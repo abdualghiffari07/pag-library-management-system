@@ -110,19 +110,13 @@ class BookController extends Controller
     /**
      * Menampilkan form edit buku.
      */
-    public function edit(Book $book)
+        public function edit(Book $book)
     {
-        $authors = Author::orderBy('author_name')->get();
+        $authors = Author::all();
+        $categories = Category::all();
+        $locations = Location::all();
 
-        $categories = Category::orderBy('category_name')->get();
-
-        $locations = Location::orderBy('location_name')->get();
-
-        $book->load([
-            'authors',
-            'categories',
-            'location'
-        ]);
+        $book->load(['authors', 'categories']);
 
         return view('books.edit', compact(
             'book',
@@ -178,12 +172,17 @@ class BookController extends Controller
     /**
      * Menghapus buku.
      */
-    public function destroy(Book $book)
-    {
-        $book->delete();
+public function destroy(Book $book)
+{
+    DB::transaction(function () use ($book) {
+        $book->authors()->detach();
+        $book->categories()->detach();
 
-        return redirect()
-            ->route('books.index')
-            ->with('success', 'Buku berhasil dihapus.');
-    }
+        $book->delete();
+    });
+
+    return redirect()
+        ->route('books.index')
+        ->with('success', 'Buku berhasil dihapus.');
+}
 }

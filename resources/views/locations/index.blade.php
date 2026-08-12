@@ -4,14 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Daftar Buku - PAG Library</title>
+    <title>Daftar Lokasi - PAG Library</title>
 </head>
+
 <body>
 
-    <h1>Daftar Buku</h1>
+    <h1>Daftar Lokasi</h1>
 
-    <a href="{{ route('books.create') }}">
-        Tambah Buku
+    <a href="{{ route('locations.create') }}">
+        Tambah Lokasi
     </a>
 
     <br><br>
@@ -22,67 +23,55 @@
         </div>
     @endif
 
-    @if ($books->count() > 0)
+    @if ($locations->count() > 0)
 
         <table border="1" cellpadding="10" cellspacing="0">
 
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Judul</th>
-                    <th>Asal</th>
-                    <th>Tahun Terbit</th>
-                    <th>Status</th>
-                    <th>Lokasi</th>
+                    <th>Nama Lokasi</th>
+                    <th>Deskripsi</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
 
             <tbody>
 
-                @foreach ($books as $book)
+                @foreach ($locations as $location)
 
                     <tr>
-                        <td>{{ $book->book_id }}</td>
 
                         <td>
-                            {{ $book->title }}
+                            {{ $location->location_id }}
                         </td>
 
                         <td>
-                            {{ $book->origin ?? '-' }}
+                            {{ $location->location_name }}
                         </td>
 
                         <td>
-                            {{ $book->publication_year ?? '-' }}
+                            {{ $location->description ?? '-' }}
                         </td>
 
                         <td>
-                            {{ $book->status }}
-                        </td>
 
-                        <td>
-                            {{ $book->location->location_name ?? '-' }}
-                        </td>
-
-                        <td>
-                            <a href="{{ route('books.show', $book->book_id) }}">
+                            <a href="{{ route('locations.show', $location->location_id) }}">
                                 Detail
                             </a>
 
                             |
 
-                            <a href="{{ route('books.edit', $book->book_id) }}">
+                            <a href="{{ route('locations.edit', $location->location_id) }}">
                                 Edit
                             </a>
 
                             |
-    
+
                             <form
-                                action="{{ route('books.destroy', $book->book_id) }}"
+                                action="{{ route('locations.destroy', $location->location_id) }}"
                                 method="POST"
                                 style="display:inline;"
-                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus buku ini?')"
                             >
 
                                 @csrf
@@ -93,7 +82,9 @@
                                 </button>
 
                             </form>
+
                         </td>
+
                     </tr>
 
                 @endforeach
@@ -104,7 +95,7 @@
 
     @else
 
-        <p>Belum ada data buku.</p>
+        <p>Belum ada data lokasi.</p>
 
     @endif
 

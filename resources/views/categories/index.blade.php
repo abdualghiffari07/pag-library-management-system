@@ -4,14 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Daftar Buku - PAG Library</title>
+    <title>Daftar Kategori - PAG Library</title>
 </head>
+
 <body>
 
-    <h1>Daftar Buku</h1>
+    <h1>Daftar Kategori</h1>
 
-    <a href="{{ route('books.create') }}">
-        Tambah Buku
+    <a href="{{ route('categories.create') }}">
+        Tambah Kategori
     </a>
 
     <br><br>
@@ -22,77 +23,58 @@
         </div>
     @endif
 
-    @if ($books->count() > 0)
+    @if ($categories->count() > 0)
 
         <table border="1" cellpadding="10" cellspacing="0">
 
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Judul</th>
-                    <th>Asal</th>
-                    <th>Tahun Terbit</th>
-                    <th>Status</th>
-                    <th>Lokasi</th>
+                    <th>Nama Kategori</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
 
             <tbody>
 
-                @foreach ($books as $book)
+                @foreach ($categories as $category)
 
                     <tr>
-                        <td>{{ $book->book_id }}</td>
-
                         <td>
-                            {{ $book->title }}
+                            {{ $category->category_id }}
                         </td>
 
                         <td>
-                            {{ $book->origin ?? '-' }}
+                            {{ $category->category_name }}
                         </td>
 
                         <td>
-                            {{ $book->publication_year ?? '-' }}
-                        </td>
 
-                        <td>
-                            {{ $book->status }}
-                        </td>
-
-                        <td>
-                            {{ $book->location->location_name ?? '-' }}
-                        </td>
-
-                        <td>
-                            <a href="{{ route('books.show', $book->book_id) }}">
+                            <a href="{{ route('categories.show', $category->category_id) }}">
                                 Detail
                             </a>
 
                             |
 
-                            <a href="{{ route('books.edit', $book->book_id) }}">
+                            <a href="{{ route('categories.edit', $category->category_id) }}">
                                 Edit
                             </a>
 
                             |
-    
+
                             <form
-                                action="{{ route('books.destroy', $book->book_id) }}"
+                                action="{{ route('categories.destroy', $category->category_id) }}"
                                 method="POST"
                                 style="display:inline;"
-                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus buku ini?')"
                             >
-
                                 @csrf
                                 @method('DELETE')
 
                                 <button type="submit">
                                     Hapus
                                 </button>
-
                             </form>
+
                         </td>
                     </tr>
 
@@ -104,7 +86,7 @@
 
     @else
 
-        <p>Belum ada data buku.</p>
+        <p>Belum ada data kategori.</p>
 
     @endif
 
