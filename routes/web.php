@@ -10,12 +10,14 @@ use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\LoanController;
+use App\Http\Controllers\BookCopyController;
 
 
 Route::resource('books', BookController::class);
 Route::resource('authors', AuthorController::class);
 Route::resource('categories', CategoryController::class);
 Route::resource('locations', LocationController::class);
+Route::resource('book-copies', BookCopyController::class);
 
 Route::post(
     '/loans/{loan}/return',

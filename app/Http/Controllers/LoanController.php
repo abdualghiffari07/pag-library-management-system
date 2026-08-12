@@ -6,25 +6,48 @@ use App\Models\Book;
 use App\Models\User;
 use App\Models\Loan;
 use App\Models\LoanDetail;
+use App\Models\BookCopy;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class LoanController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $this->updateOverdueLoans();
 
-        $loans = Loan::with([
+        $query = Loan::with([
             'user',
             'loanDetails',
         ])
             ->withCount('loanDetails')
-            ->orderByDesc('loan_id')
-            ->get();
+            ->orderByDesc('loan_id');
+
+        // Pencarian nama atau nopek
+        if ($request->filled('search')) {
+            $search = $request->search;
+
+            $query->whereHas('user', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                ->orWhere('nopek', 'like', "%{$search}%");
+            });
+        }
+
+        // Filter status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Filter tanggal pinjam
+        if ($request->filled('loan_date')) {
+            $query->whereDate('loan_date', $request->loan_date);
+        }
+
+        $loans = $query->paginate(10)->withQueryString();
 
         return view('loans.index', compact('loans'));
     }
@@ -39,11 +62,15 @@ class LoanController extends Controller
             ->orderBy('name')
             ->get();
 
-        $books = Book::where('status', 'public')
-            ->orderBy('title')
+        $bookCopies = BookCopy::with('book')
+            ->where('status', 'tersedia')
+            ->whereHas('book', function ($query) {
+                $query->where('status', 'public');
+            })
+            ->orderBy('copy_code')
             ->get();
 
-        return view('loans.create', compact('users', 'books'));
+        return view('loans.create', compact('users', 'bookCopies'));
     }
 
     /**
@@ -58,9 +85,9 @@ class LoanController extends Controller
 
             'due_date' => 'required|date|after_or_equal:loan_date',
 
-            'books' => 'required|array|min:1',
+            'copies' => 'required|array|min:1',
 
-            'books.*' => 'integer|exists:books,book_id',
+            'copies.*' => 'integer|exists:book_copies,copy_id',
 
             'notes' => 'nullable|string',
         ]);
@@ -72,24 +99,35 @@ class LoanController extends Controller
                 'loan_date' => $validated['loan_date'],
                 'due_date' => $validated['due_date'],
                 'returned_date' => null,
-
                 'status' => 'borrowed',
-
                 'notes' => $validated['notes'] ?? null,
             ]);
 
-            foreach ($validated['books'] as $bookId) {
+            foreach ($validated['copies'] as $copyId) {
+
+                $bookCopy = BookCopy::findOrFail($copyId);
+
+                // Pastikan eksemplar masih tersedia
+                if ($bookCopy->status !== 'tersedia') {
+                    throw ValidationException::withMessages([
+                        'copies' => "Eksemplar {$bookCopy->copy_code} sudah tidak tersedia.",
+                    ]);
+                }
 
                 $loan->loanDetails()->create([
-                    'book_id' => $bookId,
+                    'book_id' => $bookCopy->book_id,
+                    'copy_id' => $bookCopy->copy_id,
                     'returned_date' => null,
                     'condition' => null,
                     'fine' => 0,
                     'notes' => null,
                 ]);
 
+                // Ubah status eksemplar menjadi dipinjam
+                $bookCopy->update([
+                    'status' => 'dipinjam',
+                ]);
             }
-
         });
 
         return redirect()

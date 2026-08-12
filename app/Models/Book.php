@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\BookCopy;
+
 
 class Book extends Model
 {
@@ -62,6 +64,15 @@ class Book extends Model
     {
         return $this->hasMany(
             LoanDetail::class,
+            'book_id',
+            'book_id'
+        );
+    }
+
+    public function copies(): HasMany
+    {
+        return $this->hasMany(
+            BookCopy::class,
             'book_id',
             'book_id'
         );

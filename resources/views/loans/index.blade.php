@@ -18,6 +18,83 @@
 
     <br><br>
 
+    <form action="{{ route('loans.index') }}" method="GET">
+
+        <label for="search">
+            Cari Peminjam
+        </label>
+
+        <input
+            type="text"
+            id="search"
+            name="search"
+            value="{{ request('search') }}"
+            placeholder="Nama atau Nopek"
+        >
+
+        <br><br>
+
+        <label for="status">
+            Status
+        </label>
+
+        <select name="status" id="status">
+
+            <option value="">
+                -- Semua Status --
+            </option>
+
+            <option
+                value="borrowed"
+                {{ request('status') === 'borrowed' ? 'selected' : '' }}
+            >
+                Dipinjam
+            </option>
+
+            <option
+                value="overdue"
+                {{ request('status') === 'overdue' ? 'selected' : '' }}
+            >
+                Terlambat
+            </option>
+
+            <option
+                value="returned"
+                {{ request('status') === 'returned' ? 'selected' : '' }}
+            >
+                Dikembalikan
+            </option>
+
+        </select>
+
+        <br><br>
+
+        <label for="loan_date">
+            Tanggal Pinjam
+        </label>
+
+        <input
+            type="date"
+            id="loan_date"
+            name="loan_date"
+            value="{{ request('loan_date') }}"
+        >
+
+        <br><br>
+
+        <button type="submit">
+            Cari
+        </button>
+
+        <a href="{{ route('loans.index') }}">
+            Reset
+        </a>
+
+    </form>
+
+    <br>
+
+
     @if (session('success'))
         <div>
             {{ session('success') }}
@@ -107,6 +184,14 @@
                             @else
 
                                 {{ $loan->status }}
+
+                            @endif
+
+                            @if ($loans->hasPages())
+
+                                <br>
+
+                                {{ $loans->links() }}
 
                             @endif
 

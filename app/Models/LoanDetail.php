@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\BookCopy;
 
 class LoanDetail extends Model
 {
@@ -16,6 +17,7 @@ class LoanDetail extends Model
     protected $fillable = [
         'loan_id',
         'book_id',
+        'copy_id',
         'returned_date',
         'condition',
         'fine',
@@ -46,5 +48,10 @@ class LoanDetail extends Model
             'book_id',
             'book_id'
         );
+    }
+
+    public function bookCopy()
+    {
+        return $this->belongsTo(BookCopy::class, 'copy_id', 'copy_id');
     }
 }

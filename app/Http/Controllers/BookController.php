@@ -95,14 +95,9 @@ class BookController extends Controller
     /**
      * Menampilkan detail buku.
      */
-    public function show(Book $book)
+    public function show(string $id)
     {
-        $book->load([
-            'authors',
-            'categories',
-            'location',
-            'loanDetails'
-        ]);
+        $book = Book::with('copies')->findOrFail($id);
 
         return view('books.show', compact('book'));
     }
