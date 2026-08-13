@@ -132,19 +132,20 @@
 
         <table border="1" cellpadding="10" cellspacing="0">
 
-    <thead>
-        <tr>
-            <th>No</th>
-            <th>ID Buku</th>
-            <th>Judul Buku</th>
-            <th>Status</th>
-            <th>Tanggal Dikembalikan</th>
-            <th>Kondisi</th>
-            <th>Denda</th>
-            <th>Catatan</th>
-            <th>Aksi</th>
-        </tr>
-    </thead>
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>ID Buku</th>
+                <th>Judul Buku</th>
+                <th>Kode Eksemplar</th>
+                <th>Status</th>
+                <th>Tanggal Dikembalikan</th>
+                <th>Kondisi</th>
+                <th>Denda</th>
+                <th>Catatan</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
 
             <tbody>
 
@@ -162,6 +163,10 @@
 
                 <td>
                     {{ $detail->book->title ?? '-' }}
+                </td>
+
+                <td>
+                    {{ $detail->book->copy_code ?? '-' }}
                 </td>
 
                 {{-- STATUS --}}

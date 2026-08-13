@@ -1,0 +1,11 @@
+warning: in the working copy of 'resources/views/loans/create.blade.php', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'resources/views/loans/index.blade.php', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'resources/views/loans/show.blade.php', CRLF will be replaced by LF the next time Git touches it
+ app/Http/Controllers/LoanController.php | 155 [32m+++[m[31m---[m
+ bootstrap/app.php                       |   7 [32m+[m[31m-[m
+ database/seeders/DatabaseSeeder.php     |  13 [32m+[m[31m-[m
+ resources/views/loans/create.blade.php  |  21 [32m+[m[31m-[m
+ resources/views/loans/index.blade.php   | 821 [32m++++++++++++++++++++++++++[m[31m------[m
+ resources/views/loans/show.blade.php    |  31 [32m+[m[31m-[m
+ routes/web.php                          | 173 [32m++++++[m[31m-[m
+ 7 files changed, 965 insertions(+), 256 deletions(-)

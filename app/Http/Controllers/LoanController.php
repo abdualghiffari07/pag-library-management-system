@@ -62,15 +62,14 @@ class LoanController extends Controller
             ->orderBy('name')
             ->get();
 
-        $bookCopies = BookCopy::with('book')
-            ->where('status', 'tersedia')
-            ->whereHas('book', function ($query) {
-                $query->where('status', 'public');
+        $books = Book::where('status', 'public')
+            ->whereHas('copies', function ($query) {
+                $query->where('status', 'tersedia');
             })
-            ->orderBy('copy_code')
+            ->orderBy('title')
             ->get();
 
-        return view('loans.create', compact('users', 'bookCopies'));
+        return view('loans.create', compact('users', 'books'));
     }
 
     /**
@@ -85,9 +84,9 @@ class LoanController extends Controller
 
             'due_date' => 'required|date|after_or_equal:loan_date',
 
-            'copies' => 'required|array|min:1',
+            'books' => 'required|array|min:1',
 
-            'copies.*' => 'integer|exists:book_copies,copy_id',
+            'books.*' => 'integer|exists:books,book_id',
 
             'notes' => 'nullable|string',
         ]);
@@ -103,17 +102,31 @@ class LoanController extends Controller
                 'notes' => $validated['notes'] ?? null,
             ]);
 
-            foreach ($validated['copies'] as $copyId) {
+            foreach ($validated['books'] as $bookId) {
 
-                $bookCopy = BookCopy::findOrFail($copyId);
+                /*
+                * Cari satu eksemplar yang masih tersedia
+                */
+                $bookCopy = BookCopy::where('book_id', $bookId)
+                    ->where('status', 'tersedia')
+                    ->lockForUpdate()
+                    ->first();
 
-                // Pastikan eksemplar masih tersedia
-                if ($bookCopy->status !== 'tersedia') {
+                /*
+                * Jika tidak ada eksemplar tersedia
+                */
+                if (!$bookCopy) {
+
+                    $book = Book::find($bookId);
+
                     throw ValidationException::withMessages([
-                        'copies' => "Eksemplar {$bookCopy->copy_code} sudah tidak tersedia.",
+                        'books' => "Buku {$book->title} tidak memiliki eksemplar yang tersedia.",
                     ]);
                 }
 
+                /*
+                * Simpan detail peminjaman
+                */
                 $loan->loanDetails()->create([
                     'book_id' => $bookCopy->book_id,
                     'copy_id' => $bookCopy->copy_id,
@@ -123,7 +136,9 @@ class LoanController extends Controller
                     'notes' => null,
                 ]);
 
-                // Ubah status eksemplar menjadi dipinjam
+                /*
+                * Ubah status eksemplar
+                */
                 $bookCopy->update([
                     'status' => 'dipinjam',
                 ]);
@@ -151,66 +166,75 @@ class LoanController extends Controller
     //         ->with('success', 'Peminjaman berhasil dikembalikan.');
     // }
 
-    public function returnBookDetail(Request $request, LoanDetail $loanDetail)
-    {
-        $validated = $request->validate([
-            'returned_date' => 'required|date',
-            'condition' => 'required|string|max:100',
-            'fine' => 'nullable|numeric|min:0',
-            'notes' => 'nullable|string',
-        ]);
-
-        DB::transaction(function () use ($validated, $loanDetail) {
-
-            $loan = $loanDetail->loan;
-
-            $returnedDate = \Carbon\Carbon::parse(
-                $validated['returned_date']
-            );
-
-            $dueDate = \Carbon\Carbon::parse(
-                $loan->due_date
-            );
-
-            /*
-            * Hitung jumlah hari keterlambatan
-            */
-            $lateDays = 0;
-
-            if ($returnedDate->gt($dueDate)) {
-                $lateDays = $dueDate->diffInDays($returnedDate);
-            }
-
-            /*
-            * Tarif denda per hari
-            */
-            $finePerDay = 1000;
-
-            /*
-            * Hitung denda
-            */
-            $fine = $lateDays * $finePerDay;
-
-            /*
-            * Simpan pengembalian buku
-            */
-            $loanDetail->update([
-                'returned_date' => $validated['returned_date'],
-                'condition' => $validated['condition'],
-                'fine' => $fine,
-                'notes' => $validated['notes'] ?? null,
+        public function returnBookDetail(Request $request, LoanDetail $loanDetail)
+        {
+            $validated = $request->validate([
+                'returned_date' => 'required|date',
+                'condition' => 'required|string|max:100',
+                'notes' => 'nullable|string',
             ]);
 
-            /*
-            * Perbarui status transaksi
-            */
-            $this->updateLoanStatus($loan);
-        });
+            DB::transaction(function () use ($validated, $loanDetail) {
 
-        return redirect()
-            ->route('loans.show', $loanDetail->loan_id)
-            ->with('success', 'Buku berhasil dikembalikan.');
-    }
+                $loan = $loanDetail->loan;
+
+                $returnedDate = \Carbon\Carbon::parse(
+                    $validated['returned_date']
+                );
+
+                $dueDate = \Carbon\Carbon::parse(
+                    $loan->due_date
+                );
+
+                /*
+                * Hitung jumlah hari keterlambatan
+                */
+                $lateDays = 0;
+
+                if ($returnedDate->gt($dueDate)) {
+                    $lateDays = $dueDate->diffInDays($returnedDate);
+                }
+
+                /*
+                * Tarif denda per hari
+                */
+                $finePerDay = 1000;
+
+                /*
+                * Hitung denda
+                */
+                $fine = $lateDays * $finePerDay;
+
+                /*
+                * Simpan data pengembalian
+                */
+                $loanDetail->update([
+                    'returned_date' => $validated['returned_date'],
+                    'condition' => $validated['condition'],
+                    'fine' => $fine,
+                    'notes' => $validated['notes'] ?? null,
+                ]);
+
+                /*
+                * Kembalikan status eksemplar
+                */
+                if ($loanDetail->bookCopy) {
+                    $loanDetail->bookCopy->update([
+                        'status' => 'tersedia',
+                        'condition' => strtolower($validated['condition']),
+                    ]);
+                }
+
+                /*
+                * Perbarui status transaksi peminjaman
+                */
+                $this->updateLoanStatus($loan);
+            });
+
+            return redirect()
+                ->route('loans.show', $loanDetail->loan_id)
+                ->with('success', 'Buku berhasil dikembalikan.');
+        }
 
 
     private function updateLoanStatus(Loan $loan): void
@@ -272,6 +296,7 @@ class LoanController extends Controller
         $loan->load([
             'user',
             'loanDetails.book',
+            'loanDetails.bookCopy',
         ]);
 
         return view('loans.show', compact('loan'));

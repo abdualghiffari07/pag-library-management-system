@@ -104,12 +104,12 @@
         <div>
 
             <label>
-                Pilih Eksemplar Buku
+                Pilih Buku
             </label>
 
             <br><br>
 
-            @foreach ($bookCopies as $copy)
+            @foreach ($books as $book)
 
                 <div>
 
@@ -117,13 +117,12 @@
 
                         <input
                             type="checkbox"
-                            name="copies[]"
-                            value="{{ $copy->copy_id }}"
-                            {{ in_array($copy->copy_id, old('copies', [])) ? 'checked' : '' }}
+                            name="books[]"
+                            value="{{ $book->book_id }}"
+                            {{ in_array($book->book_id, old('books', [])) ? 'checked' : '' }}
                         >
 
-                        {{ $copy->book->title }}
-                        — {{ $copy->copy_code }}
+                        {{ $book->title }}
 
                     </label>
 
@@ -131,6 +130,14 @@
 
             @endforeach
 
+            <br>
+
+            <small>
+                Pilih satu atau lebih buku yang akan dipinjam.
+            </small>
+
+        </div>
+            
             <br>
 
             <small>
