@@ -8,113 +8,398 @@
         content="width=device-width, initial-scale=1.0">
 
     <title>Dashboard Admin - PAG Library</title>
+
+    @vite(['resources/css/dashboard-admin.css', 'resources/js/dashboard-admin.js'])
 </head>
 
 <body>
 
-    <h1>Dashboard Admin</h1>
+<div class="app">
 
-    <p>
-        Selamat datang,
-        <strong>{{ $user->name }}</strong>
-    </p>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
 
-    <hr>
+        <div class="brand">
+            <div class="brand-title">
+                PAG LIBRARY
+            </div>
 
-    <h2>Statistik Perpustakaan</h2>
+            <div class="brand-subtitle">
+                Sistem Manajemen Perpustakaan
+            </div>
+        </div>
 
-    <ul>
-        <li>
-            Total Judul Buku:
-            <strong>{{ $totalBooks }}</strong>
-        </li>
+        <nav class="menu">
 
-        <li>
-            Total Eksemplar:
-            <strong>{{ $totalCopies }}</strong>
-        </li>
+            <div class="menu-title">
+                Utama
+            </div>
 
-        <li>
-            Eksemplar Tersedia:
-            <strong>{{ $availableCopies }}</strong>
-        </li>
+            <a href="{{ route('dashboard') }}"
+               class="menu-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                <span class="menu-icon">⌂</span>
+                Dashboard
+            </a>
 
-        <li>
-            Eksemplar Dipinjam:
-            <strong>{{ $borrowedCopies }}</strong>
-        </li>
 
-        <li>
-            Total Peminjaman:
-            <strong>{{ $totalLoans }}</strong>
-        </li>
+            <div class="menu-title">
+                Koleksi
+            </div>
 
-        <li>
-            Peminjaman Aktif:
-            <strong>{{ $activeLoans }}</strong>
-        </li>
-
-        <li>
-            Peminjaman Terlambat:
-            <strong>{{ $overdueLoans }}</strong>
-        </li>
-    </ul>
-
-    <hr>
-
-    <h2>Menu</h2>
-
-    <ul>
-
-        <li>
-            <a href="{{ route('books.index') }}">
+            <a href="{{ route('books.index') }}"
+               class="menu-item {{ request()->routeIs('books.*') ? 'active' : '' }}">
+                <span class="menu-icon">▣</span>
                 Buku
             </a>
-        </li>
 
-        <li>
-            <a href="{{ route('book-copies.index') }}">
+            <a href="{{ route('book-copies.index') }}"
+               class="menu-item {{ request()->routeIs('book-copies.*') ? 'active' : '' }}">
+                <span class="menu-icon">▤</span>
                 Eksemplar Buku
             </a>
-        </li>
 
-        <li>
-            <a href="{{ route('authors.index') }}">
+            <a href="{{ route('authors.index') }}"
+               class="menu-item {{ request()->routeIs('authors.*') ? 'active' : '' }}">
+                <span class="menu-icon">♙</span>
                 Penulis
             </a>
-        </li>
 
-        <li>
-            <a href="{{ route('categories.index') }}">
+            <a href="{{ route('categories.index') }}"
+               class="menu-item {{ request()->routeIs('categories.*') ? 'active' : '' }}">
+                <span class="menu-icon">▦</span>
                 Kategori
             </a>
-        </li>
 
-        <li>
-            <a href="{{ route('locations.index') }}">
+            <a href="{{ route('locations.index') }}"
+               class="menu-item {{ request()->routeIs('locations.*') ? 'active' : '' }}">
+                <span class="menu-icon">⌖</span>
                 Lokasi
             </a>
-        </li>
 
-        <li>
-            <a href="{{ route('loans.index') }}">
+
+            <div class="menu-title">
+                Transaksi
+            </div>
+
+            <a href="{{ route('loans.index') }}"
+               class="menu-item {{ request()->routeIs('loans.*') ? 'active' : '' }}">
+                <span class="menu-icon">↔</span>
                 Peminjaman
             </a>
-        </li>
 
-    </ul>
 
-    <hr>
+            <div class="menu-title">
+                Laporan
+            </div>
 
-    <form method="POST" action="{{ route('logout') }}">
+            {{-- TODO: route belum tersedia, ganti <div> ke <a> setelah halaman dibuat --}}
+            <div class="menu-item">
+                <span class="menu-icon">▤</span>
+                Laporan Koleksi
+            </div>
 
-        @csrf
+            {{-- TODO: route belum tersedia, ganti <div> ke <a> setelah halaman dibuat --}}
+            <div class="menu-item">
+                <span class="menu-icon">▥</span>
+                Laporan Peminjaman
+            </div>
 
-        <button type="submit">
-            Logout
-        </button>
 
-    </form>
+            <div class="menu-title">
+                Arsip
+            </div>
+
+            {{-- TODO: route belum tersedia, ganti <div> ke <a> setelah halaman dibuat --}}
+            <div class="menu-item">
+                <span class="menu-icon">▧</span>
+                File Buku
+            </div>
+
+
+            <div class="menu-title">
+                Sistem
+            </div>
+
+            {{-- TODO: route belum tersedia, ganti <div> ke <a> setelah halaman dibuat --}}
+            <div class="menu-item">
+                <span class="menu-icon">♙</span>
+                Pengguna
+            </div>
+
+        </nav>
+
+        <div class="logout-wrapper">
+
+            <form method="POST"
+                  action="{{ route('logout') }}">
+
+                @csrf
+
+                <button type="submit"
+                        class="logout-button">
+                    ⇥ &nbsp; Keluar
+                </button>
+
+            </form>
+
+        </div>
+
+    </aside>
+
+    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- HEADER -->
+    <header class="header">
+
+        <div class="header-left">
+
+            <button
+                type="button"
+                id="sidebar-toggle"
+                class="sidebar-toggle"
+                aria-label="Buka menu">
+                ☰
+            </button>
+
+            <div class="header-title">
+                Dashboard Administrator
+            </div>
+
+        </div>
+
+
+        <div class="admin-profile">
+
+            <div class="admin-info">
+
+                <div class="admin-name">
+                    {{ $user->name }}
+                </div>
+
+                <div class="admin-role">
+                    Administrator
+                </div>
+
+            </div>
+
+            <div class="avatar">
+                {{ strtoupper(substr($user->name, 0, 1)) }}
+            </div>
+
+        </div>
+
+    </header>
+
+
+        <!-- CONTENT -->
+        <section class="content">
+
+            <!-- WELCOME -->
+            <div class="welcome">
+
+                <h1>
+                    Dashboard
+                </h1>
+
+                <p>
+                    Selamat datang kembali,
+                    <strong>{{ $user->name }}</strong>.
+                    Berikut ringkasan perpustakaan PAG.
+                </p>
+
+            </div>
+
+
+            <!-- PRIMARY STATISTICS -->
+            <div class="stats-grid">
+
+                <div class="stat-card">
+
+                    <div class="stat-label">
+                        Total Judul Buku
+                    </div>
+
+                    <div class="stat-value">
+                        {{ $totalBooks }}
+                    </div>
+
+                    <div class="stat-description">
+                        Jumlah seluruh judul buku
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-label">
+                        Total Eksemplar
+                    </div>
+
+                    <div class="stat-value">
+                        {{ $totalCopies }}
+                    </div>
+
+                    <div class="stat-description">
+                        Jumlah seluruh eksemplar
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-label">
+                        Sedang Dipinjam
+                    </div>
+
+                    <div class="stat-value">
+                        {{ $borrowedCopies }}
+                    </div>
+
+                    <div class="stat-description">
+                        Eksemplar yang sedang dipinjam
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-label">
+                        Terlambat
+                    </div>
+
+                    <div class="stat-value">
+                        {{ $overdueLoans }}
+                    </div>
+
+                    <div class="stat-description">
+                        Peminjaman yang melewati batas waktu
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- SECONDARY STATISTICS -->
+            <div class="secondary-grid">
+
+                <div class="secondary-card">
+
+                    <div class="secondary-label">
+                        Eksemplar Tersedia
+                    </div>
+
+                    <div class="secondary-value">
+                        {{ $availableCopies }}
+                    </div>
+
+                </div>
+
+
+                <div class="secondary-card">
+
+                    <div class="secondary-label">
+                        Total Peminjaman
+                    </div>
+
+                    <div class="secondary-value">
+                        {{ $totalLoans }}
+                    </div>
+
+                </div>
+
+
+                <div class="secondary-card">
+
+                    <div class="secondary-label">
+                        Peminjaman Aktif
+                    </div>
+
+                    <div class="secondary-value">
+                        {{ $activeLoans }}
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- QUICK ACTIONS -->
+            <h2 class="section-title">
+                Akses Cepat
+            </h2>
+
+            <div class="quick-actions">
+
+                <a href="{{ route('books.index') }}"
+                   class="action">
+
+                    <div class="action-title">
+                        Kelola Buku
+                    </div>
+
+                    <div class="action-description">
+                        Kelola data buku perpustakaan
+                    </div>
+
+                </a>
+
+
+                <a href="{{ route('book-copies.index') }}"
+                   class="action">
+
+                    <div class="action-title">
+                        Kelola Eksemplar
+                    </div>
+
+                    <div class="action-description">
+                        Kelola eksemplar buku
+                    </div>
+
+                </a>
+
+
+                <a href="{{ route('loans.index') }}"
+                   class="action">
+
+                    <div class="action-title">
+                        Kelola Peminjaman
+                    </div>
+
+                    <div class="action-description">
+                        Kelola transaksi peminjaman
+                    </div>
+
+                </a>
+
+
+                {{-- TODO: route belum tersedia, ganti <div> ke <a> setelah halaman laporan dibuat --}}
+                <div class="action">
+
+                    <div class="action-title">
+                        Laporan
+                    </div>
+
+                    <div class="action-description">
+                        Lihat laporan perpustakaan
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
 
 </body>
 
