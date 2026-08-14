@@ -1,0 +1,247 @@
+/* =========================================================
+   PAG LIBRARY - LANDING PAGE
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   HERO SLIDER
+   --------------------------------------------------------- */
+
+.hero-section {
+    position: relative;
+    min-height: 680px;
+    overflow: hidden;
+}
+
+.hero-slide {
+    position: absolute;
+    inset: 0;
+    background-position: center;
+    background-size: cover;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+.hero-slide.active {
+    opacity: 1;
+}
+
+
+/* ---------------------------------------------------------
+   HERO OVERLAY
+   --------------------------------------------------------- */
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(0, 59, 112, 0.90),
+            rgba(0, 93, 170, 0.75),
+            rgba(16, 42, 67, 0.90)
+        );
+}
+
+
+/* ---------------------------------------------------------
+   SLIDER INDICATOR
+   --------------------------------------------------------- */
+
+.slider-indicator {
+    height: 8px;
+    width: 8px;
+    border-radius: 9999px;
+    background-color: rgba(255, 255, 255, 0.5);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.slider-indicator.active {
+    width: 32px;
+    background-color: #ffffff;
+}
+
+
+/* ---------------------------------------------------------
+   LIBRARY FEATURE CARD
+   (dipakai oleh ketiga feature card: Buku, Pengguna, Peminjaman)
+   --------------------------------------------------------- */
+
+.library-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 1rem;
+    background: #ffffff;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.library-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+@media (min-width: 640px) {
+
+    .library-card {
+        padding: 2rem;
+    }
+
+}
+
+
+/* ---------------------------------------------------------
+   RESPONSIVE
+   --------------------------------------------------------- */
+
+@media (min-width: 640px) {
+
+    .hero-section {
+        min-height: 720px;
+    }
+
+}
+
+
+@media (min-width: 1024px) {
+
+    .hero-section {
+        height: 100vh;
+        min-height: 700px;
+    }
+
+}
+
+/* =========================================================
+   LOGIN MODAL
+   ========================================================= */
+
+#login-modal {
+    position: fixed;
+
+    inset: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    z-index: 9999;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 1rem;
+
+    background: rgba(0, 0, 0, 0.5);
+
+    backdrop-filter: blur(5px);
+}
+
+
+/* =========================================================
+   LOGIN PANEL
+   ========================================================= */
+
+#login-panel {
+    position: relative;
+
+    width: min(460px, calc(100vw - 2rem));
+
+    max-height: 90vh;
+
+    overflow-y: auto;
+
+    margin: 0 auto;
+
+    background: #ffffff;
+
+    border-radius: 1.5rem;
+
+    padding: 2rem;
+
+    box-shadow:
+        0 25px 50px rgba(0, 0, 0, 0.25);
+
+    /*
+     * Posisi awal:
+     * berada di bawah layar
+     */
+    transform: translateY(100vh);
+
+    /*
+     * Kecepatan animasi
+     */
+    transition:
+        transform 0.7s cubic-bezier(
+            0.22,
+            1,
+            0.36,
+            1
+        );
+}
+
+
+/* =========================================================
+   LOGIN PANEL - ANIMATION
+   ========================================================= */
+
+#login-panel.login-panel-show {
+
+    /*
+     * Bergerak dari bawah
+     * menuju posisi tengah
+     */
+    transform: translateY(0);
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 639px) {
+
+    #login-modal {
+        padding: 1rem;
+    }
+
+    #login-panel {
+
+        width: calc(100vw - 2rem);
+
+        max-width: none;
+
+        padding: 1.5rem;
+
+        border-radius: 1.25rem;
+
+    }
+
+}
+
+/* =========================================================
+   PAGE LOAD ANIMATION
+   ========================================================= */
+
+.page-load-animation {
+    animation: pageLoadUp 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes pageLoadUp {
+    from {
+        opacity: 0;
+        transform: translateY(80px);
+        filter: blur(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        filter: blur(0);
+    }
+}
