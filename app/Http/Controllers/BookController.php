@@ -99,7 +99,9 @@ class BookController extends Controller
     {
         $book = Book::with('copies')->findOrFail($id);
 
-        return view('books.show', compact('book'));
+        $user = auth()->user();
+
+        return view('books.show', compact('book', 'user'));
     }
 
     /**

@@ -2,168 +2,722 @@
 <html lang="id">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Detail Buku - PAG Library</title>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {{ $book->title }} - PAG Library
+    </title>
+
+    @vite([
+        'resources/css/dashboard-admin.css',
+        'resources/css/book-details.css',
+        'resources/js/dashboard-admin.js'
+    ])
+
 </head>
+
 
 <body>
 
-    <h1>Detail Buku</h1>
-
-    <a href="{{ route('books.index') }}">
-        ← Kembali ke Daftar Buku
-    </a>
-
-    <hr>
-
-        @if (session('success'))
-        <p>
-            {{ session('success') }}
-        </p>
-        @endif
-
-        @if (session('error'))
-            <p>
-                {{ session('error') }}
-            </p>
-        @endif
+<div class="app">
 
 
-    <h2>{{ $book->title }}</h2>
+    {{-- =====================================================
+         SIDEBAR
+    ====================================================== --}}
 
-    <table border="1" cellpadding="10" cellspacing="0">
+    <aside class="sidebar" id="sidebar">
 
-        <tr>
-            <th>ID Buku</th>
-            <td>{{ $book->book_id }}</td>
-        </tr>
+        <div class="brand">
 
-        <tr>
-            <th>Judul</th>
-            <td>{{ $book->title }}</td>
-        </tr>
+            <div class="brand-mark">
+                📚
+            </div>
 
-        <tr>
-            <th>Asal</th>
-            <td>{{ $book->origin ?? '-' }}</td>
-        </tr>
+            <div class="brand-text">
 
-        <tr>
-            <th>Tahun Terbit</th>
-            <td>{{ $book->publication_year ?? '-' }}</td>
-        </tr>
+                <div class="brand-title">
+                    PAG <span>LIBRARY</span>
+                </div>
 
-        <tr>
-            <th>Status Buku</th>
-            <td>{{ $book->status ?? '-' }}</td>
-        </tr>
+                <div class="brand-subtitle">
+                    Sistem Perpustakaan
+                </div>
 
-        <tr>
-            <th>Deskripsi</th>
-            <td>{{ $book->description ?? '-' }}</td>
-        </tr>
+            </div>
 
-    </table>
+        </div>
 
-    <br>
 
-    <h2>Daftar Eksemplar</h2>
+        <nav class="menu">
 
-    @if ($book->copies->count() > 0)
+            <div class="menu-section">
+                KOLEKSI
+            </div>
 
-        <table border="1" cellpadding="10" cellspacing="0">
 
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Kode Eksemplar</th>
-                    <th>Kondisi</th>
-                    <th>Status</th>
-                    <th>Catatan</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
+            <a href="{{ route('books.index') }}"
+               class="menu-item active">
 
-            <tbody>
+                <span class="menu-icon">
+                    ▣
+                </span>
 
-                @foreach ($book->copies as $index => $copy)
+                <span>
+                    Data Buku
+                </span>
 
-                    <tr>
+            </a>
 
-                        <td>
-                            {{ $index + 1 }}
-                        </td>
 
-                        <td>
-                            {{ $copy->copy_code }}
-                        </td>
+            <a href="{{ route('book-copies.index') }}"
+               class="menu-item">
 
-                        <td>
-                            {{ $copy->condition }}
-                        </td>
+                <span class="menu-icon">
+                    ▤
+                </span>
 
-                        <td>
-                            @if ($copy->status === 'tersedia')
+                <span>
+                    Eksemplar Buku
+                </span>
+
+            </a>
+
+
+            <div class="menu-section">
+                PENGUNJUNG
+            </div>
+
+
+            <div class="menu-item menu-disabled">
+
+                <span class="menu-icon">
+                    ♙
+                </span>
+
+                <span>
+                    Daftar Pengunjung
+                </span>
+
+            </div>
+
+
+            <div class="menu-section">
+                LAPORAN
+            </div>
+
+
+            <a href="{{ route('reports.index') }}"
+               class="menu-item
+               {{ request()->routeIs('reports.*') ? 'active' : '' }}">
+
+                <span class="menu-icon">
+                    ▥
+                </span>
+
+                <span>
+                    Laporan
+                </span>
+
+            </a>
+
+        </nav>
+
+
+        {{-- LOGOUT --}}
+
+        <div class="logout-wrapper">
+
+            <form method="POST"
+                  action="{{ route('logout') }}">
+
+                @csrf
+
+                <button type="submit"
+                        class="logout-button">
+
+                    <span class="logout-icon">
+                        ⇥
+                    </span>
+
+                    <span>
+                        Keluar
+                    </span>
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </aside>
+
+
+    {{-- MOBILE OVERLAY --}}
+
+    <div id="sidebar-overlay"
+         class="sidebar-overlay">
+    </div>
+
+
+    {{-- =====================================================
+         MAIN
+    ====================================================== --}}
+
+    <main class="main">
+
+
+        {{-- HEADER --}}
+
+        <header class="header">
+
+            <div class="header-left">
+
+                <button type="button"
+                        id="sidebar-toggle"
+                        class="sidebar-toggle"
+                        aria-label="Buka menu">
+
+                    ☰
+
+                </button>
+
+
+                <div>
+
+                    <div class="header-title">
+                        Detail Buku
+                    </div>
+
+                    <div class="header-line"></div>
+
+                </div>
+
+            </div>
+
+
+            {{-- HEADER RIGHT --}}
+
+            <div class="header-right">
+
+                <button class="header-button"
+                        type="button">
+
+                    ⌕
+
+                </button>
+
+
+                <button class="header-button"
+                        type="button">
+
+                    ♧
+
+                    <span class="notification-badge">
+                        4
+                    </span>
+
+                </button>
+
+
+                <div class="admin-profile">
+
+                    <div class="avatar">
+
+                        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+
+                    </div>
+
+
+                    <div class="admin-info">
+
+                        <div class="admin-name">
+                            {{ auth()->user()->name }}
+                        </div>
+
+                        <div class="admin-role">
+                            Administrator
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        {{-- =====================================================
+             CONTENT
+        ====================================================== --}}
+
+        <section class="content book-detail-content">
+
+
+            {{-- BACK --}}
+
+            <a href="{{ route('books.index') }}"
+               class="back-button">
+
+                <span class="back-icon">
+                    ←
+                </span>
+
+                Kembali ke Data Buku
+
+            </a>
+
+
+            {{-- =================================================
+                 BOOK HERO
+            ================================================== --}}
+
+            <div class="book-hero">
+
+                <div class="book-hero-content">
+
+                    <div class="book-label">
+                        Detail Koleksi
+                    </div>
+
+                    <h1 class="book-title">
+                        {{ $book->title }}
+                    </h1>
+
+                    @if ($book->description)
+
+                        <p class="book-description">
+                            {{ $book->description }}
+                        </p>
+
+                    @else
+
+                        <p class="book-description">
+                            Informasi detail koleksi buku
+                            PAG Library.
+                        </p>
+
+                    @endif
+
+                </div>
+
+
+                <div class="book-hero-icon">
+                    📖
+                </div>
+
+            </div>
+
+
+            {{-- =================================================
+                 ALERT
+            ================================================== --}}
+
+            @if (session('success'))
+
+                <div class="detail-alert success">
+
+                    {{ session('success') }}
+
+                </div>
+
+            @endif
+
+
+            @if (session('error'))
+
+                <div class="detail-alert error">
+
+                    {{ session('error') }}
+
+                </div>
+
+            @endif
+
+
+            {{-- =================================================
+                 BOOK INFORMATION
+            ================================================== --}}
+
+            <div class="book-info-grid">
+
+
+                {{-- INFORMASI BUKU --}}
+
+                <div class="detail-panel">
+
+                    <div class="detail-panel-header">
+
+                        <h2>
+                            Informasi Buku
+                        </h2>
+
+                        <p>
+                            Informasi utama koleksi buku
+                        </p>
+
+                    </div>
+
+
+                    <div class="book-info">
+
+
+                        <div class="info-item">
+
+                            <div class="info-label">
+                                ID Buku
+                            </div>
+
+                            <div class="info-value">
+                                #{{ $book->book_id }}
+                            </div>
+
+                        </div>
+
+
+                        <div class="info-item">
+
+                            <div class="info-label">
+                                Tahun Terbit
+                            </div>
+
+                            <div class="info-value">
+                                {{ $book->publication_year ?? '-' }}
+                            </div>
+
+                        </div>
+
+
+                        <div class="info-item">
+
+                            <div class="info-label">
+                                Asal
+                            </div>
+
+                            <div class="info-value">
+                                {{ $book->origin ?? '-' }}
+                            </div>
+
+                        </div>
+
+
+                        <div class="info-item">
+
+                            <div class="info-label">
+                                Status Buku
+                            </div>
+
+                            <div class="info-value">
+
+                                {{ $book->status ?? '-' }}
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="description-panel">
+
+                        <div class="info-label">
+                            Deskripsi
+                        </div>
+
+                        <div class="description-text">
+
+                            {{ $book->description ?? 'Tidak ada deskripsi.' }}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                {{-- RINGKASAN --}}
+
+                <div class="detail-panel">
+
+                    <div class="detail-panel-header">
+
+                        <h2>
+                            Ringkasan
+                        </h2>
+
+                        <p>
+                            Statistik eksemplar buku
+                        </p>
+
+                    </div>
+
+
+                    <div class="book-info">
+
+                        <div class="info-item">
+
+                            <div class="info-label">
+                                Total Eksemplar
+                            </div>
+
+                            <div class="info-value">
+                                {{ $book->copies->count() }}
+                            </div>
+
+                        </div>
+
+
+                        <div class="info-item">
+
+                            <div class="info-label">
                                 Tersedia
-                            @elseif ($copy->status === 'dipinjam')
+                            </div>
+
+                            <div class="info-value">
+
+                                {{ $book->copies->where('status', 'tersedia')->count() }}
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="info-item">
+
+                            <div class="info-label">
                                 Dipinjam
-                            @elseif ($copy->status === 'rusak')
-                                Rusak
-                            @elseif ($copy->status === 'hilang')
-                                Hilang
-                            @else
-                                {{ $copy->status }}
-                            @endif
-                        </td>
+                            </div>
 
-                        <td>
-                            {{ $copy->notes ?? '-' }}
-                        </td>
+                            <div class="info-value">
 
-                        <td>
+                                {{ $book->copies->where('status', 'dipinjam')->count() }}
 
-                            <a href="{{ route('book-copies.edit', $copy->copy_id) }}">
-                                Edit
-                            </a>
+                            </div>
 
-                            <form
-                                action="{{ route('book-copies.destroy', $copy->copy_id) }}"
-                                method="POST"
-                                style="display: inline;"
-                            >
+                        </div>
 
-                                @csrf
 
-                                @method('DELETE')
+                        <div class="info-item">
 
-                                <button
-                                    type="submit"
-                                    onclick="return confirm('Apakah Anda yakin ingin menghapus eksemplar ini?')"
-                                >
-                                    Hapus
-                                </button>
+                            <div class="info-label">
+                                Kondisi Rusak
+                            </div>
 
-                            </form>
+                            <div class="info-value">
 
-                        </td>
+                                {{ $book->copies->where('status', 'rusak')->count() }}
 
-                    </tr>
+                            </div>
 
-                @endforeach
+                        </div>
 
-            </tbody>
+                    </div>
 
-        </table>
+                </div>
 
-    @else
+            </div>
 
-        <p>
-            Belum ada eksemplar untuk buku ini.
-        </p>
 
-    @endif
+            {{-- =================================================
+                 EKSEMPLAR
+            ================================================== --}}
+
+            <div class="detail-panel copy-section">
+
+                <div class="detail-panel-header">
+
+                    <h2>
+                        Daftar Eksemplar
+                    </h2>
+
+                    <p>
+                        {{ $book->copies->count() }}
+                        eksemplar terdaftar untuk buku ini
+                    </p>
+
+                </div>
+
+
+                @if ($book->copies->count() > 0)
+
+                    <div class="copy-table-wrapper">
+
+                        <table class="copy-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        No
+                                    </th>
+
+                                    <th>
+                                        Kode Eksemplar
+                                    </th>
+
+                                    <th>
+                                        Kondisi
+                                    </th>
+
+                                    <th>
+                                        Status
+                                    </th>
+
+                                    <th>
+                                        Catatan
+                                    </th>
+
+                                    <th>
+                                        Aksi
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                @foreach ($book->copies as $index => $copy)
+
+                                    <tr>
+
+                                        <td>
+                                            {{ $index + 1 }}
+                                        </td>
+
+
+                                        <td class="copy-code">
+
+                                            {{ $copy->copy_code }}
+
+                                        </td>
+
+
+                                        <td class="condition">
+
+                                            {{ $copy->condition }}
+
+                                        </td>
+
+
+                                        <td>
+
+                                            @if ($copy->status === 'tersedia')
+
+                                                <span class="copy-status available">
+                                                    Tersedia
+                                                </span>
+
+                                            @elseif ($copy->status === 'dipinjam')
+
+                                                <span class="copy-status borrowed">
+                                                    Dipinjam
+                                                </span>
+
+                                            @elseif ($copy->status === 'rusak')
+
+                                                <span class="copy-status damaged">
+                                                    Rusak
+                                                </span>
+
+                                            @elseif ($copy->status === 'hilang')
+
+                                                <span class="copy-status lost">
+                                                    Hilang
+                                                </span>
+
+                                            @else
+
+                                                <span class="copy-status">
+                                                    {{ $copy->status }}
+                                                </span>
+
+                                            @endif
+
+                                        </td>
+
+
+                                        <td>
+
+                                            {{ $copy->notes ?? '-' }}
+
+                                        </td>
+
+
+                                        <td>
+
+                                            <div class="copy-actions">
+
+
+                                                <a href="{{ route('book-copies.edit', $copy->copy_id) }}"
+                                                   class="action-button action-edit">
+
+                                                    Edit
+
+                                                </a>
+
+
+                                                <form
+                                                    action="{{ route('book-copies.destroy', $copy->copy_id) }}"
+                                                    method="POST"
+                                                >
+
+                                                    @csrf
+
+                                                    @method('DELETE')
+
+                                                    <button
+                                                        type="submit"
+                                                        class="action-button action-delete"
+                                                        onclick="return confirm('Apakah Anda yakin ingin menghapus eksemplar ini?')"
+                                                    >
+
+                                                        Hapus
+
+                                                    </button>
+
+                                                </form>
+
+                                            </div>
+
+                                        </td>
+
+                                    </tr>
+
+                                @endforeach
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                @else
+
+                    <div class="empty-copy">
+
+                        Belum ada eksemplar untuk buku ini.
+
+                    </div>
+
+                @endif
+
+            </div>
+
+
+        </section>
+
+    </main>
+
+</div>
 
 </body>
 

@@ -1,3 +1,4 @@
+import './landing';
 /* =========================================================
    PAG LIBRARY - ADMIN DASHBOARD
    Entry point JS. Daftarkan fitur interaktif baru sebagai

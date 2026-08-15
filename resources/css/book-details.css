@@ -1,0 +1,668 @@
+/* =========================================================
+   PAG LIBRARY
+   BOOK DETAIL PAGE
+   Compatible with dashboard-admin.css
+========================================================= */
+
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+.book-detail-content {
+    padding-top: 24px;
+    padding-bottom: 40px;
+}
+
+
+/* =========================================================
+   BACK BUTTON
+========================================================= */
+
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    margin-bottom: 18px;
+
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 500;
+
+    transition:
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.back-button:hover {
+    color: var(--white);
+    transform: translateX(-3px);
+}
+
+.back-icon {
+    font-size: 17px;
+    line-height: 1;
+}
+
+
+/* =========================================================
+   BOOK HERO
+========================================================= */
+
+.book-hero {
+    position: relative;
+
+    min-height: 190px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    overflow: hidden;
+
+    padding: 32px 42px;
+
+    border: 1px solid var(--border);
+    border-radius: 15px;
+
+    background:
+        linear-gradient(
+            105deg,
+            #14191d 0%,
+            #0d1115 58%,
+            #15191d 100%
+        );
+}
+
+.book-hero::after {
+    content: "";
+
+    position: absolute;
+
+    width: 360px;
+    height: 360px;
+
+    right: -150px;
+    top: -190px;
+
+    background:
+        linear-gradient(
+            135deg,
+            transparent 35%,
+            var(--red) 36%,
+            var(--red) 65%,
+            transparent 66%
+        );
+
+    opacity: 0.8;
+
+    transform: rotate(8deg);
+}
+
+.book-hero-content {
+    position: relative;
+
+    z-index: 2;
+
+    max-width: 850px;
+}
+
+.book-label {
+    color: var(--red);
+
+    font-size: 10px;
+    font-weight: 800;
+
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+}
+
+.book-title {
+    margin-top: 8px;
+
+    color: var(--white);
+
+    font-size: 32px;
+    line-height: 1.2;
+    font-weight: 800;
+
+    letter-spacing: -0.5px;
+}
+
+.book-description {
+    max-width: 700px;
+
+    margin-top: 10px;
+
+    color: #9da6ac;
+
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.book-hero-icon {
+    position: relative;
+
+    z-index: 2;
+
+    margin-right: 80px;
+
+    font-size: 78px;
+    line-height: 1;
+
+    opacity: 0.85;
+
+    filter:
+        drop-shadow(
+            0 12px 25px rgba(227, 30, 36, 0.25)
+        );
+}
+
+
+/* =========================================================
+   ALERT
+========================================================= */
+
+.detail-alert {
+    margin-top: 16px;
+
+    padding: 13px 17px;
+
+    border-radius: 10px;
+
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.detail-alert.success {
+    color: #6be3a6;
+
+    background: rgba(22, 167, 101, 0.10);
+
+    border: 1px solid rgba(22, 167, 101, 0.25);
+}
+
+.detail-alert.error {
+    color: #ff7377;
+
+    background: rgba(227, 30, 36, 0.10);
+
+    border: 1px solid rgba(227, 30, 36, 0.25);
+}
+
+
+/* =========================================================
+   INFORMATION GRID
+========================================================= */
+
+.book-info-grid {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1.45fr)
+        minmax(320px, 0.75fr);
+
+    gap: 16px;
+
+    margin-top: 18px;
+}
+
+
+/* =========================================================
+   DETAIL PANEL
+========================================================= */
+
+.detail-panel {
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            145deg,
+            #141a20,
+            #0f1418
+        );
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius);
+}
+
+.detail-panel-header {
+    display: flex;
+    flex-direction: column;
+
+    padding: 20px 22px;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.detail-panel-header h2 {
+    color: var(--white);
+
+    font-size: 16px;
+    line-height: 1.3;
+    font-weight: 700;
+}
+
+.detail-panel-header p {
+    margin-top: 5px;
+
+    color: #7d878e;
+
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   BOOK INFORMATION
+========================================================= */
+
+.book-info {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    padding: 5px 22px 20px;
+}
+
+.info-item {
+    min-height: 74px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    padding: 12px 10px;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.info-item:nth-child(odd) {
+    margin-right: 8px;
+}
+
+.info-item:nth-child(even) {
+    margin-left: 8px;
+}
+
+.info-label {
+    color: #737e85;
+
+    font-size: 10px;
+    font-weight: 600;
+
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-value {
+    margin-top: 6px;
+
+    color: #f4f5f5;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
+
+.description-panel {
+    padding: 18px 32px 24px;
+}
+
+.description-text {
+    margin-top: 8px;
+
+    color: #aab2b7;
+
+    font-size: 12px;
+    line-height: 1.75;
+
+    word-break: break-word;
+}
+
+
+/* =========================================================
+   COPY SECTION
+========================================================= */
+
+.copy-section {
+    margin-top: 18px;
+
+    margin-bottom: 30px;
+}
+
+
+/* =========================================================
+   COPY TABLE
+========================================================= */
+
+.copy-table-wrapper {
+    width: 100%;
+
+    overflow-x: auto;
+
+    padding: 0 20px 20px;
+}
+
+.copy-table {
+    width: 100%;
+
+    min-width: 800px;
+
+    border-collapse: collapse;
+}
+
+.copy-table th {
+    padding: 12px 10px;
+
+    background: rgba(255, 255, 255, 0.02);
+
+    border-bottom: 1px solid var(--border);
+
+    color: #737d84;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+
+    white-space: nowrap;
+}
+
+.copy-table td {
+    padding: 14px 10px;
+
+    border-bottom:
+        1px solid rgba(255, 255, 255, 0.05);
+
+    color: #cbd1d5;
+
+    font-size: 11px;
+
+    vertical-align: middle;
+}
+
+.copy-table tbody tr {
+    transition:
+        background 0.2s ease;
+}
+
+.copy-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.copy-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+
+/* =========================================================
+   COPY CODE
+========================================================= */
+
+.copy-code {
+    color: #e4e7e9 !important;
+
+    font-family:
+        ui-monospace,
+        SFMono-Regular,
+        Menlo,
+        Monaco,
+        Consolas,
+        monospace;
+
+    font-size: 10px !important;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.condition {
+    color: #cdd3d7;
+}
+
+
+/* =========================================================
+   COPY STATUS
+========================================================= */
+
+.copy-status {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 5px 9px;
+
+    border-radius: 20px;
+
+    font-size: 9px;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+.copy-status.available {
+    color: #55d995;
+
+    background: rgba(22, 167, 101, 0.12);
+
+    border: 1px solid rgba(22, 167, 101, 0.22);
+}
+
+.copy-status.borrowed {
+    color: #ff6468;
+
+    background: rgba(227, 30, 36, 0.12);
+
+    border: 1px solid rgba(227, 30, 36, 0.22);
+}
+
+.copy-status.damaged {
+    color: #f5c348;
+
+    background: rgba(245, 180, 0, 0.12);
+
+    border: 1px solid rgba(245, 180, 0, 0.22);
+}
+
+.copy-status.lost {
+    color: #76b8ed;
+
+    background: rgba(75, 163, 223, 0.12);
+
+    border: 1px solid rgba(75, 163, 223, 0.22);
+}
+
+
+/* =========================================================
+   ACTION BUTTONS
+========================================================= */
+
+.copy-actions {
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    white-space: nowrap;
+}
+
+.copy-actions form {
+    margin: 0;
+}
+
+.action-button {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-width: 48px;
+
+    padding: 6px 9px;
+
+    border-radius: 6px;
+
+    font-size: 10px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.action-edit {
+    background: rgba(75, 163, 223, 0.10);
+
+    border: 1px solid rgba(75, 163, 223, 0.20);
+
+    color: #75b9e7;
+}
+
+.action-edit:hover {
+    background: rgba(75, 163, 223, 0.18);
+
+    color: #a5d4f3;
+}
+
+.action-delete {
+    background: rgba(227, 30, 36, 0.08);
+
+    border: 1px solid rgba(227, 30, 36, 0.18);
+
+    color: #f06064;
+}
+
+.action-delete:hover {
+    background: rgba(227, 30, 36, 0.17);
+
+    color: #ff777b;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.empty-copy {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-height: 180px;
+
+    padding: 30px;
+
+    color: #737e85;
+
+    font-size: 12px;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1100px) {
+
+    .book-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+@media (max-width: 900px) {
+
+    .book-hero {
+        padding: 28px;
+    }
+
+    .book-hero-icon {
+        margin-right: 25px;
+    }
+
+    .book-info {
+        grid-template-columns: 1fr;
+    }
+
+    .info-item:nth-child(odd),
+    .info-item:nth-child(even) {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .description-panel {
+        padding-left: 32px;
+        padding-right: 32px;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .book-detail-content {
+        padding-top: 18px;
+    }
+
+    .book-hero {
+        min-height: 175px;
+
+        padding: 23px;
+    }
+
+    .book-title {
+        font-size: 25px;
+    }
+
+    .book-description {
+        font-size: 11px;
+    }
+
+    .book-hero-icon {
+        display: none;
+    }
+
+    .detail-panel-header {
+        padding: 17px;
+    }
+
+    .book-info {
+        padding-left: 17px;
+        padding-right: 17px;
+    }
+
+    .description-panel {
+        padding-left: 17px;
+        padding-right: 17px;
+    }
+
+    .copy-table-wrapper {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .copy-section {
+        margin-top: 16px;
+    }
+
+}

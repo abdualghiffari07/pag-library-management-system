@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\AuthorController;
@@ -9,8 +11,7 @@ use App\Http\Controllers\LocationController;
 use App\Http\Controllers\LoanController;
 use App\Http\Controllers\BookCopyController;
 use App\Http\Controllers\DashboardController;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
+use App\Http\Controllers\ReportController;
 
 
 /*
@@ -23,31 +24,12 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-/*
-|--------------------------------------------------------------------------
-| Public
-|--------------------------------------------------------------------------
-*/
-
-Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware('role:admin,librarian,member')
-    ->name('dashboard');
 
 /*
 |--------------------------------------------------------------------------
 | Authentication
 |--------------------------------------------------------------------------
 */
-
-Route::get('/login', function () {
-    return view('login');
-})->name('login');
-
-
-Route::get('/login', function () {
-    return view('login');
-})->name('login');
-
 
 Route::post('/login', function (Request $request) {
 
@@ -57,17 +39,43 @@ Route::post('/login', function (Request $request) {
     ]);
 
     if (Auth::attempt($credentials)) {
+
+        $user = Auth::user();
+
+        // Hanya ADMIN yang diperbolehkan login
+        if (!$user->role || $user->role->role_name !== 'admin') {
+
+            Auth::logout();
+
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return back()
+                ->withErrors([
+                    'email' => 'Akun Anda tidak memiliki akses ke sistem.',
+                ])
+                ->onlyInput('email');
+        }
+
         $request->session()->regenerate();
 
         return redirect()->route('dashboard');
     }
 
-    return back()->withErrors([
-        'email' => 'Email atau password salah.',
-    ])->onlyInput('email');
+    return back()
+        ->withErrors([
+            'email' => 'Email atau password salah.',
+        ])
+        ->onlyInput('email');
 
 })->name('login.process');
 
+
+/*
+|--------------------------------------------------------------------------
+| Logout
+|--------------------------------------------------------------------------
+*/
 
 Route::post('/logout', function (Request $request) {
 
@@ -76,9 +84,33 @@ Route::post('/logout', function (Request $request) {
     $request->session()->invalidate();
     $request->session()->regenerateToken();
 
-    return redirect('/login');
+    return redirect('/');
 
 })->name('logout');
+
+
+/*
+|--------------------------------------------------------------------------
+| Dashboard Admin
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/dashboard', function () {
+    return redirect()->route('books.index');
+})
+    ->middleware(['role:admin', 'no-cache'])
+    ->name('dashboard');
+
+
+/*
+|--------------------------------------------------------------------------
+| Laporan Admin
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/laporan', [ReportController::class, 'index'])
+    ->middleware(['role:admin', 'no-cache'])
+    ->name('reports.index');
 
 
 /*
@@ -88,7 +120,9 @@ Route::post('/logout', function (Request $request) {
 */
 
 Route::get('/admin-test', function () {
+
     return 'Anda berhasil masuk sebagai ADMIN.';
+
 })->middleware('role:admin');
 
 
@@ -98,35 +132,94 @@ Route::get('/admin-test', function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('role:admin,librarian')->group(function () {
+Route::middleware(['role:admin', 'no-cache'])->group(function () {
 
-    // Buku
-    // Member tidak boleh create, edit, update, delete
-    // sehingga hanya index dan show yang diberikan ke Member di bawah.
+    /*
+    |--------------------------------------------------------------------------
+    | Buku
+    |--------------------------------------------------------------------------
+    */
+
     Route::resource('books', BookController::class)
-        ->except(['index', 'show']);
+        ->except([
+            'index',
+            'show'
+        ]);
 
-    // Eksemplar Buku
-    Route::resource('book-copies', BookCopyController::class);
 
-    // Penulis
+    /*
+    |--------------------------------------------------------------------------
+    | Eksemplar Buku
+    |--------------------------------------------------------------------------
+    */
+
+    Route::resource(
+        'book-copies',
+        BookCopyController::class
+    );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Penulis
+    |--------------------------------------------------------------------------
+    */
+
     Route::resource('authors', AuthorController::class)
-        ->except(['index', 'show']);
+        ->except([
+            'index',
+            'show'
+        ]);
 
-    // Kategori
+
+    /*
+    |--------------------------------------------------------------------------
+    | Kategori
+    |--------------------------------------------------------------------------
+    */
+
     Route::resource('categories', CategoryController::class)
-        ->except(['index', 'show']);
+        ->except([
+            'index',
+            'show'
+        ]);
 
-    // Lokasi
-    Route::resource('locations', LocationController::class);
 
-    // Peminjaman
-    Route::resource('loans', LoanController::class);
+    /*
+    |--------------------------------------------------------------------------
+    | Lokasi
+    |--------------------------------------------------------------------------
+    */
+
+    Route::resource(
+        'locations',
+        LocationController::class
+    );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Peminjaman
+    |--------------------------------------------------------------------------
+    */
+
+    Route::resource(
+        'loans',
+        LoanController::class
+    );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Pengembalian Buku
+    |--------------------------------------------------------------------------
+    */
 
     Route::post(
         '/loan-details/{loanDetail}/return',
         [LoanController::class, 'returnBookDetail']
     )->name('loan-details.return');
+
 });
 
 
@@ -136,35 +229,59 @@ Route::middleware('role:admin,librarian')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('role:admin,librarian,member')->group(function () {
+Route::middleware(['role:admin', 'no-cache'])->group(function () {
 
-    // Buku
-    Route::get('/books', [BookController::class, 'index'])
-        ->name('books.index');
+    /*
+    |--------------------------------------------------------------------------
+    | Buku
+    |--------------------------------------------------------------------------
+    */
 
-    Route::get('/books/{book}', [BookController::class, 'show'])
-        ->name('books.show');
+    Route::get(
+        '/books',
+        [BookController::class, 'index']
+    )->name('books.index');
 
-    // Penulis
-    Route::get('/authors', [AuthorController::class, 'index'])
-        ->name('authors.index');
 
-    Route::get('/authors/{author}', [AuthorController::class, 'show'])
-        ->name('authors.show');
+    Route::get(
+        '/books/{book}',
+        [BookController::class, 'show']
+    )->name('books.show');
 
-    // Kategori
-    Route::get('/categories', [CategoryController::class, 'index'])
-        ->name('categories.index');
 
-    Route::get('/categories/{category}', [CategoryController::class, 'show'])
-        ->name('categories.show');
+    /*
+    |--------------------------------------------------------------------------
+    | Penulis
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get(
+        '/authors',
+        [AuthorController::class, 'index']
+    )->name('authors.index');
+
+
+    Route::get(
+        '/authors/{author}',
+        [AuthorController::class, 'show']
+    )->name('authors.show');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Kategori
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get(
+        '/categories',
+        [CategoryController::class, 'index']
+    )->name('categories.index');
+
+
+    Route::get(
+        '/categories/{category}',
+        [CategoryController::class, 'show']
+    )->name('categories.show');
+
 });
-
-Route::post('/logout', function (Request $request) {
-    Auth::logout();
-
-    $request->session()->invalidate();
-    $request->session()->regenerateToken();
-
-    return redirect()->route('login');
-})->name('logout');

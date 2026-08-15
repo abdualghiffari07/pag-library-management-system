@@ -1,82 +1,124 @@
 /* =========================================================
-   PAG LIBRARY - ADMIN DASHBOARD
-   Entry point JS. Daftarkan fitur interaktif baru sebagai
-   fungsi init terpisah, lalu panggil di dalam DOMContentLoaded
-   di bagian paling bawah file ini.
-   ========================================================= */
+   PAG LIBRARY
+   ADMIN DASHBOARD JAVASCRIPT
+========================================================= */
 
 'use strict';
 
-/* =========================================================
-   SIDEBAR MOBILE TOGGLE (placeholder)
-   ---------------------------------------------------------
-   TODO: Saat ini sidebar disembunyikan penuh di layar
-   <= 600px (lihat dashboard.css) tanpa ada tombol untuk
-   membukanya kembali. Tambahkan tombol hamburger di
-   .header (mirip #mobile-menu-button pada landing page),
-   lalu implementasikan toggle-nya di sini, misalnya:
-
-   function initSidebarToggle() {
-       const toggleButton = document.getElementById('sidebar-toggle');
-       const sidebar = document.querySelector('.sidebar');
-
-       if (!toggleButton || !sidebar) {
-           return;
-       }
-
-       toggleButton.addEventListener('click', () => {
-           sidebar.classList.toggle('sidebar-open');
-       });
-   }
-   ========================================================= */
-
-function initSidebarToggle() {
-
-    const toggleButton = document.getElementById('sidebar-toggle');
-    const sidebar = document.querySelector('.sidebar');
-    const overlay = document.getElementById('sidebar-overlay');
-
-    if (!toggleButton || !sidebar || !overlay) {
-        return;
-    }
-
-    toggleButton.addEventListener('click', () => {
-
-        sidebar.classList.toggle('sidebar-open');
-        overlay.classList.toggle('active');
-
-    });
-
-    overlay.addEventListener('click', () => {
-
-        sidebar.classList.remove('sidebar-open');
-        overlay.classList.remove('active');
-
-    });
-
-}
-
-
-/* =========================================================
-   STAT CARD INTERACTIVITY (placeholder)
-   ---------------------------------------------------------
-   Tempat untuk menambahkan interaktivitas pada kartu
-   statistik di masa depan, misalnya refresh data via
-   fetch/AJAX tanpa reload halaman.
-   ========================================================= */
-
-function initStatCards() {
-    // Belum diimplementasikan.
-}
-
-
-/* =========================================================
-   INIT
-   ========================================================= */
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    initSidebarToggle();
-    initStatCards();
+    const sidebar =
+        document.getElementById('sidebar');
+
+    const toggle =
+        document.getElementById('sidebar-toggle');
+
+    const overlay =
+        document.getElementById('sidebar-overlay');
+
+
+    if (!sidebar || !toggle) {
+        return;
+    }
+
+
+    /* =====================================================
+       OPEN / CLOSE SIDEBAR
+    ====================================================== */
+
+    function openSidebar() {
+
+        sidebar.classList.add('open');
+
+        if (overlay) {
+            overlay.classList.add('active');
+        }
+
+    }
+
+
+    function closeSidebar() {
+
+        sidebar.classList.remove('open');
+
+        if (overlay) {
+            overlay.classList.remove('active');
+        }
+
+    }
+
+
+    /* =====================================================
+       TOGGLE SIDEBAR
+    ====================================================== */
+
+    toggle.addEventListener('click', () => {
+
+        if (sidebar.classList.contains('open')) {
+
+            closeSidebar();
+
+        } else {
+
+            openSidebar();
+
+        }
+
+    });
+
+
+    /* =====================================================
+       OVERLAY
+    ====================================================== */
+
+    if (overlay) {
+
+        overlay.addEventListener(
+            'click',
+            closeSidebar
+        );
+
+    }
+
+
+    /* =====================================================
+       CLOSE MOBILE SIDEBAR WHEN CLICKING MENU
+    ====================================================== */
+
+    const menuLinks =
+        sidebar.querySelectorAll(
+            '.menu-item:not(.menu-disabled)'
+        );
+
+
+    menuLinks.forEach((link) => {
+
+        link.addEventListener('click', () => {
+
+            if (window.innerWidth <= 900) {
+
+                closeSidebar();
+
+            }
+
+        });
+
+    });
+
+
+    /* =====================================================
+       RESIZE
+    ====================================================== */
+
+    window.addEventListener('resize', () => {
+
+        if (window.innerWidth > 900) {
+
+            closeSidebar();
+
+        }
+
+    });
 
 });
