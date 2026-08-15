@@ -70,21 +70,6 @@
             </a>
 
 
-            {{-- EKSEMPLAR --}}
-            <a href="{{ route('book-copies.index') }}"
-               class="menu-item {{ request()->routeIs('book-copies.*') ? 'active' : '' }}">
-
-                <span class="menu-icon">
-                    ▤
-                </span>
-
-                <span>
-                    Eksemplar Buku
-                </span>
-
-            </a>
-
-
             <div class="menu-section">
                 PENGUNJUNG
             </div>

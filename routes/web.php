@@ -136,6 +136,25 @@ Route::middleware(['role:admin', 'no-cache'])->group(function () {
 
     /*
     |--------------------------------------------------------------------------
+    | Autocomplete Penulis & Kategori
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/authors/search', [BookController::class, 'searchAuthors'])
+        ->name('authors.search');
+
+    Route::post('/authors/quick-store', [BookController::class, 'storeAuthor'])
+        ->name('authors.quick-store');
+
+    Route::get('/categories/search', [BookController::class, 'searchCategories'])
+        ->name('categories.search');
+
+    Route::post('/categories/quick-store', [BookController::class, 'storeCategory'])
+        ->name('categories.quick-store');
+
+
+    /*
+    |--------------------------------------------------------------------------
     | Buku
     |--------------------------------------------------------------------------
     */
@@ -285,3 +304,4 @@ Route::middleware(['role:admin', 'no-cache'])->group(function () {
     )->name('categories.show');
 
 });
+

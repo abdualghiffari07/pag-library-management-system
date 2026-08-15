@@ -107,13 +107,18 @@ class BookController extends Controller
     /**
      * Menampilkan form edit buku.
      */
-        public function edit(Book $book)
+    public function edit(Book $book)
     {
-        $authors = Author::all();
-        $categories = Category::all();
-        $locations = Location::all();
+        $authors = Author::orderBy('author_name')->get();
 
-        $book->load(['authors', 'categories']);
+        $categories = Category::orderBy('category_name')->get();
+
+        $locations = Location::orderBy('location_name')->get();
+
+        $book->load([
+            'authors',
+            'categories'
+        ]);
 
         return view('books.edit', compact(
             'book',
@@ -156,9 +161,13 @@ class BookController extends Controller
                 'description' => $validated['description'] ?? null,
             ]);
 
-            $book->authors()->sync($validated['authors'] ?? []);
+            $book->authors()->sync(
+                $validated['authors'] ?? []
+            );
 
-            $book->categories()->sync($validated['categories'] ?? []);
+            $book->categories()->sync(
+                $validated['categories'] ?? []
+            );
         });
 
         return redirect()
@@ -169,17 +178,145 @@ class BookController extends Controller
     /**
      * Menghapus buku.
      */
-public function destroy(Book $book)
-{
-    DB::transaction(function () use ($book) {
-        $book->authors()->detach();
-        $book->categories()->detach();
+    public function destroy(Book $book)
+    {
+        DB::transaction(function () use ($book) {
 
-        $book->delete();
-    });
+            $book->authors()->detach();
 
-    return redirect()
-        ->route('books.index')
-        ->with('success', 'Buku berhasil dihapus.');
-}
+            $book->categories()->detach();
+
+            $book->delete();
+        });
+
+        return redirect()
+            ->route('books.index')
+            ->with('success', 'Buku berhasil dihapus.');
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | AUTOCOMPLETE AUTHOR
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Mencari penulis berdasarkan input.
+     */
+    public function searchAuthors(Request $request)
+    {
+        $query = trim($request->get('q', ''));
+
+        if ($query === '') {
+            return response()->json([]);
+        }
+
+        $authors = Author::where(
+                'author_name',
+                'like',
+                '%' . $query . '%'
+            )
+            ->orderBy('author_name')
+            ->limit(10)
+            ->get([
+                'author_id',
+                'author_name'
+            ]);
+
+        return response()->json($authors);
+    }
+
+
+    /**
+     * Membuat penulis baru.
+     */
+    public function storeAuthor(Request $request)
+    {
+        $validated = $request->validate([
+            'author_name' => 'required|string|max:255',
+        ]);
+
+        $author = Author::whereRaw(
+            'LOWER(author_name) = ?',
+            [strtolower(trim($validated['author_name']))]
+        )->first();
+
+        if (!$author) {
+            $author = Author::create([
+                'author_name' => trim($validated['author_name']),
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'author' => [
+                'author_id' => $author->author_id,
+                'author_name' => $author->author_name,
+            ],
+        ]);
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | AUTOCOMPLETE CATEGORY
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Mencari kategori berdasarkan input.
+     */
+    public function searchCategories(Request $request)
+    {
+        $query = trim($request->get('q', ''));
+
+        if ($query === '') {
+            return response()->json([]);
+        }
+
+        $categories = Category::where(
+                'category_name',
+                'like',
+                '%' . $query . '%'
+            )
+            ->orderBy('category_name')
+            ->limit(10)
+            ->get([
+                'category_id',
+                'category_name'
+            ]);
+
+        return response()->json($categories);
+    }
+
+
+    /**
+     * Membuat kategori baru.
+     */
+    public function storeCategory(Request $request)
+    {
+        $validated = $request->validate([
+            'category_name' => 'required|string|max:255',
+        ]);
+
+        $category = Category::whereRaw(
+            'LOWER(category_name) = ?',
+            [strtolower(trim($validated['category_name']))]
+        )->first();
+
+        if (!$category) {
+            $category = Category::create([
+                'category_name' => trim($validated['category_name']),
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'category' => [
+                'category_id' => $category->category_id,
+                'category_name' => $category->category_name,
+            ],
+        ]);
+    }
 }
