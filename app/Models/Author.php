@@ -16,7 +16,19 @@ class Author extends Model
 
     protected $fillable = [
         'author_name',
+        'pseudonym',
+        'birth_date',
+        'nationality',
+        'biography',
+        'website',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'birth_date' => 'date',
+        ];
+    }
 
     public function books(): BelongsToMany
     {
@@ -29,4 +41,5 @@ class Author extends Model
             'book_id'
         );
     }
+    
 }

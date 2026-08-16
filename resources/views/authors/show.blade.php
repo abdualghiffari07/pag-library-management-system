@@ -1,4 +1,3 @@
-```blade
 <!DOCTYPE html>
 <html lang="id">
 
@@ -6,11 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>{{ $book->title }} - PAG Library</title>
+    <title>{{ $author->author_name }} - PAG Library</title>
 
     @vite([
         'resources/css/dashboard-admin.css',
-        'resources/css/book-details.css',
+        'resources/css/authors-details.css',
         'resources/js/dashboard-admin.js'
     ])
 </head>
@@ -19,37 +18,45 @@
 
 <div class="app">
 
-@include('layouts.sidebar')
+    {{-- =================================================
+         SIDEBAR
+    ================================================== --}}
+    @include('layouts.sidebar')
 
 
+    {{-- =================================================
+         MOBILE OVERLAY
+    ================================================== --}}
     <div id="sidebar-overlay" class="sidebar-overlay"></div>
 
 
-    {{-- =====================================================
+    {{-- =================================================
          MAIN
-    ====================================================== --}}
-
+    ================================================== --}}
     <main class="main">
 
-        {{-- HEADER --}}
 
+        {{-- =================================================
+             HEADER
+        ================================================== --}}
         <header class="header">
 
             <div class="header-left">
 
-                <button type="button"
-                        id="sidebar-toggle"
-                        class="sidebar-toggle"
-                        aria-label="Buka menu">
+                <button
+                    type="button"
+                    id="sidebar-toggle"
+                    class="sidebar-toggle"
+                    aria-label="Buka menu"
+                >
                     ☰
                 </button>
 
-
                 <div>
 
-                    <div class="header-title">
-                        Detail Buku
-                    </div>
+                    <h1 class="header-title">
+                        Penulis
+                    </h1>
 
                     <div class="header-line"></div>
 
@@ -60,43 +67,15 @@
 
             <div class="header-right">
 
-                <button class="header-button"
-                        type="button"
-                        aria-label="Search">
-                    ⌕
-                </button>
-
-
-                <button class="header-button"
-                        type="button"
-                        aria-label="Notifikasi">
-
-                    ♧
-
-                    <span class="notification-badge">
-                        4
-                    </span>
-
-                </button>
-
-
                 <div class="admin-profile">
 
-                    <div class="avatar">
-                        {{ strtoupper(substr($user->name, 0, 1)) }}
+                    <div class="admin-avatar">
+                        A
                     </div>
 
-
                     <div class="admin-info">
-
-                        <div class="admin-name">
-                            {{ $user->name }}
-                        </div>
-
-                        <div class="admin-role">
-                            Administrator
-                        </div>
-
+                        <strong>Administrator</strong>
+                        <span>Administrator</span>
                     </div>
 
                 </div>
@@ -106,340 +85,145 @@
         </header>
 
 
-        {{-- =====================================================
+        {{-- =================================================
              CONTENT
-        ====================================================== --}}
+        ================================================== --}}
+        <section class="content author-details-page">
 
-        <section class="content book-detail-content">
 
-            {{-- BACK --}}
+            {{-- =================================================
+                 BACK
+            ================================================== --}}
+            <div class="author-back-wrapper">
 
-            <div class="detail-back">
-
-                <a href="{{ route('books.index') }}">
-
-                    <span class="back-arrow">
-                        ←
-                    </span>
-
-                    <span>
-                        Kembali ke Data Buku
-                    </span>
-
+                <a
+                    href="{{ route('authors.index') }}"
+                    class="author-back-button"
+                >
+                    ←
+                    <span>Kembali ke Daftar Penulis</span>
                 </a>
 
             </div>
 
 
             {{-- =================================================
-                 BOOK HERO
+                 AUTHOR PROFILE
             ================================================== --}}
+            <section class="author-hero-card">
 
-            <div class="book-hero">
+                <div class="author-hero-content">
 
-                <div class="book-hero-info">
-
-                    <div class="detail-label">
-                        DETAIL KOLEKSI
+                    <div class="author-avatar-large">
+                        {{ strtoupper(substr($author->author_name, 0, 1)) }}
                     </div>
 
+                    <div class="author-hero-text">
 
-                    <h1>
-                        {{ $book->title }}
-                    </h1>
-
-
-                    <p class="book-description">
-                        {{ $book->description ?? 'Tidak ada deskripsi untuk buku ini.' }}
-                    </p>
-
-
-                    <div class="book-meta">
-
-                        <span class="book-status
-                            {{ $book->status === 'public' ? 'status-public' : 'status-archive' }}">
-
-                            <span class="status-dot"></span>
-
-                            {{ ucfirst($book->status ?? '-') }}
-
+                        <span class="author-section-label">
+                            PROFIL PENULIS
                         </span>
 
+                        <h2>
+                            {{ $author->author_name }}
+                        </h2>
 
-                        <span class="meta-item">
-                            {{ $book->publication_year ?? '-' }}
-                        </span>
+                        @if ($author->pseudonym)
 
-
-                        <span class="meta-separator">
-                            /
-                        </span>
-
-
-                        <span class="meta-item">
-                            {{ $book->origin ?? '-' }}
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-                <div class="book-hero-icon">
-                    📖
-                </div>
-
-            </div>
-
-
-            {{-- ALERT --}}
-
-            @if (session('success'))
-
-                <div class="detail-alert success">
-
-                    <span class="alert-icon">
-                        ✓
-                    </span>
-
-                    <span>
-                        {{ session('success') }}
-                    </span>
-
-                </div>
-
-            @endif
-
-
-            @if (session('error'))
-
-                <div class="detail-alert error">
-
-                    <span class="alert-icon">
-                        !
-                    </span>
-
-                    <span>
-                        {{ session('error') }}
-                    </span>
-
-                </div>
-
-            @endif
-
-
-            {{-- =================================================
-                 INFORMATION + SUMMARY
-            ================================================== --}}
-
-            <div class="detail-grid">
-
-
-                {{-- INFORMASI BUKU --}}
-
-                <div class="panel detail-information-panel">
-
-                    <div class="panel-header">
-
-                        <div>
-
-                            <h2>
-                                Informasi Buku
-                            </h2>
-
-                            <span>
-                                Informasi utama koleksi buku
-                            </span>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="book-information">
-
-                        <div class="information-item">
-
-                            <span class="information-label">
-                                ID Buku
-                            </span>
-
-                            <strong class="book-id">
-                                #{{ $book->book_id }}
-                            </strong>
-
-                        </div>
-
-
-                        <div class="information-item">
-
-                            <span class="information-label">
-                                Tahun Terbit
-                            </span>
-
-                            <strong>
-                                {{ $book->publication_year ?? '-' }}
-                            </strong>
-
-                        </div>
-
-
-                        <div class="information-item">
-
-                            <span class="information-label">
-                                Asal
-                            </span>
-
-                            <strong>
-                                {{ $book->origin ?? '-' }}
-                            </strong>
-
-                        </div>
-
-
-                        <div class="information-item">
-
-                            <span class="information-label">
-                                Status Buku
-                            </span>
-
-                            <strong class="information-status">
-                                {{ ucfirst($book->status ?? '-') }}
-                            </strong>
-
-                        </div>
-
-
-                        <div class="information-item information-description">
-
-                            <span class="information-label">
-                                Deskripsi
-                            </span>
-
-                            <p>
-                                {{ $book->description ?? '-' }}
+                            <p class="author-pseudonym">
+                                Nama pena:
+                                <strong>
+                                    {{ $author->pseudonym }}
+                                </strong>
                             </p>
 
-                        </div>
+                        @else
+
+                            <p class="author-pseudonym">
+                                Tidak memiliki nama pena
+                            </p>
+
+                        @endif
 
                     </div>
 
                 </div>
 
 
-                {{-- RINGKASAN --}}
+                <div class="author-hero-actions">
 
-                <div class="panel summary-panel">
+                    <button
+                        type="button"
+                        class="author-edit-button"
+                        onclick="showAuthorEdit()"
+                    >
+                        ✎
+                        <span>Edit Penulis</span>
+                    </button>
 
-                    <div class="panel-header">
+                </div>
 
-                        <div>
+            </section>
 
-                            <h2>
-                                Ringkasan
-                            </h2>
 
-                            <span>
-                                Statistik eksemplar buku
-                            </span>
+            {{-- =================================================
+                 STATISTICS
+            ================================================== --}}
+            <div class="author-stat-grid">
 
-                        </div>
+
+                {{-- TOTAL BOOK --}}
+                <div class="author-stat-card">
+
+                    <div class="author-stat-content">
+
+                        <span>
+                            Total Buku
+                        </span>
+
+                        <strong>
+                            {{ $author->books->count() }}
+                        </strong>
 
                     </div>
 
-
-                    <div class="summary-list">
-
-                        {{-- TOTAL --}}
-
-                        <div class="summary-item">
-
-                            <div class="summary-icon total-icon">
-                                ▣
-                            </div>
-
-                            <div class="summary-info">
-
-                                <span>
-                                    Total Eksemplar
-                                </span>
-
-                                <strong>
-                                    {{ $book->copies->count() }}
-                                </strong>
-
-                            </div>
-
-                        </div>
+                </div>
 
 
-                        {{-- TERSEDIA --}}
-
-                        <div class="summary-item">
-
-                            <div class="summary-icon available-icon">
-                                ✓
-                            </div>
-
-                            <div class="summary-info">
-
-                                <span>
-                                    Tersedia
-                                </span>
-
-                                <strong>
-                                    {{ $book->copies->where('status', 'tersedia')->count() }}
-                                </strong>
-
-                            </div>
-
-                        </div>
+                {{-- NATIONALITY --}}
+                <div class="author-stat-card">
 
 
-                        {{-- DIPINJAM --}}
+                    <div class="author-stat-content">
 
-                        <div class="summary-item">
+                        <span>
+                            Kewarganegaraan
+                        </span>
 
-                            <div class="summary-icon borrowed-icon">
-                                ↗
-                            </div>
+                        <strong>
+                            {{ $author->nationality ?: '-' }}
+                        </strong>
 
-                            <div class="summary-info">
+                    </div>
 
-                                <span>
-                                    Dipinjam
-                                </span>
-
-                                <strong>
-                                    {{ $book->copies->where('status', 'dipinjam')->count() }}
-                                </strong>
-
-                            </div>
-
-                        </div>
+                </div>
 
 
-                        {{-- RUSAK --}}
+                {{-- CREATED --}}
+                <div class="author-stat-card">
 
-                        <div class="summary-item">
 
-                            <div class="summary-icon damaged-icon">
-                                !
-                            </div>
+                    <div class="author-stat-content">
 
-                            <div class="summary-info">
+                        <span>
+                            Terdaftar Sejak
+                        </span>
 
-                                <span>
-                                    Kondisi Rusak
-                                </span>
-
-                                <strong>
-                                    {{ $book->copies->where('status', 'rusak')->count() }}
-                                </strong>
-
-                            </div>
-
-                        </div>
+                        <strong>
+                            {{ $author->created_at
+                                ? \Carbon\Carbon::parse($author->created_at)->format('d M Y')
+                                : '-' }}
+                        </strong>
 
                     </div>
 
@@ -449,73 +233,366 @@
 
 
             {{-- =================================================
-                 EKSEMPLAR
+                 AUTHOR INFORMATION
             ================================================== --}}
+            <section class="author-information-card">
 
-            <div class="panel copies-panel">
-
-                <div class="panel-header copies-header">
+                <div class="author-section-header">
 
                     <div>
 
+                        <span class="author-section-label">
+                            INFORMASI PENULIS
+                        </span>
+
                         <h2>
-                            Daftar Eksemplar
+                            Data Penulis
                         </h2>
 
-                        <span>
-                            {{ $book->copies->count() }}
-                            eksemplar terdaftar untuk buku ini
-                        </span>
-
                     </div>
-
-
-                    <a href="{{ route('book-copies.create', ['book_id' => $book->book_id]) }}"
-                       class="add-copy-button">
-
-                        <span>
-                            +
-                        </span>
-
-                        Tambah Eksemplar
-
-                    </a>
 
                 </div>
 
 
-                @if ($book->copies->count() > 0)
+                {{-- =================================================
+                     VIEW MODE
+                ================================================== --}}
+                <div id="author-information-view">
 
-                    <div class="copies-table-wrapper">
+                    <div class="author-information-grid">
 
-                        <table class="copies-table">
+
+                        {{-- FULL NAME --}}
+                        <div class="author-information-item">
+
+                            <span>
+                                Nama Lengkap
+                            </span>
+
+                            <strong>
+                                {{ $author->author_name }}
+                            </strong>
+
+                        </div>
+
+
+                        {{-- PSEUDONYM --}}
+                        <div class="author-information-item">
+
+                            <span>
+                                Nama Pena
+                            </span>
+
+                            <strong>
+                                {{ $author->pseudonym ?: '-' }}
+                            </strong>
+
+                        </div>
+
+
+                        {{-- BIRTH DATE --}}
+                        <div class="author-information-item">
+
+                            <span>
+                                Tanggal Lahir
+                            </span>
+
+                            <strong>
+
+                                @if ($author->birth_date)
+
+                                    {{ \Carbon\Carbon::parse($author->birth_date)->format('d M Y') }}
+
+                                @else
+
+                                    -
+
+                                @endif
+
+                            </strong>
+
+                        </div>
+
+
+                        {{-- NATIONALITY --}}
+                        <div class="author-information-item">
+
+                            <span>
+                                Kewarganegaraan
+                            </span>
+
+                            <strong>
+                                {{ $author->nationality ?: '-' }}
+                            </strong>
+
+                        </div>
+
+
+                        {{-- WEBSITE --}}
+                        <div class="author-information-item author-information-full">
+
+                            <span>
+                                Website
+                            </span>
+
+                            @if ($author->website)
+
+                                <a
+                                    href="{{ $author->website }}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    {{ $author->website }}
+                                </a>
+
+                            @else
+
+                                <strong>
+                                    -
+                                </strong>
+
+                            @endif
+
+                        </div>
+
+                    </div>
+
+
+                    {{-- BIOGRAPHY --}}
+                    <div class="author-biography">
+
+                        <span>
+                            Biografi
+                        </span>
+
+                        @if ($author->biography)
+
+                            <p>
+                                {{ $author->biography }}
+                            </p>
+
+                        @else
+
+                            <p class="author-no-biography">
+                                Belum ada informasi biografi untuk penulis ini.
+                            </p>
+
+                        @endif
+
+                    </div>
+
+                </div>
+
+
+                {{-- =================================================
+                     EDIT MODE
+                ================================================== --}}
+                <div
+                    id="author-information-edit"
+                    style="display: none;"
+                >
+
+                    <form
+                        action="{{ route('authors.update', $author->author_id) }}"
+                        method="POST"
+                        class="author-information-edit-form"
+                    >
+
+                        @csrf
+                        @method('PUT')
+
+
+                        <div class="author-information-grid">
+
+
+                            {{-- FULL NAME --}}
+                            <div class="author-information-item">
+
+                                <label for="edit_author_name">
+                                    Nama Lengkap
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="edit_author_name"
+                                    name="author_name"
+                                    value="{{ old('author_name', $author->author_name) }}"
+                                    required
+                                >
+
+                            </div>
+
+
+                            {{-- PSEUDONYM --}}
+                            <div class="author-information-item">
+
+                                <label for="edit_pseudonym">
+                                    Nama Pena
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="edit_pseudonym"
+                                    name="pseudonym"
+                                    value="{{ old('pseudonym', $author->pseudonym) }}"
+                                >
+
+                            </div>
+
+
+                            {{-- BIRTH DATE --}}
+                            <div class="author-information-item">
+
+                                <label for="edit_birth_date">
+                                    Tanggal Lahir
+                                </label>
+
+                                <input
+                                    type="date"
+                                    id="edit_birth_date"
+                                    name="birth_date"
+                                    value="{{ old('birth_date', $author->birth_date) }}"
+                                >
+
+                            </div>
+
+
+                            {{-- NATIONALITY --}}
+                            <div class="author-information-item">
+
+                                <label for="edit_nationality">
+                                    Kewarganegaraan
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="edit_nationality"
+                                    name="nationality"
+                                    value="{{ old('nationality', $author->nationality) }}"
+                                >
+
+                            </div>
+
+
+                            {{-- WEBSITE --}}
+                            <div class="author-information-item author-information-full">
+
+                                <label for="edit_website">
+                                    Website
+                                </label>
+
+                                <input
+                                    type="url"
+                                    id="edit_website"
+                                    name="website"
+                                    value="{{ old('website', $author->website) }}"
+                                    placeholder="https://example.com"
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        {{-- BIOGRAPHY --}}
+                        <div class="author-biography author-biography-edit">
+
+                            <label for="edit_biography">
+                                Biografi
+                            </label>
+
+                            <textarea
+                                id="edit_biography"
+                                name="biography"
+                                rows="5"
+                            >{{ old('biography', $author->biography) }}</textarea>
+
+                        </div>
+
+
+                        {{-- EDIT ACTIONS --}}
+                        <div class="author-information-edit-actions">
+
+                            <button
+                                type="button"
+                                class="author-edit-cancel"
+                                onclick="cancelAuthorEdit()"
+                            >
+                                Batal
+                            </button>
+
+                            <button
+                                type="submit"
+                                class="author-edit-save"
+                            >
+                                ✓
+                                <span>Simpan Perubahan</span>
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </section>
+
+
+            {{-- =================================================
+                 BOOK COLLECTION
+            ================================================== --}}
+            <section class="author-books-card">
+
+                <div class="author-section-header author-books-header">
+
+                    <div>
+
+                        <span class="author-section-label">
+                            KOLEKSI BUKU
+                        </span>
+
+                        <h2>
+                            Buku yang Ditulis
+                        </h2>
+
+                        <p>
+                            {{ $author->books->count() }}
+                            buku terkait dengan penulis ini.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                @if ($author->books->count() > 0)
+
+                    <div class="author-books-table-wrapper">
+
+                        <table class="author-books-table">
 
                             <thead>
 
                                 <tr>
 
-                                    <th class="col-number">
-                                        No
+                                    <th class="column-no">
+                                        NO
                                     </th>
 
                                     <th>
-                                        Kode Eksemplar
+                                        ID BUKU
                                     </th>
 
                                     <th>
-                                        Kondisi
+                                        JUDUL BUKU
                                     </th>
 
                                     <th>
-                                        Status
+                                        TAHUN TERBIT
                                     </th>
 
-                                    <th>
-                                        Catatan
-                                    </th>
-
-                                    <th class="col-action">
-                                        Aksi
+                                    <th class="column-action">
+                                        AKSI
                                     </th>
 
                                 </tr>
@@ -525,113 +602,42 @@
 
                             <tbody>
 
-                                @foreach ($book->copies as $index => $copy)
+                                @foreach ($author->books as $index => $book)
 
                                     <tr>
 
-                                        <td class="number-cell">
+                                        <td class="column-no">
                                             {{ $index + 1 }}
                                         </td>
 
-
                                         <td>
 
-                                            <span class="copy-code">
-                                                {{ $copy->copy_code }}
+                                            <span class="author-book-id">
+                                                #{{ $book->book_id }}
                                             </span>
 
                                         </td>
 
-
                                         <td>
 
-                                            <span class="condition">
-                                                {{ ucfirst($copy->condition) }}
-                                            </span>
+                                            <strong class="author-book-title">
+                                                {{ $book->title }}
+                                            </strong>
 
                                         </td>
 
-
                                         <td>
-
-                                            @if ($copy->status === 'tersedia')
-
-                                                <span class="copy-status available">
-                                                    <span class="status-dot"></span>
-                                                    Tersedia
-                                                </span>
-
-                                            @elseif ($copy->status === 'dipinjam')
-
-                                                <span class="copy-status borrowed">
-                                                    <span class="status-dot"></span>
-                                                    Dipinjam
-                                                </span>
-
-                                            @elseif ($copy->status === 'rusak')
-
-                                                <span class="copy-status damaged">
-                                                    <span class="status-dot"></span>
-                                                    Rusak
-                                                </span>
-
-                                            @elseif ($copy->status === 'hilang')
-
-                                                <span class="copy-status lost">
-                                                    <span class="status-dot"></span>
-                                                    Hilang
-                                                </span>
-
-                                            @else
-
-                                                <span class="copy-status">
-                                                    {{ ucfirst($copy->status) }}
-                                                </span>
-
-                                            @endif
-
+                                            {{ $book->publication_year ?? '-' }}
                                         </td>
 
+                                        <td class="column-action">
 
-                                        <td>
-
-                                            <span class="copy-notes">
-                                                {{ $copy->notes ?? '-' }}
-                                            </span>
-
-                                        </td>
-
-
-                                        <td>
-
-                                            <div class="copy-actions">
-
-                                                <a href="{{ route('book-copies.edit', $copy->copy_id) }}"
-                                                   class="action-edit">
-                                                    Edit
-                                                </a>
-
-
-                                                <form
-                                                    action="{{ route('book-copies.destroy', $copy->copy_id) }}"
-                                                    method="POST"
-                                                >
-
-                                                    @csrf
-
-                                                    @method('DELETE')
-
-                                                    <button
-                                                        type="submit"
-                                                        class="action-delete"
-                                                        onclick="return confirm('Apakah Anda yakin ingin menghapus eksemplar ini?')"
-                                                    >
-                                                        Hapus
-                                                    </button>
-
-                                                </form>
-
-                                            </div>
+                                            <a
+                                                href="{{ route('books.show', $book->book_id) }}"
+                                                class="author-book-detail-button"
+                                            >
+                                                Detail
+                                            </a>
 
                                         </td>
 
@@ -647,35 +653,44 @@
 
                 @else
 
-                    <div class="empty-copies">
-
-                        <div class="empty-icon">
-                            📚
-                        </div>
-
-                        <h3>
-                            Belum Ada Eksemplar
-                        </h3>
+                    <div class="author-no-books">
+                        <h3>Belum Ada Buku</h3>
 
                         <p>
-                            Belum ada eksemplar yang terdaftar
-                            untuk buku ini.
+                            Penulis ini belum memiliki buku yang terdaftar
+                            dalam koleksi perpustakaan.
                         </p>
-
-                        <a href="{{ route('book-copies.create', ['book_id' => $book->book_id]) }}"
-                           class="add-copy-button">
-
-                            <span>+</span>
-
-                            Tambah Eksemplar
-
-                        </a>
-
                     </div>
 
                 @endif
 
+            </section>
+
+
+            {{-- =================================================
+                 BOTTOM ACTIONS
+            ================================================== --}}
+            <div class="author-bottom-actions">
+
+                <a
+                    href="{{ route('authors.index') }}"
+                    class="author-bottom-back"
+                >
+                    ←
+                    <span>Kembali</span>
+                </a>
+
+                <button
+                    type="button"
+                    class="author-bottom-confirm"
+                    onclick="confirmAuthorBack()"
+                >
+                    ✓
+                    <span>Konfirmasi</span>
+                </button>
+
             </div>
+
 
         </section>
 
@@ -683,6 +698,72 @@
 
 </div>
 
+
+{{-- =========================================================
+     JAVASCRIPT
+========================================================= --}}
+<script>
+
+    function showAuthorEdit() {
+
+        const viewMode =
+            document.getElementById('author-information-view');
+
+        const editMode =
+            document.getElementById('author-information-edit');
+
+        const nameInput =
+            document.getElementById('edit_author_name');
+
+
+        if (viewMode && editMode) {
+
+            viewMode.style.display = 'none';
+
+            editMode.style.display = 'block';
+
+            if (nameInput) {
+                nameInput.focus();
+            }
+
+        }
+
+    }
+
+
+    function cancelAuthorEdit() {
+
+        const viewMode =
+            document.getElementById('author-information-view');
+
+        const editMode =
+            document.getElementById('author-information-edit');
+
+
+        if (viewMode && editMode) {
+
+            editMode.style.display = 'none';
+
+            viewMode.style.display = 'block';
+
+        }
+
+    }
+
+
+        function confirmAuthorBack() {
+                const confirmed = confirm(
+                    'Apakah Anda yakin ingin Konfirmasi Perubahan?'
+                );
+
+                if (confirmed) {
+                    window.location.href = "{{ route('authors.index') }}";
+                }
+            }
+
+</script>
+
+
 </body>
+
 </html>
-```
