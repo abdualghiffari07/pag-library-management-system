@@ -103,4 +103,35 @@
 
 </nav>
 
+
+{{-- =====================================================
+     LOGOUT
+====================================================== --}}
+
+<div class="logout-wrapper">
+
+    <form method="POST"
+          action="{{ route('logout') }}"
+          onsubmit="return confirm('Apakah Anda yakin ingin keluar?');">
+
+        @csrf
+
+        <button type="submit"
+                class="logout-button">
+
+            <span class="logout-icon">
+                ⇥
+            </span>
+
+            <span>
+                Keluar
+            </span>
+
+        </button>
+
+    </form>
+
+</div>
+
+
 </aside>
