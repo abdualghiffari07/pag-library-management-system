@@ -62,28 +62,30 @@
             </div>
 
 
-            {{-- HEADER RIGHT --}}
-            <div class="header-right">
+<div class="admin-profile">
 
-                <div class="admin-profile">
+    <div class="avatar">
 
-                    <div class="admin-avatar">
-                        A
-                    </div>
+        {{ strtoupper(
+            substr(auth()->user()->name, 0, 1)
+        ) }}
 
-                    <div class="admin-info">
-                        <strong>
-                            Administrator
-                        </strong>
+    </div>
 
-                        <span>
-                            Administrator
-                        </span>
-                    </div>
 
-                </div>
+    <div class="admin-info">
 
-            </div>
+        <div class="admin-name">
+            {{ auth()->user()->name }}
+        </div>
+
+        <div class="admin-role">
+            Administrator
+        </div>
+
+    </div>
+
+</div>
 
         </header>
 
