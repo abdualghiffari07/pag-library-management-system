@@ -6,46 +6,53 @@
     <meta charset="UTF-8">
 
     <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
+          content="width=device-width, initial-scale=1.0">
 
     <title>Data Buku - PAG Library</title>
 
-    @vite([
-        'resources/css/dashboard-admin.css',
-        'resources/css/books.css',
-        'resources/js/dashboard-admin.js'
-    ])
+@vite([
+    'resources/css/dashboard-admin.css',
+    'resources/css/books.css',
+    'resources/js/books.js'
+])
 
 </head>
-
 
 <body>
 
 <div class="app">
 
+    {{-- =====================================================
+         SIDEBAR
+    ====================================================== --}}
+
     @include('layouts.sidebar')
+
+
+    {{-- =====================================================
+         MOBILE OVERLAY
+    ====================================================== --}}
 
     <div id="sidebar-overlay"
          class="sidebar-overlay">
     </div>
-
-  
 
 
     {{-- =====================================================
          MAIN
     ====================================================== --}}
 
-    <main class="main">
+    <main class="main dashboard-page books-main">
 
+        {{-- =================================================
+             HEADER
+        ================================================== --}}
 
-        {{-- HEADER
-             (header-line ditambahkan, urutan avatar/nama
-             disamakan dengan report.blade.php) --}}
-
-        <header class="header">
+        <header class="header books-header">
 
             <div class="header-left">
+
+                {{-- MOBILE SIDEBAR BUTTON --}}
 
                 <button type="button"
                         id="sidebar-toggle"
@@ -59,9 +66,9 @@
 
                 <div>
 
-                    <div class="header-title">
+                    <h1 class="header-title">
                         Data Buku
-                    </div>
+                    </h1>
 
                     <div class="header-line"></div>
 
@@ -70,23 +77,23 @@
             </div>
 
 
+            {{-- =================================================
+                 ADMIN PROFILE
+            ================================================== --}}
+
             <div class="header-right">
 
                 <div class="admin-profile">
 
                     <div class="avatar">
-
-                        {{ strtoupper(
-                            substr(auth()->user()->name, 0, 1)
-                        ) }}
-
+                        {{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 1)) }}
                     </div>
-
 
                     <div class="admin-info">
 
                         <div class="admin-name">
-                            {{ auth()->user()->name }}
+                            {{ auth()->user()->name ?? 'Administrator' }}
+                            <span class="admin-caret">⌄</span>
                         </div>
 
                         <div class="admin-role">
@@ -106,131 +113,113 @@
              CONTENT
         ================================================== --}}
 
-        <section class="content">
+        <section class="content books-page">
+
+            <div class="books-content">
 
 
-            {{-- PAGE TITLE
-                 (pola welcome-card, sama seperti report.blade.php,
-                 tombol "Tambah Buku" diletakkan di slot
-                 welcome-decoration) --}}
+                {{-- =================================================
+                     HERO CARD
+                ================================================== --}}
 
-            <div class="welcome-card">
+                <section class="welcome-card">
 
-                <div class="welcome-content">
+                    <div class="welcome-content">
 
-                    <div class="welcome-small">
-                        KOLEKSI PERPUSTAKAAN
-                    </div>
-
-                    <h1>
-                        Data Buku
-                    </h1>
-
-                    <p>
-                        Kelola seluruh data buku yang tersedia
-                        di perpustakaan PAG.
-                    </p>
-
-                </div>
-
-
-                <div class="welcome-decoration">
-
-                    <a href="{{ route('books.create') }}"
-                       class="add-book-button">
-
-                        <span class="add-icon">
-                            +
+                        <span class="welcome-small">
+                            KOLEKSI PERPUSTAKAAN
                         </span>
 
-                        Tambah Buku
-
-                    </a>
-
-                </div>
-
-            </div>
-
-
-            {{-- =================================================
-                 SUCCESS MESSAGE (tidak diubah)
-            ================================================== --}}
-
-            @if (session('success'))
-
-                <div class="alert-success">
-
-                    <span class="alert-icon">
-                        ✓
-                    </span>
-
-                    <span>
-                        {{ session('success') }}
-                    </span>
-
-                </div>
-
-            @endif
-
-
-            {{-- =================================================
-                 BOOK CARD (isi & logika tidak diubah)
-            ================================================== --}}
-
-            <div class="books-card">
-
-
-                <!-- CARD HEADER -->
-
-                <div class="books-card-header">
-
-
-                    <div>
-
-                        <h2 class="section-title">
-                            Daftar Buku
-                        </h2>
+                        <h1>
+                            Data Buku
+                        </h1>
 
                         <p>
-                            {{ $books->count() }}
-                            buku terdaftar
+                            Kelola seluruh data buku yang tersedia
+                            di perpustakaan PAG.
                         </p>
 
                     </div>
 
 
-                    <!-- SEARCH -->
+                    {{-- =================================================
+                         TAMBAH BUKU
+                    ================================================== --}}
 
-                    <div class="book-search">
+                    <div class="welcome-decoration">
 
-                        <span class="search-icon">
-                            ⌕
-                        </span>
+                        <a href="{{ route('books.create') }}"
+                           class="view-all">
 
-                        <input
-                            type="text"
-                            id="book-search"
-                            placeholder="Cari buku..."
-                            autocomplete="off">
+                            <span>+</span>
+
+                            Tambah Buku
+
+                        </a>
+
+                    </div>
+
+                </section>
+
+
+                {{-- =================================================
+                     TABLE PANEL
+                ================================================== --}}
+
+                <section class="panel books-table-panel">
+
+
+                    {{-- =================================================
+                         PANEL HEADER
+                    ================================================== --}}
+
+                    <div class="panel-header">
+
+                        <div class="panel-title">
+
+                            <h2>
+                                Daftar Buku
+                            </h2>
+
+                            <span>
+                                {{ $books->count() }} buku terdaftar
+                            </span>
+
+                        </div>
+
+
+                        {{-- =================================================
+                             SEARCH
+                        ================================================== --}}
+
+                        <form method="GET"
+                              action="{{ route('books.index') }}"
+                              class="book-search">
+
+                            <span class="search-icon">
+                                ⌕
+                            </span>
+
+                            <input
+                                type="text"
+                                name="search"
+                                value="{{ request('search') }}"
+                                placeholder="Cari buku..."
+                                autocomplete="off"
+                            >
+
+                        </form>
 
                     </div>
 
 
-                </div>
-
-
-                @if ($books->count() > 0)
-
-
-                    <!-- =================================================
+                    {{-- =================================================
                          TABLE
-                    ================================================== -->
+                    ================================================== --}}
 
                     <div class="table-wrapper">
 
-                        <table class="books-table"
-                               id="books-table">
-
+                        <table>
 
                             <thead>
 
@@ -241,27 +230,27 @@
                                     </th>
 
                                     <th>
-                                        Buku
+                                        BUKU
                                     </th>
 
                                     <th>
-                                        Asal
+                                        ASAL
                                     </th>
 
                                     <th>
-                                        Tahun
+                                        TAHUN
                                     </th>
 
                                     <th>
-                                        Status
+                                        STATUS
                                     </th>
 
                                     <th>
-                                        Lokasi
+                                        LOKASI
                                     </th>
 
-                                    <th class="action-column">
-                                        Aksi
+                                    <th>
+                                        AKSI
                                     </th>
 
                                 </tr>
@@ -271,135 +260,114 @@
 
                             <tbody>
 
-
-                                @foreach ($books as $book)
+                                @forelse ($books as $book)
 
                                     <tr>
 
-
-                                        <!-- ID -->
+                                        {{-- =================================================
+                                             ID
+                                        ================================================== --}}
 
                                         <td class="book-id">
-
                                             #{{ $book->book_id }}
-
                                         </td>
 
 
-                                        <!-- TITLE -->
+                                        {{-- =================================================
+                                             TITLE
+                                        ================================================== --}}
 
-                                        <td>
+                                        <td class="book-title-cell">
 
-                                            <div class="book-title">
-
+                                            <strong>
                                                 {{ $book->title }}
-
-                                            </div>
+                                            </strong>
 
                                         </td>
 
 
-                                        <!-- ORIGIN -->
+                                        {{-- =================================================
+                                             ORIGIN
+                                        ================================================== --}}
 
-                                        <td class="muted-cell">
-
+                                        <td>
                                             {{ $book->origin ?? '-' }}
-
                                         </td>
 
 
-                                        <!-- YEAR -->
+                                        {{-- =================================================
+                                             YEAR
+                                        ================================================== --}}
 
-                                        <td class="muted-cell">
-
+                                        <td>
                                             {{ $book->publication_year ?? '-' }}
-
                                         </td>
 
 
-                                        <!-- STATUS -->
+                                        {{-- =================================================
+                                             STATUS
+                                        ================================================== --}}
 
                                         <td>
 
-                                            @if ($book->status === 'public')
-
-                                                <span class="status-badge status-public">
-                                                    Public
-                                                </span>
-
-                                            @elseif ($book->status === 'archive')
-
-                                                <span class="status-badge status-archive">
-                                                    Arsip
-                                                </span>
-
-                                            @else
-
-                                                <span class="status-badge">
-                                                    {{ $book->status }}
-                                                </span>
-
-                                            @endif
+                                            <span class="badge">
+                                                {{ $book->status ?? 'Public' }}
+                                            </span>
 
                                         </td>
 
 
-                                        <!-- LOCATION -->
+                                        {{-- =================================================
+                                             LOCATION
+                                        ================================================== --}}
 
-                                        <td class="muted-cell">
-
+                                        <td class="book-location">
                                             {{ $book->location->location_name ?? '-' }}
-
                                         </td>
 
 
-                                        <!-- ACTION -->
+                                        {{-- =================================================
+                                             ACTION
+                                        ================================================== --}}
 
-                                        <td>
+                                        <td class="action-cell">
 
                                             <div class="book-actions">
 
+                                                {{-- DETAIL --}}
 
-                                                <a href="{{ route(
-                                                    'books.show',
-                                                    $book->book_id
-                                                ) }}"
-                                                class="action-detail">
+                                                <a href="{{ route('books.show', $book->book_id) }}"
+                                                   class="btn-action">
 
                                                     Detail
 
                                                 </a>
 
 
-                                                <a href="{{ route(
-                                                    'books.edit',
-                                                    $book->book_id
-                                                ) }}"
-                                                class="action-edit">
+                                                {{-- EDIT --}}
+
+                                                <a href="{{ route('books.edit', $book->book_id) }}"
+                                                   class="btn-action">
 
                                                     Edit
 
                                                 </a>
 
 
+                                                {{-- DELETE --}}
+
                                                 <form
-                                                    action="{{ route(
-                                                        'books.destroy',
-                                                        $book->book_id
-                                                    ) }}"
-                                                    method="POST"
-                                                    onsubmit="return confirm(
-                                                        'Apakah Anda yakin ingin menghapus buku ini?'
-                                                    )">
+                                                    action="{{ route('books.destroy', $book->book_id) }}"
+                                                    method="POST">
 
                                                     @csrf
 
                                                     @method('DELETE')
 
-
                                                     <button
                                                         type="submit"
-                                                        class="action-delete">
+                                                        class="btn-action btn-action--delete"
+                                                        onclick="return confirm('Yakin ingin menghapus buku ini?')">
 
                                                         Hapus
 
@@ -407,122 +375,131 @@
 
                                                 </form>
 
-
                                             </div>
 
                                         </td>
 
+                                    </tr>
+
+
+                                @empty
+
+                                    <tr>
+
+                                        <td colspan="7"
+                                            class="empty-table">
+
+                                            Belum ada data buku.
+
+                                        </td>
 
                                     </tr>
 
-                                @endforeach
-
+                                @endforelse
 
                             </tbody>
-
 
                         </table>
 
                     </div>
 
 
-                @else
+                    {{-- =================================================
+                         PAGINATION
+                    ================================================== --}}
 
+                    @if(method_exists($books, 'links'))
 
-                    <!-- EMPTY STATE -->
+                        <div class="pagination-wrapper">
 
-                    <div class="empty-books">
+                            {{ $books->links() }}
 
-                        <div class="empty-icon">
-                            ▣
                         </div>
 
-                        <h3>
-                            Belum ada data buku
-                        </h3>
+                    @endif
 
-                        <p>
-                            Belum terdapat buku yang
-                            terdaftar di perpustakaan.
-                        </p>
-
-
-                        <a href="{{ route('books.create') }}"
-                           class="add-book-button">
-
-                            + Tambah Buku
-
-                        </a>
-
-                    </div>
-
-
-                @endif
-
+                </section>
 
             </div>
 
-
         </section>
 
-
     </main>
-
 
 </div>
 
 
-{{-- =========================================================
-     SEARCH SCRIPT (tidak diubah)
-========================================================= --}}
+{{-- =====================================================
+     MOBILE SIDEBAR SCRIPT
+====================================================== --}}
 
 <script>
 
-document.addEventListener(
-    'DOMContentLoaded',
-    function () {
+document.addEventListener('DOMContentLoaded', function () {
 
-        const search =
-            document.getElementById('book-search');
+    const sidebar = document.querySelector('.sidebar');
 
-        const table =
-            document.getElementById('books-table');
+    const toggle = document.getElementById('sidebar-toggle');
 
-        if (!search || !table) {
-            return;
-        }
+    const overlay = document.getElementById('sidebar-overlay');
 
 
-        const rows =
-            table.querySelectorAll('tbody tr');
+    if (!sidebar || !toggle || !overlay) {
+        return;
+    }
 
 
-        search.addEventListener(
-            'input',
-            function () {
+    function openSidebar() {
 
-                const keyword =
-                    this.value.toLowerCase().trim();
+        sidebar.classList.add('open');
 
+        overlay.classList.add('active');
 
-                rows.forEach(function (row) {
-
-                    const text =
-                        row.textContent.toLowerCase();
-
-
-                    row.style.display =
-                        text.includes(keyword)
-                            ? ''
-                            : 'none';
-
-                });
-
-            }
-        );
+        document.body.classList.add('sidebar-open');
 
     }
-);
+
+
+    function closeSidebar() {
+
+        sidebar.classList.remove('open');
+
+        overlay.classList.remove('active');
+
+        document.body.classList.remove('sidebar-open');
+
+    }
+
+
+    toggle.addEventListener('click', function () {
+
+        if (sidebar.classList.contains('open')) {
+
+            closeSidebar();
+
+        } else {
+
+            openSidebar();
+
+        }
+
+    });
+
+
+    overlay.addEventListener('click', closeSidebar);
+
+
+    window.addEventListener('resize', function () {
+
+        if (window.innerWidth > 900) {
+
+            closeSidebar();
+
+        }
+
+    });
+
+});
 
 </script>
 

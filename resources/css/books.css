@@ -1,76 +1,290 @@
 /* =========================================================
    PAG LIBRARY
-   DATA BUKU
+   BOOKS PAGE
+   LANDING PAGE STYLE
 ========================================================= */
+
+
+/* =========================================================
+   MAIN BACKGROUND
+   ---------------------------------------------------------
+   GAMBAR DIPASANG MELALUI JAVASCRIPT.
+   CSS HANYA MENGATUR POSISI DAN TAMPILANNYA.
+========================================================= */
+
+.main.dashboard-page {
+
+    position: relative;
+
+    min-height: 100vh;
+
+    overflow: hidden;
+
+    background-color: #0874c1;
+
+    background-size: cover;
+
+    /*
+       Posisi gambar:
+       55% = sedikit digeser ke kanan
+       45% = sedikit dinaikkan
+    */
+    background-position: 55% 35%;
+
+    background-repeat: no-repeat;
+
+    background-attachment: fixed;
+
+    isolation: isolate;
+}
+
+
+/* =========================================================
+   BLUE OVERLAY
+   ---------------------------------------------------------
+   HANYA GRADIENT.
+   BUKAN GAMBAR.
+========================================================= */
+
+.main.dashboard-page::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 0;
+
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(0, 91, 158, 0.58),
+            rgba(15, 135, 214, 0.30)
+        );
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.main.dashboard-page > .header {
+
+    position: relative;
+
+    z-index: 10;
+
+    background:
+        rgba(255, 255, 255, 0.08) !important;
+
+    border-bottom:
+        1px solid rgba(255, 255, 255, 0.18) !important;
+
+    box-shadow: none !important;
+
+    backdrop-filter: blur(8px);
+
+    -webkit-backdrop-filter: blur(8px);
+}
+
+
+/* =========================================================
+   HEADER TITLE
+========================================================= */
+
+.main.dashboard-page .header-title {
+
+    color: #ffffff !important;
+
+    font-size: 20px;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   HEADER LINE
+========================================================= */
+
+.main.dashboard-page .header-line {
+
+    background: #e31e24 !important;
+}
+
+
+/* =========================================================
+   ADMIN NAME
+========================================================= */
+
+.main.dashboard-page .admin-name {
+
+    color: #ffffff !important;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   ADMIN ROLE
+========================================================= */
+
+.main.dashboard-page .admin-role {
+
+    color:
+        rgba(255, 255, 255, 0.80) !important;
+}
 
 
 /* =========================================================
    CONTENT
 ========================================================= */
 
-.books-content {
-    padding-bottom: 40px;
+.main.dashboard-page .books-page {
+
+    position: relative;
+
+    z-index: 2;
+
+    width: 100%;
+
+    min-height: calc(100vh - 68px);
+
+    padding: 34px 30px 60px;
+
+    box-sizing: border-box;
+
+    background: transparent !important;
 }
 
 
 /* =========================================================
-   PAGE HEADER
+   CONTENT CONTAINER
 ========================================================= */
 
-.books-page-header {
+.main.dashboard-page .books-content {
+
+    position: relative;
+
+    z-index: 2;
+
+    width: 100%;
+
+    max-width: 1700px;
+
+    margin: 0 auto;
+
+    padding-bottom: 30px;
+
+    background: transparent !important;
+}
+
+
+/* =========================================================
+   HERO CARD
+   TRANSPARAN / GLASS EFFECT
+========================================================= */
+
+.books-page .welcome-card {
+
+    position: relative;
+
+    z-index: 2;
+
+    min-height: 165px;
 
     display: flex;
 
-    align-items: flex-end;
+    align-items: center;
 
     justify-content: space-between;
 
-    gap: 24px;
+    gap: 30px;
 
-    margin-bottom: 28px;
+    margin-bottom: 32px;
+
+    padding: 38px 60px;
+
+    box-sizing: border-box;
+
+    overflow: hidden;
+
+    border-radius: 18px;
+
+    /* LEBIH TRANSPARAN */
+    background: rgba(255, 255, 255, 0.55) !important;
+
+    /* HILANGKAN GARIS/BORDER */
+    border: none !important;
+
+    /* SHADOW LEBIH HALUS */
+    box-shadow:
+        0 12px 35px rgba(0, 40, 80, 0.12);
+
+    /* EFEK KACA */
+    backdrop-filter: blur(5px);
+
+    -webkit-backdrop-filter: blur(5px);
 
 }
 
 
-.page-eyebrow {
+/* =========================================================
+   HERO CONTENT
+========================================================= */
 
-    margin-bottom: 8px;
+.books-page .welcome-content {
 
-    color: #e31e24;
+    position: relative;
 
-    font-size: 11px;
+    z-index: 2;
+
+}
+
+
+.books-page .welcome-small {
+
+    display: block;
+
+    margin-bottom: 10px;
+
+    color: #0876bd;
+
+    font-size: 13px;
 
     font-weight: 800;
 
-    letter-spacing: 0.14em;
+    letter-spacing: 0.10em;
 
 }
 
 
-.page-title {
+.books-page .welcome-content h1 {
 
     margin: 0;
 
-    color: #ffffff;
+    color: #102f49 !important;
 
-    font-size: 30px;
+    font-size: 36px;
 
     font-weight: 800;
 
-    letter-spacing: -0.02em;
+    line-height: 1.15;
 
 }
 
 
-.page-description {
+.books-page .welcome-content p {
 
-    margin-top: 8px;
+    margin: 12px 0 0;
 
-    margin-bottom: 0;
+    color: #526a7b !important;
 
-    color: #7d878e;
+    font-size: 14px;
 
-    font-size: 13px;
+    font-weight: 500;
 
     line-height: 1.6;
 
@@ -78,10 +292,24 @@
 
 
 /* =========================================================
+   ADD BOOK
+========================================================= */
+
+.books-page .welcome-decoration {
+
+    position: relative;
+
+    z-index: 4;
+
+    flex-shrink: 0;
+}
+
+
+/* =========================================================
    ADD BOOK BUTTON
 ========================================================= */
 
-.add-book-button {
+.books-page .welcome-decoration .view-all {
 
     display: inline-flex;
 
@@ -91,15 +319,17 @@
 
     gap: 8px;
 
-    min-height: 42px;
+    min-height: 44px;
 
-    padding: 0 18px;
+    padding: 0 20px;
 
     border-radius: 9px;
 
     background: #e31e24;
 
-    color: #ffffff;
+    border: 1px solid #e31e24;
+
+    color: #ffffff !important;
 
     text-decoration: none;
 
@@ -107,116 +337,67 @@
 
     font-weight: 700;
 
-    border: 1px solid #e31e24;
+    box-shadow:
+        0 8px 20px rgba(227, 30, 36, 0.20);
 
     transition:
-        background 0.2s ease,
         transform 0.2s ease,
+        background 0.2s ease,
         box-shadow 0.2s ease;
-
 }
 
 
-.add-book-button:hover {
+/* =========================================================
+   ADD BOOK HOVER
+========================================================= */
+
+.books-page .welcome-decoration .view-all:hover {
 
     background: #c91820;
 
-    transform: translateY(-1px);
+    transform: translateY(-2px);
 
     box-shadow:
-        0 8px 20px rgba(227, 30, 36, 0.18);
-
-}
-
-
-.add-icon {
-
-    font-size: 18px;
-
-    line-height: 1;
-
+        0 12px 25px rgba(227, 30, 36, 0.28);
 }
 
 
 /* =========================================================
-   SUCCESS ALERT
+   TABLE PANEL
 ========================================================= */
 
-.alert-success {
+.books-page .books-table-panel {
 
-    display: flex;
+    position: relative;
 
-    align-items: center;
+    z-index: 3;
 
-    gap: 10px;
-
-    margin-bottom: 18px;
-
-    padding: 13px 16px;
-
-    border-radius: 9px;
-
-    background: rgba(46, 160, 67, 0.08);
-
-    border: 1px solid rgba(46, 160, 67, 0.25);
-
-    color: #8ed49a;
-
-    font-size: 13px;
-
-}
-
-
-.alert-icon {
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    width: 22px;
-
-    height: 22px;
-
-    border-radius: 50%;
-
-    background: rgba(46, 160, 67, 0.15);
-
-    font-size: 12px;
-
-    font-weight: 800;
-
-}
-
-
-/* =========================================================
-   BOOK CARD
-========================================================= */
-
-.books-card {
+    width: 100%;
 
     overflow: hidden;
 
-    border: 1px solid var(--border);
-
-    border-radius: 12px;
+    border-radius: 18px;
 
     background:
-        linear-gradient(
-            145deg,
-            #141a20,
-            #0f1418
-        );
+        rgba(255, 255, 255, 0.94) !important;
 
+    border:
+        1px solid rgba(255, 255, 255, 0.80);
+
+    box-shadow:
+        0 15px 40px rgba(0, 40, 80, 0.16);
+
+    backdrop-filter: blur(10px);
+
+    -webkit-backdrop-filter: blur(10px);
 }
 
 
 /* =========================================================
-   CARD HEADER
+   PANEL HEADER
 ========================================================= */
 
-.books-card-header {
+.books-page .books-table-panel .panel-header {
 
     display: flex;
 
@@ -224,36 +405,53 @@
 
     justify-content: space-between;
 
-    gap: 20px;
+    gap: 40px;
 
-    padding: 20px 22px;
+    min-height: 110px;
 
-    border-bottom: 1px solid var(--border);
+    padding: 26px 32px;
 
+    box-sizing: border-box;
+
+    background:
+        rgba(255, 255, 255, 0.82);
+
+    border-bottom:
+        1px solid #dce7ee;
 }
 
 
-.books-card-header h2 {
+/* =========================================================
+   PANEL TITLE
+========================================================= */
+
+.books-page .panel-header h2 {
 
     margin: 0;
 
-    color: #ffffff;
+    color: #102f49 !important;
 
-    font-size: 16px;
+    font-size: 20px;
 
-    font-weight: 700;
-
+    font-weight: 800;
 }
 
 
-.books-card-header p {
+/* =========================================================
+   PANEL SUBTITLE
+========================================================= */
 
-    margin: 5px 0 0;
+.books-page .panel-header > div > span {
 
-    color: #737e85;
+    display: block;
 
-    font-size: 12px;
+    margin-top: 7px;
 
+    color: #557187 !important;
+
+    font-size: 13px;
+
+    font-weight: 600;
 }
 
 
@@ -261,80 +459,110 @@
    SEARCH
 ========================================================= */
 
-.book-search {
+.books-page .book-search {
 
     position: relative;
 
-    width: 280px;
+    width: 345px;
 
+    flex-shrink: 0;
 }
 
 
-.book-search input {
+/* =========================================================
+   SEARCH INPUT
+========================================================= */
+
+.books-page .book-search input {
 
     width: 100%;
 
-    height: 40px;
+    height: 50px;
 
     box-sizing: border-box;
 
-    padding:
-        0 14px 0 38px;
+    padding: 0 18px 0 48px;
 
-    border: 1px solid #2a3239;
+    border:
+        1px solid #c7d8e4;
 
-    border-radius: 8px;
+    border-radius: 10px;
 
     outline: none;
 
-    background: #0b0f12;
+    background: #ffffff;
 
-    color: #ffffff;
+    color: #17364d;
 
     font-family: inherit;
 
-    font-size: 12px;
+    font-size: 13px;
 
-    transition:
-        border-color 0.2s ease,
-        box-shadow 0.2s ease;
-
-}
-
-
-.book-search input::placeholder {
-
-    color: #626c73;
-
-}
-
-
-.book-search input:focus {
-
-    border-color: rgba(227, 30, 36, 0.7);
+    font-weight: 500;
 
     box-shadow:
-        0 0 0 3px rgba(227, 30, 36, 0.08);
-
+        0 3px 10px rgba(0, 50, 90, 0.05);
 }
 
 
-.search-icon {
+/* =========================================================
+   SEARCH PLACEHOLDER
+========================================================= */
+
+.books-page .book-search input::placeholder {
+
+    color: #71889a;
+}
+
+
+/* =========================================================
+   SEARCH FOCUS
+========================================================= */
+
+.books-page .book-search input:focus {
+
+    border-color: #1683c7;
+
+    box-shadow:
+        0 0 0 3px rgba(22, 131, 199, 0.12);
+}
+
+
+/* =========================================================
+   SEARCH ICON
+========================================================= */
+
+.books-page .search-icon {
 
     position: absolute;
 
-    left: 14px;
+    left: 17px;
 
     top: 50%;
 
     transform: translateY(-50%);
 
-    color: #707a81;
+    color: #53748a;
 
-    font-size: 17px;
+    font-size: 18px;
 
     pointer-events: none;
+}
 
+
+/* =========================================================
+   TABLE WRAPPER
+========================================================= */
+
+.books-page .table-wrapper {
+
+    width: 100%;
+
+    padding: 22px 26px 30px;
+
+    box-sizing: border-box;
+
+    overflow-x: auto;
 }
 
 
@@ -342,116 +570,116 @@
    TABLE
 ========================================================= */
 
-.table-wrapper {
+.books-page table {
 
     width: 100%;
 
-    overflow-x: auto;
+    min-width: 950px;
 
-}
+    border-collapse: separate;
 
+    border-spacing: 0;
 
-.books-table {
+    overflow: hidden;
 
-    width: 100%;
-
-    border-collapse: collapse;
-
-    min-width: 850px;
-
-}
-
-
-.books-table thead {
-
-    background: #0c1013;
-
-}
-
-
-.books-table th {
-
-    padding: 13px 18px;
-
-    color: #727c83;
-
-    font-size: 10px;
-
-    font-weight: 800;
-
-    letter-spacing: 0.08em;
-
-    text-align: left;
-
-    text-transform: uppercase;
-
-    white-space: nowrap;
-
-}
-
-
-.books-table td {
-
-    padding: 17px 18px;
-
-    border-top: 1px solid #20272d;
-
-    color: #d9dde0;
-
-    font-size: 12px;
-
-    vertical-align: middle;
-
-}
-
-
-.books-table tbody tr {
-
-    transition:
-        background 0.2s ease;
-
-}
-
-
-.books-table tbody tr:hover {
-
-    background: rgba(255, 255, 255, 0.025);
-
+    border-radius: 10px;
 }
 
 
 /* =========================================================
-   BOOK DATA
+   TABLE HEADER
 ========================================================= */
 
-.book-id {
+.books-page table thead {
 
-    color: #6d777e !important;
-
-    font-family: monospace;
-
-    font-size: 11px !important;
-
+    background:
+        linear-gradient(
+            135deg,
+            #0874c1,
+            #176db5
+        );
 }
 
 
-.book-title {
+/* =========================================================
+   TABLE HEADER CELLS
+========================================================= */
 
-    max-width: 280px;
+.books-page table th {
 
-    color: #ffffff;
+    padding: 17px 18px;
 
-    font-weight: 700;
+    color: #ffffff !important;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.05em;
+
+    text-align: left;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   TABLE BODY
+========================================================= */
+
+.books-page table tbody tr {
+
+    background: #ffffff;
+
+    transition:
+        background 0.2s ease;
+}
+
+
+/* =========================================================
+   TABLE HOVER
+========================================================= */
+
+.books-page table tbody tr:hover {
+
+    background: #f3f9fd;
+}
+
+
+/* =========================================================
+   TABLE CELLS
+========================================================= */
+
+.books-page table td {
+
+    padding: 19px 18px;
+
+    color: #19374d !important;
+
+    font-size: 13px;
+
+    font-weight: 500;
 
     line-height: 1.5;
 
+    vertical-align: middle;
+
+    border-bottom:
+        1px solid #dce7ee;
 }
 
 
-.muted-cell {
+/* =========================================================
+   BOOK TITLE
+========================================================= */
 
-    color: #858f96 !important;
+.books-page table td strong {
 
+    color: #102f49 !important;
+
+    font-size: 14px;
+
+    font-weight: 800;
 }
 
 
@@ -459,52 +687,29 @@
    STATUS
 ========================================================= */
 
-.status-badge {
+.books-page .badge {
 
     display: inline-flex;
 
     align-items: center;
 
-    min-height: 24px;
+    justify-content: center;
 
-    padding: 0 9px;
+    min-height: 28px;
+
+    padding: 0 12px;
 
     border-radius: 20px;
 
-    background: #242b31;
+    background: #e4f5eb;
 
-    color: #aeb6bb;
+    border: 1px solid #bfe4ce;
 
-    font-size: 10px;
+    color: #208047;
 
-    font-weight: 700;
+    font-size: 11px;
 
-}
-
-
-.status-public {
-
-    background:
-        rgba(46, 160, 67, 0.12);
-
-    color: #7fd18c;
-
-    border:
-        1px solid rgba(46, 160, 67, 0.2);
-
-}
-
-
-.status-archive {
-
-    background:
-        rgba(227, 30, 36, 0.10);
-
-    color: #f06c70;
-
-    border:
-        1px solid rgba(227, 30, 36, 0.2);
-
+    font-weight: 800;
 }
 
 
@@ -512,14 +717,7 @@
    ACTIONS
 ========================================================= */
 
-.action-column {
-
-    text-align: right !important;
-
-}
-
-
-.book-actions {
+.books-page table td:last-child .person {
 
     display: flex;
 
@@ -527,13 +725,17 @@
 
     justify-content: flex-end;
 
-    gap: 6px;
+    gap: 8px;
 
+    white-space: nowrap;
 }
 
 
-.book-actions a,
-.book-actions button {
+/* =========================================================
+   ACTION BUTTON
+========================================================= */
+
+.books-page table td:last-child .view-all {
 
     display: inline-flex;
 
@@ -541,244 +743,238 @@
 
     justify-content: center;
 
-    min-height: 30px;
+    min-height: 36px;
 
-    padding: 0 9px;
+    padding: 0 12px;
 
-    border-radius: 6px;
+    border-radius: 8px;
 
-    font-family: inherit;
+    background: #ffffff;
 
-    font-size: 10px;
+    border: 1px solid #76afe1;
 
-    font-weight: 700;
+    color: #126bc0 !important;
+
+    font-size: 11px;
+
+    font-weight: 800;
 
     text-decoration: none;
 
-    cursor: pointer;
-
     transition:
         background 0.2s ease,
-        border-color 0.2s ease,
-        color 0.2s ease;
-
-}
-
-
-.action-detail {
-
-    background: #20272d;
-
-    border: 1px solid #303941;
-
-    color: #c6cdd1;
-
-}
-
-
-.action-detail:hover {
-
-    background: #2a3239;
-
-    color: #ffffff;
-
-}
-
-
-.action-edit {
-
-    background: rgba(255, 255, 255, 0.04);
-
-    border: 1px solid #303941;
-
-    color: #d6dadd;
-
-}
-
-
-.action-edit:hover {
-
-    background: rgba(255, 255, 255, 0.08);
-
-    color: #ffffff;
-
-}
-
-
-.action-delete {
-
-    background:
-        rgba(227, 30, 36, 0.08);
-
-    border:
-        1px solid rgba(227, 30, 36, 0.22);
-
-    color: #ef696d;
-
-}
-
-
-.action-delete:hover {
-
-    background:
-        rgba(227, 30, 36, 0.16);
-
-    border-color:
-        rgba(227, 30, 36, 0.4);
-
-    color: #ff8589;
-
+        transform 0.2s ease;
 }
 
 
 /* =========================================================
-   EMPTY STATE
+   ACTION HOVER
 ========================================================= */
 
-.empty-books {
+.books-page table td:last-child .view-all:hover {
 
-    display: flex;
+    background: #eef7ff;
 
-    align-items: center;
-
-    justify-content: center;
-
-    flex-direction: column;
-
-    min-height: 350px;
-
-    padding: 40px;
-
-    text-align: center;
-
-}
-
-
-.empty-icon {
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    width: 58px;
-
-    height: 58px;
-
-    margin-bottom: 18px;
-
-    border-radius: 14px;
-
-    background:
-        rgba(227, 30, 36, 0.08);
-
-    border:
-        1px solid rgba(227, 30, 36, 0.15);
-
-    color: #e31e24;
-
-    font-size: 25px;
-
-}
-
-
-.empty-books h3 {
-
-    margin: 0;
-
-    color: #ffffff;
-
-    font-size: 16px;
-
-}
-
-
-.empty-books p {
-
-    max-width: 350px;
-
-    margin: 8px 0 20px;
-
-    color: #737e85;
-
-    font-size: 12px;
-
-    line-height: 1.6;
-
+    transform: translateY(-1px);
 }
 
 
 /* =========================================================
-   RESPONSIVE
+   DELETE BUTTON
+========================================================= */
+
+.books-page table td:last-child form .view-all {
+
+    background: #ffffff;
+
+    border-color: #ef6b6f;
+
+    color: #e31e24 !important;
+}
+
+
+/* =========================================================
+   DELETE HOVER
+========================================================= */
+
+.books-page table td:last-child form .view-all:hover {
+
+    background: #fff2f2;
+}
+
+
+/* =========================================================
+   PAGINATION
+========================================================= */
+
+.books-page .pagination-wrapper {
+
+    padding: 0 28px 25px;
+}
+
+
+/* =========================================================
+   MOBILE
 ========================================================= */
 
 @media (max-width: 900px) {
 
-    .books-page-header {
+    .main.dashboard-page {
+
+        background-attachment: scroll;
+
+        background-position: 55% 40%;
+    }
+
+
+    .books-page {
+
+        padding: 24px 18px 40px;
+    }
+
+
+    .books-page .welcome-card {
 
         align-items: flex-start;
 
         flex-direction: column;
 
+        padding: 28px;
+
+        margin-bottom: 24px;
     }
 
 
-    .add-book-button {
+    .books-page .welcome-decoration {
 
         width: 100%;
-
     }
 
 
-    .books-card-header {
+    .books-page .welcome-decoration .view-all {
+
+        width: 100%;
+    }
+
+
+    .books-page .books-table-panel .panel-header {
 
         align-items: stretch;
 
         flex-direction: column;
 
+        gap: 18px;
+
+        padding: 24px;
     }
 
 
-    .book-search {
+    .books-page .book-search {
 
         width: 100%;
+    }
 
+
+    .books-page .table-wrapper {
+
+        padding:
+            18px 12px 24px;
     }
 
 }
 
 
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
 @media (max-width: 600px) {
 
-    .page-title {
+    .main.dashboard-page {
 
-        font-size: 25px;
-
+        background-position: 55% 35%;
     }
 
 
-    .books-card-header {
+    .books-page {
 
-        padding: 17px;
-
+        padding: 18px 12px 30px;
     }
 
 
-    .books-table td,
-    .books-table th {
+    .books-page .welcome-card {
 
-        padding:
-            13px 14px;
+        min-height: auto;
 
+        padding: 24px 20px;
+
+        border-radius: 14px;
     }
 
 
-    .books-content {
+    .books-page .welcome-content h1 {
 
-        padding:
-            20px 15px 30px;
-
+        font-size: 26px;
     }
 
+
+    .books-page .welcome-content p {
+
+        font-size: 12px;
+    }
+
+
+    .books-page .books-table-panel {
+
+        border-radius: 14px;
+    }
+
+
+    .books-page .books-table-panel .panel-header {
+
+        padding: 20px;
+    }
+
+
+    .books-page .panel-header h2 {
+
+        font-size: 18px;
+    }
+
+
+    .books-page .book-search input {
+
+        height: 48px;
+    }
+
+
+    .books-page table {
+
+        min-width: 900px;
+    }
+
+
+    .books-page table th,
+    .books-page table td {
+
+        padding: 13px 14px;
+    }
+
+}
+/* =========================================================
+   HAPUS DEKORASI MERAH DI BELAKANG TOMBOL TAMBAH BUKU
+========================================================= */
+
+.books-page .welcome-card::before,
+.books-page .welcome-card::after {
+
+    content: none !important;
+
+    display: none !important;
+
+    background: none !important;
+
+    border: none !important;
+
+    box-shadow: none !important;
 }

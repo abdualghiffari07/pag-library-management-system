@@ -14,18 +14,33 @@ class BookController extends Controller
     /**
      * Menampilkan daftar buku.
      */
-    public function index()
-    {
-        $books = Book::with([
-            'authors',
-            'categories',
-            'location'
-        ])
-        ->orderBy('book_id', 'desc')
-        ->get();
+public function index(Request $request)
+{
+    $query = Book::with([
+        'authors',
+        'categories',
+        'location'
+    ]);
 
-        return view('books.index', compact('books'));
+    if ($request->filled('search')) {
+
+        $search = $request->search;
+
+        $query->where(function ($q) use ($search) {
+
+            $q->where('title', 'like', '%' . $search . '%')
+              ->orWhere('origin', 'like', '%' . $search . '%');
+
+        });
+
     }
+
+    $books = $query
+        ->orderByDesc('book_id')
+        ->paginate(10);
+
+    return view('books.index', compact('books'));
+}
 
     /**
      * Menampilkan form tambah buku.
