@@ -40,7 +40,7 @@
          MAIN
     ====================================================== --}}
 
-    <main class="main">
+    <main class="main dashboard-page book-detail-page">
 
 
         {{-- HEADER --}}
@@ -84,15 +84,11 @@
                 </button>
 
 
-                <button class="header-button"
-                        type="button">
-
-                    ♧
-
-                    <span class="notification-badge">
-                        4
-                    </span>
-
+                <button type="button"
+                        id="sidebar-toggle"
+                        class="sidebar-toggle"
+                        aria-label="Buka menu">
+                    ☰
                 </button>
 
 

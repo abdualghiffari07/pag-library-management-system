@@ -677,9 +677,11 @@
 
     color: #102f49 !important;
 
+    
+
     font-size: 14px;
 
-    font-weight: 800;
+    font-weight: 650;
 }
 
 
@@ -709,7 +711,7 @@
 
     font-size: 11px;
 
-    font-weight: 800;
+    font-weight: 650;
 }
 
 
@@ -727,12 +729,15 @@
 
     gap: 8px;
 
+    width: 100%;
+
     white-space: nowrap;
+
 }
 
 
 /* =========================================================
-   ACTION BUTTON
+   ACTION BUTTON BASE
 ========================================================= */
 
 .books-page table td:last-child .view-all {
@@ -743,39 +748,103 @@
 
     justify-content: center;
 
-    min-height: 36px;
+    width: 64px;
 
-    padding: 0 12px;
+    height: 34px;
 
-    border-radius: 8px;
+    padding: 0;
+
+    box-sizing: border-box;
+
+    border-radius: 7px;
 
     background: #ffffff;
 
-    border: 1px solid #76afe1;
+    border: 1px solid #b8c9d6;
 
-    color: #126bc0 !important;
+    color: #31566f !important;
 
     font-size: 11px;
 
-    font-weight: 800;
+    font-weight: 700;
+
+    line-height: 1;
+
+    text-align: center;
 
     text-decoration: none;
 
+    cursor: pointer;
+
     transition:
-        background 0.2s ease,
-        transform 0.2s ease;
+        background 0.18s ease,
+        border-color 0.18s ease,
+        color 0.18s ease,
+        transform 0.18s ease,
+        box-shadow 0.18s ease;
+
 }
 
 
 /* =========================================================
-   ACTION HOVER
+   DETAIL BUTTON
 ========================================================= */
 
-.books-page table td:last-child .view-all:hover {
+.books-page table td:last-child a.view-all {
 
-    background: #eef7ff;
+    background: #f2f8fd;
+
+    border-color: #8ebddd;
+
+    color: #126bc0 !important;
+
+}
+
+
+.books-page table td:last-child a.view-all:hover {
+
+    background: #e4f2fc;
+
+    border-color: #5fa3d4;
+
+    color: #0b5da7 !important;
 
     transform: translateY(-1px);
+
+    box-shadow:
+        0 4px 10px rgba(18, 107, 192, 0.12);
+
+}
+
+
+/* =========================================================
+   EDIT BUTTON
+========================================================= */
+
+.books-page table td:last-child a.view-all:nth-of-type(2) {
+
+    background: #f5f7f9;
+
+    border-color: #b8c4ce;
+
+    color: #40596b !important;
+
+}
+
+
+.books-page table td:last-child a.view-all:nth-of-type(2):hover {
+
+    background: #eaf0f4;
+
+    border-color: #8fa1af;
+
+    color: #263f50 !important;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 4px 10px rgba(50, 75, 95, 0.10);
+
 }
 
 
@@ -783,23 +852,86 @@
    DELETE BUTTON
 ========================================================= */
 
+.books-page table td:last-child form {
+
+    display: inline-flex;
+
+    margin: 0;
+
+    padding: 0;
+
+}
+
+
 .books-page table td:last-child form .view-all {
 
-    background: #ffffff;
+    background: #fff5f5 !important;
 
-    border-color: #ef6b6f;
+    border-color: #efa2a5 !important;
 
-    color: #e31e24 !important;
+    color: #d92128 !important;
+
+}
+
+
+.books-page table td:last-child form .view-all:hover {
+
+    background: #ffe8e9 !important;
+
+    border-color: #e56b70 !important;
+
+    color: #b71920 !important;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 4px 10px rgba(227, 30, 36, 0.12);
+
 }
 
 
 /* =========================================================
-   DELETE HOVER
+   BUTTON ACTIVE
 ========================================================= */
 
-.books-page table td:last-child form .view-all:hover {
+.books-page table td:last-child .view-all:active {
 
-    background: #fff2f2;
+    transform: translateY(0);
+
+    box-shadow: none;
+
+}
+
+
+/* =========================================================
+   MOBILE ACTIONS
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .books-page table td:last-child .person {
+
+        justify-content: flex-start;
+
+        gap: 6px;
+
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .books-page table td:last-child .view-all {
+
+        width: 60px;
+
+        height: 32px;
+
+        font-size: 10px;
+
+    }
+
 }
 
 

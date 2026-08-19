@@ -1,701 +1,49 @@
 /* =========================================================
    PAG LIBRARY
-   BOOK EDIT
-   Professional Admin Dashboard
+   BOOK EDIT PAGE
+   SINGLE CARD DESIGN
 ========================================================= */
-
-:root {
-    --edit-border: rgba(255, 255, 255, 0.08);
-
-    --edit-white: #ffffff;
-    --edit-text: #e8ecef;
-    --edit-muted: #8d979e;
-    --edit-placeholder: #59636a;
-
-    --edit-red: #e31e24;
-    --edit-red-dark: #b51218;
-
-    --edit-radius: 14px;
-}
 
 
 /* =========================================================
    PAGE
 ========================================================= */
 
-.edit-page {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding-bottom: 50px;
-}
+.book-edit-page {
 
-
-/* =========================================================
-   BACK BUTTON
-========================================================= */
-
-.edit-back {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-
-    margin-bottom: 22px;
-
-    color: #89939a;
-    font-size: 12px;
-
-    transition:
-        color 0.2s ease,
-        transform 0.2s ease;
-}
-
-.edit-back:hover {
-    color: #ffffff;
-    transform: translateX(-3px);
-}
-
-.edit-back-icon {
-    font-size: 16px;
-    line-height: 1;
-}
-
-
-/* =========================================================
-   PAGE HEADER
-========================================================= */
-
-.edit-header {
     position: relative;
 
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    min-height: 150px;
-
-    padding: 30px 34px;
-    margin-bottom: 18px;
-
-    overflow: hidden;
-
-    border: 1px solid var(--edit-border);
-    border-radius: var(--edit-radius);
-
-    background:
-        linear-gradient(
-            110deg,
-            #171c21 0%,
-            #101519 65%,
-            #15191d 100%
-        );
-}
-
-.edit-header::after {
-    content: "";
-
-    position: absolute;
-
-    width: 280px;
-    height: 280px;
-
-    right: -100px;
-    top: -150px;
-
-    background:
-        linear-gradient(
-            135deg,
-            transparent 35%,
-            var(--edit-red) 36%,
-            var(--edit-red) 65%,
-            transparent 66%
-        );
-
-    opacity: 0.75;
-    transform: rotate(7deg);
-}
-
-.edit-header-content {
-    position: relative;
-    z-index: 2;
-}
-
-.edit-eyebrow {
-    color: var(--edit-red);
-
-    font-size: 10px;
-    font-weight: 800;
-
-    letter-spacing: 1.8px;
-    text-transform: uppercase;
-}
-
-.edit-header h1 {
-    margin-top: 7px;
-
-    color: var(--edit-white);
-
-    font-size: 30px;
-    line-height: 1.2;
-    font-weight: 800;
-
-    letter-spacing: -0.5px;
-}
-
-.edit-header p {
-    margin-top: 9px;
-
-    color: #9aa3a9;
-
-    font-size: 13px;
-    line-height: 1.6;
-}
-
-.edit-header p strong {
-    color: #ffffff;
-    font-weight: 600;
-}
-
-.edit-header-icon {
-    position: relative;
-    z-index: 2;
-
-    margin-right: 65px;
-
-    font-size: 65px;
-    opacity: 0.85;
-
-    filter:
-        drop-shadow(
-            0 10px 25px rgba(227, 30, 36, 0.25)
-        );
-}
-
-
-/* =========================================================
-   ERROR
-========================================================= */
-
-.edit-errors {
-    margin-bottom: 18px;
-    padding: 15px 18px;
-
-    border: 1px solid rgba(227, 30, 36, 0.28);
-    border-radius: 10px;
-
-    background: rgba(227, 30, 36, 0.08);
-
-    color: #ff777b;
-    font-size: 12px;
-}
-
-.edit-errors strong {
-    color: #ff8589;
-    font-weight: 700;
-}
-
-.edit-errors ul {
-    margin-top: 8px;
-    padding-left: 18px;
-}
-
-.edit-errors li {
-    margin-bottom: 4px;
-}
-
-
-/* =========================================================
-   FORM
-========================================================= */
-
-.edit-form {
-    width: 100%;
-}
-
-
-/* =========================================================
-   CARDS
-========================================================= */
-
-.edit-card {
-    margin-bottom: 18px;
-
-    overflow: hidden;
-
-    border: 1px solid var(--edit-border);
-    border-radius: var(--edit-radius);
-
-    background:
-        linear-gradient(
-            145deg,
-            #151b20,
-            #101519
-        );
-}
-
-.edit-card-header {
-    padding: 20px 24px;
-
-    border-bottom: 1px solid var(--edit-border);
-}
-
-.edit-card-header h2 {
-    color: var(--edit-white);
-
-    font-size: 16px;
-    font-weight: 700;
-}
-
-.edit-card-header p {
-    margin-top: 5px;
-
-    color: #747f86;
-
-    font-size: 11px;
-    line-height: 1.5;
-}
-
-.edit-card-body {
-    padding: 24px;
-}
-
-
-/* =========================================================
-   FORM GRID
-========================================================= */
-
-.form-grid {
-    display: grid;
-
-    grid-template-columns:
-        repeat(2, minmax(0, 1fr));
-
-    gap: 20px;
-}
-
-.form-grid-full {
-    grid-column: 1 / -1;
-}
-
-
-/* =========================================================
-   FORM GROUP
-========================================================= */
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-
-    min-width: 0;
-    margin-bottom: 20px;
-}
-
-.form-group label,
-.book-edit-page label {
-    display: block;
-
-    margin-bottom: 8px;
-
-    color: #dfe4e7;
-
-    font-size: 12px;
-    font-weight: 600;
-}
-
-.form-group label .required {
-    margin-left: 2px;
-    color: var(--edit-red);
-}
-
-
-/* =========================================================
-   FORM CONTROLS
-   DARK + PROFESSIONAL
-========================================================= */
-
-.book-edit-page input,
-.book-edit-page select,
-.book-edit-page textarea {
     width: 100%;
 
-    min-height: 48px;
+    min-height: calc(100vh - 68px);
 
-    padding: 12px 14px;
+    padding: 30px 34px 60px;
 
-    border: 1px solid rgba(255, 255, 255, 0.09) !important;
-    border-radius: 9px !important;
+    box-sizing: border-box;
 
-    outline: none !important;
-
-    background-color: #0d1216 !important;
-    background-image: none !important;
-
-    color: #e9edef !important;
-
-    font-family: inherit;
-    font-size: 13px;
-    line-height: 1.5;
-
-    color-scheme: dark;
-
-    transition:
-        border-color 0.2s ease,
-        background-color 0.2s ease,
-        box-shadow 0.2s ease;
+    color: #17364d;
 }
 
-
-/* =========================================================
-   INPUT
-========================================================= */
-
-.book-edit-page input[type="text"],
-.book-edit-page input[type="number"] {
-    height: 48px;
-}
-
-.book-edit-page input::placeholder,
-.book-edit-page textarea::placeholder {
-    color: var(--edit-placeholder) !important;
-}
-
-
-/* =========================================================
-   SELECT
-========================================================= */
-
-.book-edit-page select {
-    height: 48px;
-
-    padding: 0 14px;
-
-    cursor: pointer;
-}
-
-.book-edit-page select option {
-    background-color: #11161b !important;
-    color: #e9edef !important;
-}
-
-
-/* =========================================================
-   MULTIPLE SELECT
-========================================================= */
-
-.book-edit-page select[multiple] {
-    height: auto;
-
-    min-height: 210px;
-
-    padding: 8px;
-
-    line-height: 1.5;
-}
-
-.book-edit-page select[multiple] option {
-    padding: 10px 12px;
-
-    background-color: #0d1216 !important;
-    color: #cbd2d6 !important;
-}
-
-.book-edit-page select[multiple] option:checked {
-    background-color: #e31e24 !important;
-    color: #ffffff !important;
-}
-
-
-/* =========================================================
-   TEXTAREA
-========================================================= */
-
-.book-edit-page textarea {
-    min-height: 140px;
-
-    line-height: 1.6;
-
-    resize: vertical;
-}
-
-
-/* =========================================================
-   HOVER
-========================================================= */
-
-.book-edit-page input:hover,
-.book-edit-page select:hover,
-.book-edit-page textarea:hover {
-    border-color: rgba(255, 255, 255, 0.15) !important;
-}
-
-
-/* =========================================================
-   FOCUS
-========================================================= */
-
-.book-edit-page input:focus,
-.book-edit-page select:focus,
-.book-edit-page textarea:focus {
-    background-color: #10161b !important;
-
-    border-color: rgba(227, 30, 36, 0.7) !important;
-
-    box-shadow:
-        0 0 0 3px rgba(227, 30, 36, 0.10) !important;
-}
-
-
-/* =========================================================
-   HELP TEXT
-========================================================= */
-
-.form-help {
-    margin-top: 7px;
-
-    color: #687279;
-
-    font-size: 10px;
-    line-height: 1.5;
-}
-
-
-/* =========================================================
-   STATUS
-========================================================= */
-
-.status-options {
-    display: grid;
-
-    grid-template-columns:
-        repeat(2, minmax(0, 1fr));
-
-    gap: 10px;
-}
-
-.status-option {
-    position: relative;
-}
-
-.status-option input {
-    position: absolute;
-
-    width: auto;
-
-    min-height: 0;
-
-    opacity: 0;
-    pointer-events: none;
-}
-
-.status-option label {
-    min-height: 48px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    margin: 0;
-    padding: 10px;
-
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 9px;
-
-    background: #0d1216;
-
-    color: #8d979e;
-
-    cursor: pointer;
-
-    transition:
-        border-color 0.2s ease,
-        background 0.2s ease,
-        color 0.2s ease;
-}
-
-.status-option label:hover {
-    border-color: rgba(255, 255, 255, 0.18);
-    color: #ffffff;
-}
-
-.status-option input:checked + label {
-    border-color: rgba(227, 30, 36, 0.55);
-
-    background: rgba(227, 30, 36, 0.10);
-
-    color: #ff666b;
-}
-
-
-/* =========================================================
-   SECTION
-========================================================= */
-
-.form-section {
-    padding-top: 5px;
-}
-
-
-/* =========================================================
-   ACTIONS
-========================================================= */
-
-.form-actions {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-
-    gap: 10px;
-
-    padding-top: 4px;
-    padding-bottom: 30px;
-}
-
-.btn {
-    min-height: 42px;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    gap: 7px;
-
-    padding: 10px 18px;
-
-    border-radius: 9px;
-
-    font-size: 11px;
-    font-weight: 700;
-
-    cursor: pointer;
-
-    transition:
-        background 0.2s ease,
-        border-color 0.2s ease,
-        color 0.2s ease,
-        transform 0.2s ease;
-}
-
-.btn:hover {
-    transform: translateY(-1px);
-}
-
-.btn-cancel {
-    border: 1px solid rgba(255, 255, 255, 0.09);
-
-    background: rgba(255, 255, 255, 0.04);
-
-    color: #aab2b7;
-}
-
-.btn-cancel:hover {
-    border-color: rgba(255, 255, 255, 0.17);
-
-    background: rgba(255, 255, 255, 0.07);
-
-    color: #ffffff;
-}
-
-.btn-primary {
-    border: 1px solid var(--edit-red);
-
-    background: var(--edit-red);
-
-    color: #ffffff;
-
-    box-shadow:
-        0 7px 20px rgba(227, 30, 36, 0.16);
-}
-
-.btn-primary:hover {
-    border-color: var(--edit-red-dark);
-
-    background: var(--edit-red-dark);
-}
-
-
-/* =========================================================
-   RESPONSIVE
-========================================================= */
-
-@media (max-width: 900px) {
-
-    .edit-header {
-        padding: 25px;
-    }
-
-    .edit-header-icon {
-        margin-right: 20px;
-    }
-
-    .form-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .form-grid-full {
-        grid-column: auto;
-    }
-}
-
-
-@media (max-width: 600px) {
-
-    .edit-page {
-        padding-bottom: 25px;
-    }
-
-    .edit-header {
-        min-height: 135px;
-        padding: 22px;
-    }
-
-    .edit-header h1 {
-        font-size: 25px;
-    }
-
-    .edit-header p {
-        font-size: 11px;
-    }
-
-    .edit-header-icon {
-        display: none;
-    }
-
-    .edit-card-header {
-        padding: 17px;
-    }
-
-    .edit-card-body {
-        padding: 17px;
-    }
-
-    .status-options {
-        grid-template-columns: 1fr;
-    }
-
-    .form-actions {
-        flex-direction: column-reverse;
-        align-items: stretch;
-    }
-
-    .btn {
-        width: 100%;
-    }
-}
 
 /* =========================================================
    BACK BUTTON
 ========================================================= */
 
 .book-edit-page .back-button {
+
     display: inline-flex;
+
     align-items: center;
-    gap: 8px;
 
-    margin-bottom: 18px;
+    gap: 9px;
 
-    color: #8d979e;
-    font-size: 12px;
-    font-weight: 500;
+    margin-bottom: 22px;
+
+    color: #ffffff;
+
+    font-size: 13px;
+
+    font-weight: 700;
 
     text-decoration: none;
 
@@ -704,667 +52,646 @@
         transform 0.2s ease;
 }
 
+
 .book-edit-page .back-button:hover {
-    color: #ffffff;
+
+    color: #e31e24;
+
     transform: translateX(-3px);
 }
 
+
 .book-edit-page .back-icon {
-    font-size: 17px;
-    line-height: 1;
-}
 
-/* =========================================================
-   TAG INPUT
-========================================================= */
-
-.tag-input-container {
-    width: 100%;
-}
-
-
-.tag-list {
-    width: 100%;
-    min-height: 48px;
-
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-
-    gap: 7px;
-
-    padding: 7px 10px;
-
-    border: 1px solid rgba(255, 255, 255, 0.09);
-    border-radius: 9px;
-
-    background: #0d1216;
-
-    transition:
-        border-color 0.2s ease,
-        background 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-
-.tag-list:focus-within {
-    border-color: rgba(227, 30, 36, 0.7);
-
-    background: #10161b;
-
-    box-shadow:
-        0 0 0 3px rgba(227, 30, 36, 0.10);
-}
-
-
-/* =========================================================
-   TAG
-========================================================= */
-
-.tag-item {
     display: inline-flex;
 
     align-items: center;
 
-    gap: 7px;
+    justify-content: center;
 
-    min-height: 30px;
+    width: 28px;
 
-    padding: 5px 8px 5px 11px;
-
-    border: 1px solid rgba(227, 30, 36, 0.25);
+    height: 28px;
 
     border-radius: 7px;
 
-    background: rgba(227, 30, 36, 0.10);
+    background: rgba(255, 255, 255, 0.16);
 
-    color: #e9edef;
+    font-size: 16px;
+
+    line-height: 1;
+}
+
+
+/* =========================================================
+   MAIN SINGLE CARD
+========================================================= */
+
+.book-edit-page .book-edit-form {
+
+    position: relative;
+
+    width: 100%;
+
+    max-width: 1500px;
+
+    margin: 0 auto;
+
+    overflow: hidden;
+
+    background:
+        rgba(255, 255, 255, 0.96);
+
+    border: none;
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 18px 50px rgba(0, 42, 80, 0.18);
+
+    backdrop-filter: blur(10px);
+
+    -webkit-backdrop-filter: blur(10px);
+}
+
+
+/* =========================================================
+   COLLECTION SUMMARY
+   MENJADI BAGIAN ATAS CARD
+========================================================= */
+
+.book-edit-page .collection-summary {
+
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 30px;
+
+    min-height: 175px;
+
+    padding: 36px 42px;
+
+    box-sizing: border-box;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.98),
+            rgba(239, 247, 252, 0.96)
+        );
+
+    border-bottom:
+        1px solid #dce7ee;
+}
+
+
+/* =========================================================
+   COLLECTION CONTENT
+========================================================= */
+
+.book-edit-page .collection-summary-content {
+
+    min-width: 0;
+}
+
+
+.book-edit-page .collection-eyebrow {
+
+    margin-bottom: 9px;
+
+    color: #0874c1;
 
     font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.13em;
+
+    text-transform: uppercase;
+}
+
+
+.book-edit-page .collection-summary h1 {
+
+    margin: 0;
+
+    color: #102f49;
+
+    font-size: 28px;
+
+    font-weight: 800;
+
+    line-height: 1.25;
+}
+
+
+.book-edit-page .collection-summary p {
+
+    max-width: 800px;
+
+    margin: 10px 0 0;
+
+    color: #61798a;
+
+    font-size: 13px;
+
+    font-weight: 500;
+
+    line-height: 1.65;
+}
+
+
+/* =========================================================
+   COLLECTION ICON
+========================================================= */
+
+.book-edit-page .collection-icon {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    width: 64px;
+
+    height: 64px;
+
+    border-radius: 12px;
+
+    background:
+        rgba(8, 116, 193, 0.10);
+
+    color: #0874c1;
+
+    font-size: 29px;
+
+    box-shadow:
+        0 8px 20px rgba(8, 116, 193, 0.08);
+}
+
+
+/* =========================================================
+   FORM ALERT
+========================================================= */
+
+.book-edit-page .form-alert {
+
+    margin: 26px 36px 0;
+
+    padding: 17px 20px;
+
+    border-radius: 10px;
+
+    box-sizing: border-box;
+}
+
+
+.book-edit-page .form-alert.error {
+
+    background: #fff5f5;
+
+    border: 1px solid #f1b6b8;
+
+    color: #b71920;
+}
+
+
+.book-edit-page .form-alert-title {
+
+    margin-bottom: 7px;
+
+    font-size: 13px;
+
+    font-weight: 800;
+}
+
+
+.book-edit-page .form-alert ul {
+
+    margin: 0;
+
+    padding-left: 20px;
+
+    font-size: 12px;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   REMOVE CARD STYLE FROM EDIT PANEL
+   SEMUA MENJADI SATU CARD
+========================================================= */
+
+.book-edit-page .edit-panel {
+
+    width: 100%;
+
+    margin: 0;
+
+    background: transparent !important;
+
+    border: none !important;
+
+    border-radius: 0 !important;
+
+    box-shadow: none !important;
+}
+
+
+/* =========================================================
+   EDIT PANEL HEADER
+========================================================= */
+
+.book-edit-page .edit-panel-header {
+
+    padding: 32px 42px 24px;
+
+    background: transparent;
+
+    border: none;
+}
+
+
+.book-edit-page .edit-panel-header h2 {
+
+    margin: 0;
+
+    color: #102f49;
+
+    font-size: 20px;
+
+    font-weight: 800;
+}
+
+
+.book-edit-page .edit-panel-header p {
+
+    margin: 7px 0 0;
+
+    color: #6a8191;
+
+    font-size: 13px;
+
+    font-weight: 500;
+}
+
+
+/* =========================================================
+   EDIT PANEL BODY
+========================================================= */
+
+.book-edit-page .edit-panel-body {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 22px 28px;
+
+    padding: 0 42px 34px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   INFORMASI BUKU
+========================================================= */
+
+.book-edit-page .edit-section {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+
+/* =========================================================
+   SECTION HEADER
+========================================================= */
+
+.book-edit-page .edit-section-header {
+    padding: 32px 42px 24px;
+    box-sizing: border-box;
+}
+
+
+.book-edit-page .edit-section-header h2 {
+    margin: 0;
+
+    color: #102f49;
+
+    font-size: 20px;
+    font-weight: 800;
 
     line-height: 1.3;
 }
 
 
-.tag-item span {
-    white-space: nowrap;
-}
+.book-edit-page .edit-section-header p {
+    margin: 7px 0 0;
 
+    color: #6a8191;
 
-/* =========================================================
-   REMOVE TAG
-========================================================= */
-
-.tag-remove {
-    width: 18px;
-    height: 18px;
-
-    display: inline-flex;
-
-    align-items: center;
-    justify-content: center;
-
-    padding: 0;
-
-    border: none;
-
-    border-radius: 50%;
-
-    background: transparent;
-
-    color: #8d979e;
-
-    font-size: 15px;
-
-    line-height: 1;
-
-    cursor: pointer;
-
-    transition:
-        background 0.2s ease,
-        color 0.2s ease;
-}
-
-
-.tag-remove:hover {
-    background: rgba(227, 30, 36, 0.25);
-
-    color: #ffffff;
-}
-
-
-/* =========================================================
-   TEXT INPUT
-========================================================= */
-
-.tag-input {
-    flex: 1;
-
-    min-width: 180px;
-
-    height: 32px;
-
-    padding: 5px 4px;
-
-    border: none !important;
-
-    outline: none !important;
-
-    background: transparent !important;
-
-    box-shadow: none !important;
-
-    color: #e9edef;
-
-    font-size: 12px;
-}
-
-
-.tag-input::placeholder {
-    color: #59636a;
-}
-
-
-.tag-input:focus {
-    background: transparent !important;
-
-    border: none !important;
-
-    box-shadow: none !important;
-}
-
-/* =========================================================
-   TAG INPUT
-========================================================= */
-
-.tag-input-wrapper {
-    position: relative;
-    width: 100%;
-}
-
-
-/* =========================================================
-   TAG CONTAINER
-========================================================= */
-
-.tag-container {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 7px;
-
-    width: 100%;
-
-    min-height: 48px;
-
-    padding: 7px 10px;
-
-    margin-bottom: 8px;
-
-    border: 1px solid rgba(255, 255, 255, 0.09);
-    border-radius: 9px;
-
-    background: #0d1216;
-}
-
-
-/* =========================================================
-   TAG
-========================================================= */
-
-.tag-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-
-    min-height: 30px;
-
-    padding: 5px 8px 5px 11px;
-
-    border: 1px solid rgba(227, 30, 36, 0.25);
-    border-radius: 7px;
-
-    background: rgba(227, 30, 36, 0.10);
-
-    color: #e9edef;
-
-    font-size: 11px;
-    font-weight: 600;
-}
-
-
-.tag-remove {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 19px;
-    height: 19px;
-
-    padding: 0;
-
-    border: none;
-    border-radius: 50%;
-
-    background: transparent;
-
-    color: #9ba4a9;
-
-    font-size: 15px;
-    line-height: 1;
-
-    cursor: pointer;
-
-    transition:
-        background 0.2s ease,
-        color 0.2s ease;
-}
-
-
-.tag-remove:hover {
-    background: rgba(255, 255, 255, 0.10);
-
-    color: #ffffff;
-}
-
-
-/* =========================================================
-   SEARCH INPUT
-========================================================= */
-
-.tag-search-input {
-    margin-top: 0;
-}
-
-
-/* =========================================================
-   AUTOCOMPLETE
-========================================================= */
-
-.autocomplete-list {
-    position: absolute;
-
-    top: calc(100% + 5px);
-
-    left: 0;
-
-    width: 100%;
-
-    max-height: 230px;
-
-    overflow-y: auto;
-
-    z-index: 100;
-
-    border: 1px solid rgba(255, 255, 255, 0.10);
-
-    border-radius: 9px;
-
-    background: #151b20;
-
-    box-shadow:
-        0 15px 35px rgba(0, 0, 0, 0.35);
-}
-
-
-/* =========================================================
-   AUTOCOMPLETE ITEM
-========================================================= */
-
-.autocomplete-item,
-.autocomplete-create {
-
-    width: 100%;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 9px;
-
-    padding: 11px 13px;
-
-    border: none;
-
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-
-    background: transparent;
-
-    color: #dfe4e7;
-
-    text-align: left;
-
-    font-size: 12px;
-
-    cursor: pointer;
-
-    transition:
-        background 0.15s ease,
-        color 0.15s ease;
-}
-
-
-.autocomplete-item:hover {
-    background: rgba(255, 255, 255, 0.06);
-
-    color: #ffffff;
-}
-
-
-.autocomplete-create {
-    color: #ff666b;
-
-    font-weight: 600;
-}
-
-
-.autocomplete-create:hover {
-    background: rgba(227, 30, 36, 0.10);
-
-    color: #ff8589;
-}
-
-
-.autocomplete-create span {
-    font-size: 16px;
-}
-
-/* =========================================================
-   TAG INPUT
-========================================================= */
-
-.tag-input-wrapper {
-    position: relative;
-
-    width: 100%;
-
-    border: 1px solid rgba(255, 255, 255, 0.09);
-
-    border-radius: 9px;
-
-    background: #0d1216;
-
-    padding: 7px;
-
-    transition:
-        border-color 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-
-.tag-input-wrapper:focus-within {
-    border-color: rgba(227, 30, 36, 0.7);
-
-    box-shadow:
-        0 0 0 3px rgba(227, 30, 36, 0.10);
-}
-
-
-/* =========================================================
-   SELECTED TAGS
-========================================================= */
-
-.selected-tags {
-    display: flex;
-
-    flex-wrap: wrap;
-
-    gap: 7px;
-
-    margin-bottom: 5px;
-}
-
-
-.selected-tag {
-    display: inline-flex;
-
-    align-items: center;
-
-    gap: 7px;
-
-    min-height: 30px;
-
-    padding: 5px 9px;
-
-    border: 1px solid rgba(227, 30, 36, 0.35);
-
-    border-radius: 7px;
-
-    background: rgba(227, 30, 36, 0.10);
-
-    color: #f0f3f4;
-
-    font-size: 11px;
-
-    font-weight: 600;
-}
-
-
-.remove-tag {
-    display: inline-flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    width: 18px;
-
-    height: 18px;
-
-    padding: 0;
-
-    border: none;
-
-    background: transparent;
-
-    color: #aeb7bc;
-
-    font-size: 16px;
-
-    line-height: 1;
-
-    cursor: pointer;
-
-    transition:
-        color 0.2s ease,
-        transform 0.2s ease;
-}
-
-
-.remove-tag:hover {
-    color: #ffffff;
-
-    transform: scale(1.15);
-}
-
-
-/* =========================================================
-   SEARCH INPUT
-========================================================= */
-
-.tag-search-input {
-    min-height: 40px !important;
-
-    height: 40px !important;
-
-    padding: 9px 10px !important;
-
-    border: none !important;
-
-    background: transparent !important;
-
-    box-shadow: none !important;
-}
-
-
-.tag-search-input:focus {
-    border: none !important;
-
-    box-shadow: none !important;
-
-    background: transparent !important;
-}
-
-
-/* =========================================================
-   AUTOCOMPLETE DROPDOWN
-========================================================= */
-
-.autocomplete-dropdown {
-    position: absolute;
-
-    top: calc(100% + 6px);
-
-    left: 0;
-
-    right: 0;
-
-    z-index: 1000;
-
-    display: none;
-
-    max-height: 260px;
-
-    overflow-y: auto;
-
-    padding: 5px;
-
-    border: 1px solid rgba(255, 255, 255, 0.10);
-
-    border-radius: 10px;
-
-    background: #151b20;
-
-    box-shadow:
-        0 15px 35px rgba(0, 0, 0, 0.45);
-}
-
-
-.autocomplete-dropdown.is-visible {
-    display: block;
-}
-
-
-/* =========================================================
-   AUTOCOMPLETE ITEM
-========================================================= */
-
-.autocomplete-item {
-    width: 100%;
-
-    display: flex;
-
-    align-items: center;
-
-    min-height: 42px;
-
-    padding: 9px 12px;
-
-    border: none;
-
-    border-radius: 7px;
-
-    background: transparent;
-
-    color: #dfe4e7;
-
-    text-align: left;
-
-    font-family: inherit;
-
-    font-size: 12px;
-
-    cursor: pointer;
-
-    transition:
-        background 0.15s ease,
-        color 0.15s ease;
-}
-
-
-.autocomplete-item:hover {
-    background: rgba(227, 30, 36, 0.10);
-
-    color: #ffffff;
-}
-
-
-.autocomplete-item-name {
-    overflow: hidden;
-
-    text-overflow: ellipsis;
-
-    white-space: nowrap;
-}
-
-
-/* =========================================================
-   EMPTY RESULT
-========================================================= */
-
-.autocomplete-empty {
-    padding: 12px;
-
-    color: #7f898f;
-
-    font-size: 11px;
+    font-size: 13px;
+    font-weight: 500;
 
     line-height: 1.5;
 }
 
 
-.autocomplete-empty span {
-    display: block;
-
-    margin-top: 3px;
-
-    color: #59636a;
-}
-
-
 /* =========================================================
-   SCROLLBAR DROPDOWN
+   SECTION BODY
 ========================================================= */
 
-.autocomplete-dropdown::-webkit-scrollbar {
-    width: 5px;
+.book-edit-page .edit-section-body {
+    width: 100%;
+
+    padding: 0 42px 34px;
+
+    box-sizing: border-box;
 }
 
-
-.autocomplete-dropdown::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-
-.autocomplete-dropdown::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-
-    background: rgba(255, 255, 255, 0.12);
-}
 
 /* =========================================================
-   CLASSIFICATION CARD
+   FORM GRID
+========================================================= */
+
+.book-edit-page .form-grid {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(0, 1fr);
+
+    column-gap: 26px;
+    row-gap: 22px;
+
+    width: 100%;
+}
+
+
+/* =========================================================
+   FORM GROUP
+========================================================= */
+
+.book-edit-page .form-group {
+    display: flex;
+
+    flex-direction: column;
+
+    min-width: 0;
+
+    width: 100%;
+}
+
+
+/* =========================================================
+   FULL WIDTH
+========================================================= */
+
+.book-edit-page .form-grid-full {
+    grid-column: 1 / -1;
+}
+
+
+/* =========================================================
+   LABEL
+========================================================= */
+
+.book-edit-page .form-group label,
+.book-edit-page .classification-field > label {
+
+    display: flex;
+
+    align-items: center;
+
+    min-height: 18px;
+
+    margin: 0 0 8px;
+
+    color: #17364d;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   REQUIRED
+========================================================= */
+
+.book-edit-page .required {
+
+    margin-left: 3px;
+
+    color: #e31e24;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   INPUT / SELECT / TEXTAREA
+========================================================= */
+
+.book-edit-page .form-group input,
+.book-edit-page .form-group select,
+.book-edit-page .form-group textarea {
+
+    display: block;
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    border: 1px solid #c8d7e1;
+
+    border-radius: 8px;
+
+    outline: none;
+
+    background: #ffffff;
+
+    color: #17364d;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    font-weight: 500;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+
+/* =========================================================
+   INPUT
+========================================================= */
+
+.book-edit-page .form-group input {
+
+    height: 44px;
+
+    padding: 0 13px;
+}
+
+
+/* =========================================================
+   SELECT
+========================================================= */
+
+.book-edit-page .form-group select {
+
+    height: 44px;
+
+    padding: 0 38px 0 13px;
+
+    cursor: pointer;
+
+    appearance: auto;
+}
+
+
+/* =========================================================
+   TEXTAREA
+========================================================= */
+
+.book-edit-page .form-group textarea {
+
+    min-height: 125px;
+
+    padding: 12px 13px;
+
+    resize: vertical;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   FOCUS
+========================================================= */
+
+.book-edit-page .form-group input:focus,
+.book-edit-page .form-group select:focus,
+.book-edit-page .form-group textarea:focus {
+
+    border-color: #1683c7;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 0 0 3px rgba(22, 131, 199, 0.10);
+}
+
+
+/* =========================================================
+   PLACEHOLDER
+========================================================= */
+
+.book-edit-page .form-group input::placeholder,
+.book-edit-page .form-group textarea::placeholder {
+
+    color: #8a9aa5;
+
+    opacity: 1;
+}
+
+
+/* =========================================================
+   SELECT OPTION
+========================================================= */
+
+.book-edit-page .form-group select option {
+
+    color: #17364d;
+
+    background: #ffffff;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   HELP TEXT
+========================================================= */
+
+.book-edit-page .form-help {
+
+    display: block;
+
+    margin: 7px 0 0;
+
+    color: #718796;
+
+    font-size: 11px;
+
+    font-weight: 500;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.book-edit-page .field-error {
+
+    display: block;
+
+    margin: 6px 0 0;
+
+    color: #d92128;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   CLASSIFICATION
+   TIDAK LAGI MENJADI CARD
 ========================================================= */
 
 .book-edit-page .classification-card {
-    position: relative;
 
-    overflow: visible;
+    width: 100%;
 
-    margin-bottom: 20px;
+    margin: 0;
 
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 14px;
+    background: transparent !important;
 
-    background:
-        linear-gradient(
-            145deg,
-            #151b20 0%,
-            #101519 100%
-        );
+    border: none !important;
 
-    box-shadow:
-        0 12px 30px rgba(0, 0, 0, 0.18);
+    border-radius: 0 !important;
+
+    box-shadow: none !important;
+
+    border-top:
+        1px solid #dce7ee !important;
 }
 
 
@@ -1373,55 +700,67 @@
 ========================================================= */
 
 .book-edit-page .classification-header {
+
     display: flex;
+
     align-items: center;
 
     gap: 14px;
 
-    padding: 20px 24px;
+    padding: 30px 42px 22px;
 
-    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    background: transparent;
 }
 
 
 .book-edit-page .classification-icon {
-    width: 38px;
-    height: 38px;
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
     flex-shrink: 0;
 
-    border: 1px solid rgba(227, 30, 36, 0.25);
-    border-radius: 10px;
+    width: 42px;
 
-    background: rgba(227, 30, 36, 0.10);
+    height: 42px;
 
-    color: #ff5b60;
+    border-radius: 9px;
 
-    font-size: 17px;
+    background:
+        rgba(8, 116, 193, 0.10);
+
+    color: #0874c1;
+
+    font-size: 18px;
+
+    font-weight: 800;
 }
 
 
 .book-edit-page .classification-header h2 {
+
     margin: 0;
 
-    color: #ffffff;
+    color: #102f49;
 
-    font-size: 15px;
-    font-weight: 700;
+    font-size: 19px;
+
+    font-weight: 800;
 }
 
 
 .book-edit-page .classification-header p {
-    margin: 4px 0 0;
 
-    color: #727d84;
+    margin: 5px 0 0;
 
-    font-size: 11px;
-    line-height: 1.5;
+    color: #6a8191;
+
+    font-size: 12px;
+
+    font-weight: 500;
 }
 
 
@@ -1430,49 +769,27 @@
 ========================================================= */
 
 .book-edit-page .classification-body {
-    padding: 24px;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 24px 28px;
+
+    padding: 0 42px 34px;
+
+    box-sizing: border-box;
 }
 
 
 /* =========================================================
-   TAG FIELD
+   CLASSIFICATION FIELD
 ========================================================= */
 
 .book-edit-page .classification-field {
-    position: relative;
 
-    margin-bottom: 20px;
-}
-
-
-.book-edit-page .classification-field:last-child {
-    margin-bottom: 0;
-}
-
-
-.book-edit-page .classification-field label {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-
-    margin-bottom: 8px;
-
-    color: #dfe4e7;
-
-    font-size: 12px;
-    font-weight: 700;
-}
-
-
-.book-edit-page .classification-field label::before {
-    content: "";
-
-    width: 3px;
-    height: 12px;
-
-    border-radius: 5px;
-
-    background: #e31e24;
+    min-width: 0;
 }
 
 
@@ -1481,40 +798,44 @@
 ========================================================= */
 
 .book-edit-page .tag-input-wrapper {
+
     position: relative;
 
+    width: 100%;
+
+    min-height: 46px;
+
+    padding: 7px 10px;
+
+    box-sizing: border-box;
+
     display: flex;
+
     flex-wrap: wrap;
+
     align-items: center;
 
-    min-height: 50px;
+    gap: 6px;
 
-    padding: 6px 8px;
+    border:
+        1px solid #c8d7e1;
 
-    border: 1px solid rgba(255, 255, 255, 0.09);
-    border-radius: 10px;
+    border-radius: 9px;
 
-    background: #0c1115;
+    background: #ffffff;
 
     transition:
         border-color 0.2s ease,
-        box-shadow 0.2s ease,
-        background 0.2s ease;
-}
-
-
-.book-edit-page .tag-input-wrapper:hover {
-    border-color: rgba(255, 255, 255, 0.15);
+        box-shadow 0.2s ease;
 }
 
 
 .book-edit-page .tag-input-wrapper:focus-within {
-    border-color: rgba(227, 30, 36, 0.65);
 
-    background: #10161b;
+    border-color: #1683c7;
 
     box-shadow:
-        0 0 0 3px rgba(227, 30, 36, 0.09);
+        0 0 0 3px rgba(22, 131, 199, 0.10);
 }
 
 
@@ -1523,60 +844,46 @@
 ========================================================= */
 
 .book-edit-page .selected-tags {
+
     display: flex;
+
     flex-wrap: wrap;
+
+    align-items: center;
+
+    gap: 6px;
+}
+
+
+/* =========================================================
+   SELECTED TAG
+========================================================= */
+
+.book-edit-page .selected-tag {
+
+    display: inline-flex;
+
     align-items: center;
 
     gap: 6px;
 
-    width: 100%;
+    min-height: 29px;
 
-    margin-bottom: 2px;
-}
+    padding: 0 8px 0 11px;
 
+    box-sizing: border-box;
 
-.book-edit-page .selected-tag {
-    display: inline-flex;
-    align-items: center;
+    border-radius: 6px;
 
-    gap: 7px;
+    background: #edf6fc;
 
-    min-height: 30px;
+    border: 1px solid #c4dfee;
 
-    padding: 5px 8px 5px 11px;
-
-    border: 1px solid rgba(227, 30, 36, 0.28);
-    border-radius: 7px;
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(227, 30, 36, 0.14),
-            rgba(227, 30, 36, 0.06)
-        );
-
-    color: #edf1f3;
+    color: #126bc0;
 
     font-size: 11px;
-    font-weight: 600;
 
-    animation:
-        tagAppear 0.2s ease both;
-}
-
-
-@keyframes tagAppear {
-
-    from {
-        opacity: 0;
-        transform: translateY(4px) scale(0.96);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-
+    font-weight: 700;
 }
 
 
@@ -1585,59 +892,60 @@
 ========================================================= */
 
 .book-edit-page .remove-tag {
-    width: 19px;
-    height: 19px;
 
     display: inline-flex;
+
     align-items: center;
+
     justify-content: center;
+
+    width: 18px;
+
+    height: 18px;
 
     padding: 0;
 
     border: none;
-    border-radius: 50%;
+
+    border-radius: 4px;
 
     background: transparent;
 
-    color: #879197;
+    color: #557187;
 
     font-size: 15px;
+
+    line-height: 1;
 
     cursor: pointer;
 
     transition:
-        background 0.15s ease,
-        color 0.15s ease,
-        transform 0.15s ease;
+        background 0.18s ease,
+        color 0.18s ease;
 }
 
 
 .book-edit-page .remove-tag:hover {
-    background: rgba(227, 30, 36, 0.25);
 
-    color: #ffffff;
+    background: #dcecf7;
 
-    transform: scale(1.08);
+    color: #d92128;
 }
 
 
 /* =========================================================
-   SEARCH INPUT
+   TAG SEARCH INPUT
 ========================================================= */
 
 .book-edit-page .tag-search-input {
+
     flex: 1;
 
-    width: 100%;
+    min-width: 150px;
 
-    min-width: 160px;
+    height: 32px !important;
 
-    height: 36px !important;
-    min-height: 36px !important;
-
-    margin: 0;
-
-    padding: 7px 8px !important;
+    padding: 0 5px !important;
 
     border: none !important;
 
@@ -1647,189 +955,43 @@
 
     box-shadow: none !important;
 
-    color: #e9edef !important;
+    color: #17364d;
 
     font-size: 12px;
-}
 
-
-.book-edit-page .tag-search-input::placeholder {
-    color: #586269 !important;
+    font-weight: 500;
 }
 
 
 /* =========================================================
-   AUTOCOMPLETE DROPDOWN
+   AUTOCOMPLETE
 ========================================================= */
 
 .book-edit-page .autocomplete-dropdown {
+
     position: absolute;
 
-    top: calc(100% + 7px);
+    top: calc(100% + 5px);
 
     left: 0;
+
     right: 0;
 
-    z-index: 9999;
+    z-index: 100;
 
-    display: none;
-
-    max-height: 240px;
+    max-height: 220px;
 
     overflow-y: auto;
 
-    padding: 5px;
+    background: #ffffff;
 
-    border: 1px solid rgba(255, 255, 255, 0.10);
-    border-radius: 10px;
+    border:
+        1px solid #c9d9e3;
 
-    background:
-        linear-gradient(
-            145deg,
-            #171d22,
-            #11161a
-        );
+    border-radius: 9px;
 
     box-shadow:
-        0 18px 40px rgba(0, 0, 0, 0.45);
-
-    animation:
-        dropdownAppear 0.16s ease both;
-}
-
-
-.book-edit-page .autocomplete-dropdown.is-visible {
-    display: block;
-}
-
-
-@keyframes dropdownAppear {
-
-    from {
-        opacity: 0;
-        transform: translateY(-5px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-}
-
-
-/* =========================================================
-   AUTOCOMPLETE ITEM
-========================================================= */
-
-.book-edit-page .autocomplete-item {
-    width: 100%;
-
-    display: flex;
-    align-items: center;
-
-    min-height: 42px;
-
-    padding: 9px 12px;
-
-    border: none;
-    border-radius: 7px;
-
-    background: transparent;
-
-    color: #cdd4d8;
-
-    font-family: inherit;
-    font-size: 12px;
-
-    text-align: left;
-
-    cursor: pointer;
-
-    transition:
-        background 0.15s ease,
-        color 0.15s ease,
-        padding-left 0.15s ease;
-}
-
-
-.book-edit-page .autocomplete-item:hover {
-    padding-left: 15px;
-
-    background: rgba(227, 30, 36, 0.10);
-
-    color: #ffffff;
-}
-
-
-.book-edit-page .autocomplete-item::before {
-    content: "•";
-
-    margin-right: 9px;
-
-    color: #e31e24;
-
-    font-size: 15px;
-}
-
-
-.book-edit-page .autocomplete-item-name {
-    overflow: hidden;
-
-    text-overflow: ellipsis;
-
-    white-space: nowrap;
-}
-
-
-/* =========================================================
-   EMPTY AUTOCOMPLETE
-========================================================= */
-
-.book-edit-page .autocomplete-empty {
-    padding: 14px;
-
-    color: #7d878d;
-
-    font-size: 11px;
-
-    line-height: 1.5;
-}
-
-
-.book-edit-page .autocomplete-empty span {
-    display: block;
-
-    margin-top: 3px;
-
-    color: #59636a;
-}
-
-
-/* =========================================================
-   FORM HELP
-========================================================= */
-
-.book-edit-page .classification-help {
-    display: flex;
-    align-items: center;
-
-    gap: 6px;
-
-    margin-top: 7px;
-
-    color: #687279;
-
-    font-size: 10px;
-}
-
-
-.book-edit-page .classification-help::before {
-    content: "⌕";
-
-    color: #8c969c;
-
-    font-size: 12px;
+        0 12px 28px rgba(0, 45, 80, 0.16);
 }
 
 
@@ -1838,40 +1000,64 @@
 ========================================================= */
 
 .book-edit-page .form-actions {
+
     display: flex;
+
     align-items: center;
+
     justify-content: flex-end;
 
     gap: 10px;
 
-    margin-top: 5px;
+    padding: 24px 42px 30px;
 
-    padding: 20px 0 35px;
+    border-top:
+        1px solid #dce7ee;
+
+    background:
+        rgba(248, 251, 253, 0.85);
 }
 
 
 /* =========================================================
-   BUTTON
+   BUTTON BASE
 ========================================================= */
 
 .book-edit-page .form-actions .btn {
-    min-width: 125px;
-    min-height: 44px;
 
-    border-radius: 9px;
+    display: inline-flex;
 
-    font-size: 11px;
-    font-weight: 700;
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    min-width: 120px;
+
+    height: 42px;
+
+    padding: 0 18px;
+
+    box-sizing: border-box;
+
+    border-radius: 8px;
+
+    font-family: inherit;
+
+    font-size: 12px;
+
+    font-weight: 750;
+
+    text-decoration: none;
+
+    cursor: pointer;
 
     transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease,
-        background 0.2s ease;
-}
-
-
-.book-edit-page .form-actions .btn:hover {
-    transform: translateY(-2px);
+        transform 0.18s ease,
+        background 0.18s ease,
+        border-color 0.18s ease,
+        box-shadow 0.18s ease;
 }
 
 
@@ -1880,82 +1066,63 @@
 ========================================================= */
 
 .book-edit-page .btn-cancel {
-    border: 1px solid rgba(255, 255, 255, 0.10);
 
-    background: rgba(255, 255, 255, 0.035);
+    background: #ffffff;
 
-    color: #aeb6bb;
+    border: 1px solid #c3d1da;
+
+    color: #40596b;
 }
 
 
 .book-edit-page .btn-cancel:hover {
-    background: rgba(255, 255, 255, 0.07);
 
-    color: #ffffff;
+    background: #f1f5f7;
 
-    box-shadow:
-        0 8px 20px rgba(0, 0, 0, 0.18);
+    border-color: #9fb2bf;
+
+    color: #263f50;
+
+    transform: translateY(-1px);
 }
 
 
 /* =========================================================
-   UPDATE
+   PRIMARY
 ========================================================= */
 
 .book-edit-page .btn-primary {
-    position: relative;
-
-    overflow: hidden;
 
     border: 1px solid #e31e24;
 
-    background:
-        linear-gradient(
-            135deg,
-            #e31e24,
-            #c9181d
-        );
+    background: #e31e24;
 
     color: #ffffff;
 
     box-shadow:
-        0 8px 22px rgba(227, 30, 36, 0.18);
-}
-
-
-.book-edit-page .btn-primary::after {
-    content: "";
-
-    position: absolute;
-
-    top: 0;
-    left: -100%;
-
-    width: 60%;
-    height: 100%;
-
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            rgba(255, 255, 255, 0.16),
-            transparent
-        );
-
-    transform: skewX(-20deg);
-
-    transition: left 0.5s ease;
-}
-
-
-.book-edit-page .btn-primary:hover::after {
-    left: 130%;
+        0 7px 17px rgba(227, 30, 36, 0.18);
 }
 
 
 .book-edit-page .btn-primary:hover {
+
+    background: #c91820;
+
+    border-color: #c91820;
+
+    transform: translateY(-1px);
+
     box-shadow:
-        0 10px 28px rgba(227, 30, 36, 0.25);
+        0 10px 22px rgba(227, 30, 36, 0.25);
+}
+
+
+.book-edit-page .btn-primary:active,
+.book-edit-page .btn-cancel:active {
+
+    transform: translateY(0);
+
+    box-shadow: none;
 }
 
 
@@ -1964,6 +1131,7 @@
 ========================================================= */
 
 .book-edit-page .btn-icon {
+
     font-size: 14px;
 
     line-height: 1;
@@ -1971,43 +1139,30 @@
 
 
 /* =========================================================
-   SUBMIT LOADING
+   SPINNER
 ========================================================= */
 
-.book-edit-page .btn-primary.is-loading {
-    pointer-events: none;
-
-    opacity: 0.8;
-}
-
-
-.book-edit-page .btn-primary.is-loading .btn-text {
-    opacity: 0.7;
-}
-
-
 .book-edit-page .btn-spinner {
-    width: 13px;
-    height: 13px;
 
     display: none;
 
-    border: 2px solid rgba(255, 255, 255, 0.35);
+    width: 13px;
+
+    height: 13px;
+
+    border:
+        2px solid rgba(255, 255, 255, 0.35);
+
     border-top-color: #ffffff;
 
     border-radius: 50%;
 
     animation:
-        buttonSpin 0.7s linear infinite;
+        bookEditSpin 0.7s linear infinite;
 }
 
 
-.book-edit-page .btn-primary.is-loading .btn-spinner {
-    display: inline-block;
-}
-
-
-@keyframes buttonSpin {
+@keyframes bookEditSpin {
 
     to {
         transform: rotate(360deg);
@@ -2017,264 +1172,246 @@
 
 
 /* =========================================================
-   RESPONSIVE
+   REMOVE OLD DECORATIONS
 ========================================================= */
 
-@media (max-width: 600px) {
+.book-edit-page .edit-panel::before,
+.book-edit-page .edit-panel::after,
+.book-edit-page .classification-card::before,
+.book-edit-page .classification-card::after {
 
+    content: none !important;
+
+    display: none !important;
+}
+
+
+/* =========================================================
+   LARGE SCREEN
+========================================================= */
+
+@media (min-width: 1400px) {
+
+    .book-edit-page {
+
+        padding-left: 42px;
+
+        padding-right: 42px;
+    }
+
+
+    .book-edit-page .book-edit-form {
+
+        max-width: 1600px;
+    }
+
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1000px) {
+
+    .book-edit-page {
+
+        padding: 26px 22px 50px;
+    }
+
+
+    .book-edit-page .collection-summary {
+
+        padding: 30px;
+
+    }
+
+
+    .book-edit-page .edit-panel-header,
     .book-edit-page .classification-header {
-        padding: 17px;
+
+        padding-left: 30px;
+
+        padding-right: 30px;
     }
 
+
+    .book-edit-page .edit-panel-body,
     .book-edit-page .classification-body {
-        padding: 17px;
+
+        padding-left: 30px;
+
+        padding-right: 30px;
     }
 
-    .book-edit-page .classification-icon {
-        width: 34px;
-        height: 34px;
-    }
 
     .book-edit-page .form-actions {
-        flex-direction: column-reverse;
-        align-items: stretch;
+
+        padding-left: 30px;
+
+        padding-right: 30px;
     }
 
-    .book-edit-page .form-actions .btn {
-        width: 100%;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 760px) {
+
+    .book-edit-page {
+
+        padding: 20px 15px 40px;
     }
 
-}
 
-/* =========================================================
-   COLLECTION SUMMARY
-   Detail koleksi pada halaman Edit Buku
-========================================================= */
+    .book-edit-page .book-edit-form {
 
-.collection-summary {
-    position: relative;
-
-    width: 100%;
-    min-height: 155px;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    margin-bottom: 20px;
-    padding: 28px 32px;
-
-    overflow: hidden;
-
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 14px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #171c21 0%,
-            #11161a 60%,
-            #151a1e 100%
-        );
-
-    box-shadow:
-        0 10px 30px rgba(0, 0, 0, 0.18);
-}
-
-
-/* Garis merah dekoratif */
-
-.collection-summary::before {
-    content: "";
-
-    position: absolute;
-
-    left: 0;
-    top: 0;
-    bottom: 0;
-
-    width: 4px;
-
-    background: #e31e24;
-}
-
-
-/* Efek cahaya */
-
-.collection-summary::after {
-    content: "";
-
-    position: absolute;
-
-    width: 260px;
-    height: 260px;
-
-    right: -100px;
-    top: -130px;
-
-    border-radius: 50%;
-
-    background:
-        radial-gradient(
-            circle,
-            rgba(227, 30, 36, 0.14),
-            transparent 68%
-        );
-
-    pointer-events: none;
-}
-
-
-/* =========================================================
-   CONTENT
-========================================================= */
-
-.collection-summary-content {
-    position: relative;
-
-    z-index: 2;
-
-    min-width: 0;
-}
-
-
-.collection-eyebrow {
-    margin-bottom: 8px;
-
-    color: #e31e24;
-
-    font-size: 10px;
-    font-weight: 800;
-
-    letter-spacing: 1.8px;
-
-    text-transform: uppercase;
-}
-
-
-.collection-summary h1 {
-    margin: 0;
-
-    max-width: 850px;
-
-    color: #ffffff;
-
-    font-size: 27px;
-    font-weight: 750;
-
-    line-height: 1.25;
-
-    letter-spacing: -0.4px;
-
-    word-break: break-word;
-}
-
-
-.collection-summary p {
-    max-width: 780px;
-
-    margin-top: 9px;
-    margin-bottom: 0;
-
-    color: #89939a;
-
-    font-size: 12px;
-
-    line-height: 1.6;
-}
-
-
-/* =========================================================
-   ICON
-========================================================= */
-
-.collection-icon {
-    position: relative;
-
-    z-index: 2;
-
-    flex-shrink: 0;
-
-    width: 70px;
-    height: 70px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    margin-right: 20px;
-
-    border: 1px solid rgba(227, 30, 36, 0.20);
-
-    border-radius: 14px;
-
-    background:
-        rgba(227, 30, 36, 0.08);
-
-    font-size: 32px;
-
-    filter:
-        drop-shadow(
-            0 8px 20px rgba(227, 30, 36, 0.18)
-        );
-
-    transition:
-        transform 0.25s ease,
-        background 0.25s ease;
-}
-
-
-.collection-summary:hover .collection-icon {
-    transform: translateY(-3px);
-
-    background:
-        rgba(227, 30, 36, 0.13);
-}
-
-
-/* =========================================================
-   RESPONSIVE
-========================================================= */
-
-@media (max-width: 700px) {
-
-    .collection-summary {
-        min-height: 140px;
-
-        padding: 23px 24px;
+        border-radius: 14px;
     }
 
-    .collection-summary h1 {
+
+    .book-edit-page .collection-summary {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        padding: 26px 22px;
+
+        min-height: auto;
+    }
+
+
+    .book-edit-page .collection-summary h1 {
+
+        font-size: 24px;
+    }
+
+
+    .book-edit-page .collection-summary p {
+
+        font-size: 12px;
+    }
+
+
+    .book-edit-page .collection-icon {
+
+        width: 50px;
+
+        height: 50px;
+
         font-size: 23px;
     }
 
-    .collection-summary p {
-        font-size: 11px;
+
+    .book-edit-page .edit-panel-header,
+    .book-edit-page .classification-header {
+
+        padding: 25px 22px 20px;
     }
 
-    .collection-icon {
-        width: 58px;
-        height: 58px;
 
-        margin-right: 5px;
+    .book-edit-page .edit-panel-body,
+    .book-edit-page .classification-body {
 
-        font-size: 27px;
+        grid-template-columns: 1fr;
+
+        gap: 20px;
+
+        padding: 0 22px 28px;
     }
+
+
+    .book-edit-page .form-actions {
+
+        align-items: stretch;
+
+        flex-direction: column-reverse;
+
+        padding: 20px 22px 24px;
+    }
+
+
+    .book-edit-page .form-actions .btn {
+
+        width: 100%;
+    }
+
+
+    .book-edit-page .form-alert {
+
+        margin-left: 22px;
+
+        margin-right: 22px;
+    }
+
 }
 
 
-@media (max-width: 520px) {
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
 
-    .collection-summary {
-        padding: 21px;
+@media (max-width: 480px) {
+
+    .book-edit-page {
+
+        padding: 15px 10px 30px;
     }
 
-    .collection-icon {
-        display: none;
+
+    .book-edit-page .back-button {
+
+        margin-bottom: 16px;
+
+        font-size: 12px;
     }
 
-    .collection-summary h1 {
+
+    .book-edit-page .collection-summary {
+
+        padding: 22px 18px;
+    }
+
+
+    .book-edit-page .collection-summary h1 {
+
         font-size: 21px;
     }
+
+
+    .book-edit-page .edit-panel-header,
+    .book-edit-page .classification-header {
+
+        padding-left: 18px;
+
+        padding-right: 18px;
+    }
+
+
+    .book-edit-page .edit-panel-body,
+    .book-edit-page .classification-body {
+
+        padding-left: 18px;
+
+        padding-right: 18px;
+    }
+
+
+    .book-edit-page .form-actions {
+
+        padding-left: 18px;
+
+        padding-right: 18px;
+    }
+
+
+    .book-edit-page .classification-header {
+
+        align-items: flex-start;
+    }
+
 }

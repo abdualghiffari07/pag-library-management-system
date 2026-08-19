@@ -13,7 +13,8 @@
 @vite([
     'resources/css/dashboard-admin.css',
     'resources/css/books.css',
-    'resources/js/books.js'
+    'resources/js/books.js',
+    'resources/js/dashboard-admin.js'
 ])
 
 </head>
@@ -336,44 +337,29 @@
 
                                                 {{-- DETAIL --}}
 
-                                                <a href="{{ route('books.show', $book->book_id) }}"
-                                                   class="btn-action">
+<a href="{{ route('books.show', $book->book_id) }}"
+   class="view-all">
+    Detail
+</a>
 
-                                                    Detail
+<a href="{{ route('books.edit', $book->book_id) }}"
+   class="view-all">
+    Edit
+</a>
 
-                                                </a>
+<form action="{{ route('books.destroy', $book->book_id) }}"
+      method="POST">
 
+    @csrf
+    @method('DELETE')
 
-                                                {{-- EDIT --}}
+    <button type="submit"
+            class="view-all"
+            onclick="return confirm('Yakin ingin menghapus buku ini?')">
+        Hapus
+    </button>
 
-                                                <a href="{{ route('books.edit', $book->book_id) }}"
-                                                   class="btn-action">
-
-                                                    Edit
-
-                                                </a>
-
-
-                                                {{-- DELETE --}}
-
-                                                <form
-                                                    action="{{ route('books.destroy', $book->book_id) }}"
-                                                    method="POST">
-
-                                                    @csrf
-
-                                                    @method('DELETE')
-
-                                                    <button
-                                                        type="submit"
-                                                        class="btn-action btn-action--delete"
-                                                        onclick="return confirm('Yakin ingin menghapus buku ini?')">
-
-                                                        Hapus
-
-                                                    </button>
-
-                                                </form>
+</form>
 
                                             </div>
 
