@@ -33,56 +33,10 @@
     {{-- =================================================
          MAIN
     ================================================== --}}
-    <main class="main book-detail-main">
+    <main class="main dashboard-page author-details-page-main">
 
 
-        {{-- =================================================
-             HEADER
-        ================================================== --}}
-        <header class="header">
-
-            <div class="header-left">
-
-                <button
-                    type="button"
-                    id="sidebar-toggle"
-                    class="sidebar-toggle"
-                    aria-label="Buka menu"
-                >
-                    ☰
-                </button>
-
-                <div>
-
-                    <h1 class="header-title">
-                        Penulis
-                    </h1>
-
-                    <div class="header-line"></div>
-
-                </div>
-
-            </div>
-
-
-            <div class="header-right">
-
-                <div class="admin-profile">
-
-                    <div class="admin-avatar">
-                        A
-                    </div>
-
-                    <div class="admin-info">
-                        <strong>Administrator</strong>
-                        <span>Administrator</span>
-                    </div>
-
-                </div>
-
-            </div>
-
-        </header>
+@include('layouts.header', ['pageTitle' => 'Penulis'])
 
 
         {{-- =================================================

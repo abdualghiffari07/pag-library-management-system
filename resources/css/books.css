@@ -5,67 +5,6 @@
 ========================================================= */
 
 
-/* =========================================================
-   MAIN BACKGROUND
-   ---------------------------------------------------------
-   GAMBAR DIPASANG MELALUI JAVASCRIPT.
-   CSS HANYA MENGATUR POSISI DAN TAMPILANNYA.
-========================================================= */
-
-.main.dashboard-page {
-
-    position: relative;
-
-    min-height: 100vh;
-
-    overflow: hidden;
-
-    background-color: #0874c1;
-
-    background-size: cover;
-
-    /*
-       Posisi gambar:
-       55% = sedikit digeser ke kanan
-       45% = sedikit dinaikkan
-    */
-    background-position: 55% 35%;
-
-    background-repeat: no-repeat;
-
-    background-attachment: fixed;
-
-    isolation: isolate;
-}
-
-
-/* =========================================================
-   BLUE OVERLAY
-   ---------------------------------------------------------
-   HANYA GRADIENT.
-   BUKAN GAMBAR.
-========================================================= */
-
-.main.dashboard-page::before {
-
-    content: "";
-
-    position: absolute;
-
-    inset: 0;
-
-    z-index: 0;
-
-    pointer-events: none;
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(0, 91, 158, 0.58),
-            rgba(15, 135, 214, 0.30)
-        );
-}
-
 
 /* =========================================================
    HEADER

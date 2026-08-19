@@ -2,114 +2,90 @@
 <html lang="id">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="csrf-token"
+        content="{{ csrf_token() }}"
+    >
 
     <title>Penulis - PAG Library</title>
 
     @vite([
         'resources/css/dashboard-admin.css',
+        'resources/js/dashboard-admin.js',
+        'resources/css/header.css',
         'resources/css/authors.css',
         'resources/js/authors.js'
     ])
+
 </head>
+
 
 <body>
 
 <div class="app">
 
+
     {{-- =====================================================
          SIDEBAR
     ====================================================== --}}
+
     @include('layouts.sidebar')
 
 
     {{-- =====================================================
          MOBILE OVERLAY
     ====================================================== --}}
-    <div id="sidebar-overlay"
-         class="sidebar-overlay">
-    </div>
+
+    <div
+        id="sidebar-overlay"
+        class="sidebar-overlay"
+    ></div>
 
 
     {{-- =====================================================
          MAIN
     ====================================================== --}}
-    <main class="main">
 
-        {{-- =================================================
-             HEADER
-        ================================================== --}}
-        <header class="header">
+<main class="main dashboard-page">
 
-            <div class="header-left">
+    @include('layouts.header', ['pageTitle' => 'Penulis'])
 
-                <button type="button"
-                        id="sidebar-toggle"
-                        class="sidebar-toggle"
-                        aria-label="Buka menu">
-                    ☰
-                </button>
-
-                <div>
-                    <h1 class="header-title">
-                        Penulis
-                    </h1>
-
-                    <div class="header-line"></div>
-                </div>
-
-            </div>
-
-
-<div class="admin-profile">
-
-    <div class="avatar">
-
-        {{ strtoupper(
-            substr(auth()->user()->name, 0, 1)
-        ) }}
-
-    </div>
-
-
-    <div class="admin-info">
-
-        <div class="admin-name">
-            {{ auth()->user()->name }}
-        </div>
-
-        <div class="admin-role">
-            Administrator
-        </div>
-
-    </div>
-
-</div>
-
-        </header>
 
 
         {{-- =================================================
              CONTENT
         ================================================== --}}
+
         <section class="content authors-page">
 
 
             {{-- =================================================
                  HERO
+                 SAMA DENGAN DATA BUKU
             ================================================== --}}
-            <section class="authors-hero">
 
-                <div class="authors-hero-content">
+            <section class="welcome-card">
 
-                    <span class="authors-eyebrow">
+
+                <div class="welcome-content">
+
+                    <span class="welcome-small">
                         KOLEKSI PERPUSTAKAAN
                     </span>
 
-                    <h2>
+
+                    <h1>
                         Penulis
-                    </h2>
+                    </h1>
+
 
                     <p>
                         Kelola seluruh data penulis yang terkait
@@ -119,78 +95,125 @@
                 </div>
 
 
-                <div class="authors-hero-decoration">
+                <div class="welcome-decoration">
 
-                    <span class="decoration-letter">
-                        ✒
-                    </span>
+                    <a
+                        href="{{ route('authors.create') }}"
+                        class="view-all"
+                    >
+
+                        <span>
+                            +
+                        </span>
+
+                        Tambah Penulis
+
+                    </a>
 
                 </div>
 
 
-                <a href="{{ route('authors.create') }}"
-                   class="authors-add-button">
-
-                    <span>+</span>
-
-                    Tambah Penulis
-
-                </a>
-
             </section>
 
+            
+            {{-- =================================================
+                 DATA PENULIS
+                 SAMA DENGAN PANEL DATA BUKU
+            ================================================== --}}
 
-
+            <section class="authors-table-panel">
 
 
                 {{-- =================================================
-                     TABLE
+                     PANEL HEADER
                 ================================================== --}}
-                <div class="authors-table-wrapper">
 
-                {{-- SEARCH --}}
-<form
-    action="{{ route('authors.index') }}"
-    method="GET"
-    class="authors-search"
->
+                <div class="panel-header">
 
-    <span class="search-icon">
-        ⌕
-    </span>
 
-    <input
-        type="search"
-        name="search"
-        id="author-search"
-        placeholder="Cari penulis..."
-        value="{{ request('search') }}"
-        autocomplete="off"
-    >
+                    <div>
 
-    @if(request('search'))
-        <a href="{{ route('authors.index') }}"
-           class="search-clear"
-           title="Hapus pencarian">
-            ×
-        </a>
-    @endif
+                        <h2>
+                            Data Penulis
+                        </h2>
 
-</form>
+
+                        <span>
+                            Daftar penulis yang terdaftar
+                            dalam perpustakaan.
+                        </span>
+
+                    </div>
+
+
+                    {{-- =================================================
+                         SEARCH
+                    ================================================== --}}
+
+                    <form
+                        action="{{ route('authors.index') }}"
+                        method="GET"
+                        class="author-search"
+                    >
+
+                        <span class="search-icon">
+                            ⌕
+                        </span>
+
+
+                        <input
+                            type="search"
+                            name="search"
+                            id="author-search"
+                            placeholder="Cari penulis..."
+                            value="{{ request('search') }}"
+                            autocomplete="off"
+                        >
+
+
+                        @if(request('search'))
+
+                            <a
+                                href="{{ route('authors.index') }}"
+                                class="search-clear"
+                                title="Hapus pencarian"
+                            >
+                                ×
+                            </a>
+
+                        @endif
+
+                    </form>
+
+
+                </div>
+
+
+                {{-- =================================================
+                     TABLE WRAPPER
+                ================================================== --}}
+
+                <div class="table-wrapper">
+
 
                     <table class="authors-table">
 
+
+                        {{-- =================================================
+                             TABLE HEADER
+                        ================================================== --}}
+
                         <thead>
 
-                        <tr>
+                            <tr>
 
-                            <th>
-                                NO
-                            </th>
+                                <th>
+                                    NO
+                                </th>
 
-                            <th>
-                                ID
-                            </th>
+                                <th>
+                                    ID
+                                </th>
 
                                 <th>
                                     PENULIS
@@ -213,51 +236,87 @@
                         </thead>
 
 
+                        {{-- =================================================
+                             TABLE BODY
+                        ================================================== --}}
+
                         <tbody id="authors-table-body">
+
 
                             @forelse ($authors as $author)
 
-                        <tr class="author-row">
 
-                            {{-- NO --}}
-                            <td>
-                                <span class="author-number">
-                                    {{ $authors->firstItem() + $loop->index }}
-                                </span>
-                            </td>
-
-                            {{-- ID --}}
-                            <td>
-                                <span class="author-id">
-                                    #{{ $author->author_id }}
-                                </span>
-                            </td>
+                                <tr class="author-row">
 
 
-                                    {{-- AUTHOR --}}
+                                    {{-- =====================================
+                                         NO
+                                    ====================================== --}}
+
+                                    <td>
+
+                                        <span class="author-number">
+
+                                            {{ $authors->firstItem() + $loop->index }}
+
+                                        </span>
+
+                                    </td>
+
+
+                                    {{-- =====================================
+                                         ID
+                                    ====================================== --}}
+
+                                    <td>
+
+                                        <span class="author-id">
+
+                                            #{{ $author->author_id }}
+
+                                        </span>
+
+                                    </td>
+
+
+                                    {{-- =====================================
+                                         AUTHOR
+                                    ====================================== --}}
+
                                     <td>
 
                                         <div class="author-name-wrapper">
 
+
                                             <div class="author-avatar">
-                                                {{ strtoupper(substr($author->author_name, 0, 1)) }}
+
+                                                {{ strtoupper(
+                                                    substr($author->author_name, 0, 1)
+                                                ) }}
+
                                             </div>
+
 
                                             <div class="author-name-content">
 
-                                            <strong class="author-name">
-                                                {{ $author->author_name }}
-                                            </strong>
+                                                <strong class="author-name">
 
+                                                    {{ $author->author_name }}
+
+                                                </strong>
 
                                             </div>
+
 
                                         </div>
 
                                     </td>
 
 
-                                    {{-- BOOK COUNT --}}
+                                    {{-- =====================================
+                                         BOOK COUNT
+                                    ====================================== --}}
+
                                     <td>
 
                                         <span class="book-count">
@@ -271,7 +330,10 @@
                                     </td>
 
 
-                                    {{-- CREATED --}}
+                                    {{-- =====================================
+                                         CREATED
+                                    ====================================== --}}
+
                                     <td>
 
                                         <span class="author-date">
@@ -285,74 +347,89 @@
                                     </td>
 
 
-                                {{-- ACTION --}}
-                                <td>
+                                    {{-- =====================================
+                                         ACTION
+                                    ====================================== --}}
 
-                                    <div class="author-actions">
+                                    <td>
 
-                                        <a href="{{ route('authors.show', $author->author_id) }}"
-                                        class="author-action manage">
-
-                                            Kelola
-
-                                        </a>
+                                        <div class="author-actions">
 
 
-                                        <form
-                                            action="{{ route('authors.destroy', $author->author_id) }}"
-                                            method="POST"
-                                            class="delete-author-form">
+                                            <a
+                                                href="{{ route('authors.show', $author->author_id) }}"
+                                                class="author-action manage"
+                                            >
+                                                Kelola
+                                            </a>
 
-                                            @csrf
-                                            @method('DELETE')
 
-                                            <button
-                                                type="submit"
-                                                class="author-action delete">
+                                            <form
+                                                action="{{ route('authors.destroy', $author->author_id) }}"
+                                                method="POST"
+                                                class="delete-author-form"
+                                            >
 
-                                                Hapus
+                                                @csrf
 
-                                            </button>
+                                                @method('DELETE')
 
-                                        </form>
 
-                                    </div>
+                                                <button
+                                                    type="submit"
+                                                    class="author-action delete"
+                                                >
+                                                    Hapus
+                                                </button>
 
-                                </td>
+                                            </form>
+
 
                                         </div>
 
                                     </td>
 
+
                                 </tr>
+
 
                             @empty
 
+
+                                {{-- =====================================
+                                     EMPTY STATE
+                                ====================================== --}}
+
                                 <tr>
 
-                                    <td colspan="5">
+                                    <td colspan="6">
 
                                         <div class="authors-empty">
+
 
                                             <div class="empty-icon">
                                                 ✒
                                             </div>
 
+
                                             <h3>
                                                 Belum ada penulis
                                             </h3>
+
 
                                             <p>
                                                 Belum terdapat data penulis
                                                 di perpustakaan.
                                             </p>
 
-                                            <a href="{{ route('authors.create') }}"
-                                               class="authors-empty-button">
 
+                                            <a
+                                                href="{{ route('authors.create') }}"
+                                                class="authors-empty-button"
+                                            >
                                                 Tambah Penulis
-
                                             </a>
+
 
                                         </div>
 
@@ -360,11 +437,15 @@
 
                                 </tr>
 
+
                             @endforelse
+
 
                         </tbody>
 
+
                     </table>
+
 
                 </div>
 
@@ -372,9 +453,16 @@
                 {{-- =================================================
                      PAGINATION
                 ================================================== --}}
+
                 @if ($authors instanceof \Illuminate\Pagination\LengthAwarePaginator)
 
+
                     <div class="authors-pagination">
+
+
+                        {{-- =============================================
+                             PAGINATION INFO
+                        ============================================== --}}
 
                         <div class="pagination-info">
 
@@ -401,65 +489,94 @@
                         </div>
 
 
-        <div class="pagination-links">
+                        {{-- =============================================
+                             PAGINATION LINKS
+                        ============================================== --}}
 
-            {{-- PREVIOUS --}}
-            @if ($authors->onFirstPage())
-                <span class="pagination-button disabled">
-                    « Previous
-                </span>
-            @else
-                <a href="{{ $authors->previousPageUrl() }}"
-                class="pagination-button">
-                    « Previous
-                </a>
-            @endif
+                        <div class="pagination-links">
 
 
-            {{-- PAGE NUMBERS --}}
-            <div class="pagination-numbers">
+                            {{-- PREVIOUS --}}
 
-                @for ($page = 1; $page <= $authors->lastPage(); $page++)
+                            @if ($authors->onFirstPage())
 
-                    @if ($page == $authors->currentPage())
+                                <span class="pagination-button disabled">
+                                    « Previous
+                                </span>
 
-                        <span class="pagination-number active">
-                            {{ $page }}
-                        </span>
+                            @else
 
-                    @else
+                                <a
+                                    href="{{ $authors->previousPageUrl() }}"
+                                    class="pagination-button"
+                                >
+                                    « Previous
+                                </a>
 
-                        <a href="{{ $authors->url($page) }}"
-                        class="pagination-number">
-                            {{ $page }}
-                        </a>
-
-                    @endif
-
-                @endfor
-
-            </div>
+                            @endif
 
 
-            {{-- NEXT --}}
-            @if ($authors->hasMorePages())
+                            {{-- PAGE NUMBERS --}}
 
-                <a href="{{ $authors->nextPageUrl() }}"
-                class="pagination-button">
-                    Next »
-                </a>
+                            <div class="pagination-numbers">
 
-            @else
 
-                <span class="pagination-button disabled">
-                    Next »
-                </span>
+                                @for (
+                                    $page = 1;
+                                    $page <= $authors->lastPage();
+                                    $page++
+                                )
 
-            @endif
 
-        </div>
+                                    @if ($page == $authors->currentPage())
+
+                                        <span class="pagination-number active">
+                                            {{ $page }}
+                                        </span>
+
+                                    @else
+
+                                        <a
+                                            href="{{ $authors->url($page) }}"
+                                            class="pagination-number"
+                                        >
+                                            {{ $page }}
+                                        </a>
+
+                                    @endif
+
+
+                                @endfor
+
+
+                            </div>
+
+
+                            {{-- NEXT --}}
+
+                            @if ($authors->hasMorePages())
+
+                                <a
+                                    href="{{ $authors->nextPageUrl() }}"
+                                    class="pagination-button"
+                                >
+                                    Next »
+                                </a>
+
+                            @else
+
+                                <span class="pagination-button disabled">
+                                    Next »
+                                </span>
+
+                            @endif
+
+
+                        </div>
+
 
                     </div>
+
 
                 @endif
 
@@ -469,9 +586,12 @@
 
         </section>
 
+
     </main>
 
+
 </div>
+
 
 </body>
 

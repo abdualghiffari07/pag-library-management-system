@@ -10,12 +10,13 @@
 
     <title>Data Buku - PAG Library</title>
 
-@vite([
-    'resources/css/dashboard-admin.css',
-    'resources/css/books.css',
-    'resources/js/books.js',
-    'resources/js/dashboard-admin.js'
-])
+    @vite([
+        'resources/css/dashboard-admin.css',
+        'resources/css/header.css',
+        'resources/css/books.css',
+        'resources/js/books.js',
+        'resources/js/dashboard-admin.js'
+    ])
 
 </head>
 
@@ -39,128 +40,56 @@
     </div>
 
 
-    {{-- =====================================================
-         MAIN
-    ====================================================== --}}
+<main class="main dashboard-page books-main">
 
-    <main class="main dashboard-page books-main">
-
-        {{-- =================================================
-             HEADER
-        ================================================== --}}
-
-        <header class="header books-header">
-
-            <div class="header-left">
-
-                {{-- MOBILE SIDEBAR BUTTON --}}
-
-                <button type="button"
-                        id="sidebar-toggle"
-                        class="sidebar-toggle"
-                        aria-label="Buka menu">
-
-                    ☰
-
-                </button>
+    @include('layouts.header', ['pageTitle' => 'Data Buku'])
 
 
-                <div>
+    {{-- =================================================
+         CONTENT
+    ================================================== --}}
 
-                    <h1 class="header-title">
+    <section class="content books-page">
+
+        <div class="books-content">
+
+            {{-- =================================================
+                 HERO CARD
+            ================================================== --}}
+
+            <section class="welcome-card">
+
+                <div class="welcome-content">
+
+                    <span class="welcome-small">
+                        KOLEKSI PERPUSTAKAAN
+                    </span>
+
+                    <h1>
                         Data Buku
                     </h1>
 
-                    <div class="header-line"></div>
+                    <p>
+                        Kelola seluruh data buku yang tersedia
+                        di perpustakaan PAG.
+                    </p>
 
                 </div>
 
-            </div>
+                <div class="welcome-decoration">
 
+                    <a href="{{ route('books.create') }}"
+                       class="view-all">
 
-            {{-- =================================================
-                 ADMIN PROFILE
-            ================================================== --}}
+                        <span>+</span>
 
-            <div class="header-right">
+                        Tambah Buku
 
-                <div class="admin-profile">
-
-                    <div class="avatar">
-                        {{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 1)) }}
-                    </div>
-
-                    <div class="admin-info">
-
-                        <div class="admin-name">
-                            {{ auth()->user()->name ?? 'Administrator' }}
-                            <span class="admin-caret">⌄</span>
-                        </div>
-
-                        <div class="admin-role">
-                            Administrator
-                        </div>
-
-                    </div>
+                    </a>
 
                 </div>
 
-            </div>
-
-        </header>
-
-
-        {{-- =================================================
-             CONTENT
-        ================================================== --}}
-
-        <section class="content books-page">
-
-            <div class="books-content">
-
-
-                {{-- =================================================
-                     HERO CARD
-                ================================================== --}}
-
-                <section class="welcome-card">
-
-                    <div class="welcome-content">
-
-                        <span class="welcome-small">
-                            KOLEKSI PERPUSTAKAAN
-                        </span>
-
-                        <h1>
-                            Data Buku
-                        </h1>
-
-                        <p>
-                            Kelola seluruh data buku yang tersedia
-                            di perpustakaan PAG.
-                        </p>
-
-                    </div>
-
-
-                    {{-- =================================================
-                         TAMBAH BUKU
-                    ================================================== --}}
-
-                    <div class="welcome-decoration">
-
-                        <a href="{{ route('books.create') }}"
-                           class="view-all">
-
-                            <span>+</span>
-
-                            Tambah Buku
-
-                        </a>
-
-                    </div>
-
-                </section>
+            </section>
 
 
                 {{-- =================================================
@@ -168,11 +97,6 @@
                 ================================================== --}}
 
                 <section class="panel books-table-panel">
-
-
-                    {{-- =================================================
-                         PANEL HEADER
-                    ================================================== --}}
 
                     <div class="panel-header">
 
@@ -189,9 +113,7 @@
                         </div>
 
 
-                        {{-- =================================================
-                             SEARCH
-                        ================================================== --}}
+                        {{-- SEARCH --}}
 
                         <form method="GET"
                               action="{{ route('books.index') }}"
@@ -226,33 +148,19 @@
 
                                 <tr>
 
-                                    <th>
-                                        ID
-                                    </th>
+                                    <th>ID</th>
 
-                                    <th>
-                                        BUKU
-                                    </th>
+                                    <th>BUKU</th>
 
-                                    <th>
-                                        ASAL
-                                    </th>
+                                    <th>ASAL</th>
 
-                                    <th>
-                                        TAHUN
-                                    </th>
+                                    <th>TAHUN</th>
 
-                                    <th>
-                                        STATUS
-                                    </th>
+                                    <th>STATUS</th>
 
-                                    <th>
-                                        LOKASI
-                                    </th>
+                                    <th>LOKASI</th>
 
-                                    <th>
-                                        AKSI
-                                    </th>
+                                    <th>AKSI</th>
 
                                 </tr>
 
@@ -265,18 +173,10 @@
 
                                     <tr>
 
-                                        {{-- =================================================
-                                             ID
-                                        ================================================== --}}
-
                                         <td class="book-id">
                                             #{{ $book->book_id }}
                                         </td>
 
-
-                                        {{-- =================================================
-                                             TITLE
-                                        ================================================== --}}
 
                                         <td class="book-title-cell">
 
@@ -287,27 +187,15 @@
                                         </td>
 
 
-                                        {{-- =================================================
-                                             ORIGIN
-                                        ================================================== --}}
-
                                         <td>
                                             {{ $book->origin ?? '-' }}
                                         </td>
 
 
-                                        {{-- =================================================
-                                             YEAR
-                                        ================================================== --}}
-
                                         <td>
                                             {{ $book->publication_year ?? '-' }}
                                         </td>
 
-
-                                        {{-- =================================================
-                                             STATUS
-                                        ================================================== --}}
 
                                         <td>
 
@@ -318,48 +206,46 @@
                                         </td>
 
 
-                                        {{-- =================================================
-                                             LOCATION
-                                        ================================================== --}}
-
                                         <td class="book-location">
                                             {{ $book->location->location_name ?? '-' }}
                                         </td>
 
 
-                                        {{-- =================================================
-                                             ACTION
-                                        ================================================== --}}
-
                                         <td class="action-cell">
 
                                             <div class="book-actions">
 
-                                                {{-- DETAIL --}}
+                                                <a
+                                                    href="{{ route('books.show', $book->book_id) }}"
+                                                    class="view-all">
+                                                    Detail
+                                                </a>
 
-<a href="{{ route('books.show', $book->book_id) }}"
-   class="view-all">
-    Detail
-</a>
 
-<a href="{{ route('books.edit', $book->book_id) }}"
-   class="view-all">
-    Edit
-</a>
+                                                <a
+                                                    href="{{ route('books.edit', $book->book_id) }}"
+                                                    class="view-all">
+                                                    Edit
+                                                </a>
 
-<form action="{{ route('books.destroy', $book->book_id) }}"
-      method="POST">
 
-    @csrf
-    @method('DELETE')
+                                                <form
+                                                    action="{{ route('books.destroy', $book->book_id) }}"
+                                                    method="POST">
 
-    <button type="submit"
-            class="view-all"
-            onclick="return confirm('Yakin ingin menghapus buku ini?')">
-        Hapus
-    </button>
+                                                    @csrf
+                                                    @method('DELETE')
 
-</form>
+                                                    <button
+                                                        type="submit"
+                                                        class="view-all"
+                                                        onclick="return confirm('Yakin ingin menghapus buku ini?')">
+
+                                                        Hapus
+
+                                                    </button>
+
+                                                </form>
 
                                             </div>
 
@@ -372,7 +258,8 @@
 
                                     <tr>
 
-                                        <td colspan="7"
+                                        <td
+                                            colspan="7"
                                             class="empty-table">
 
                                             Belum ada data buku.

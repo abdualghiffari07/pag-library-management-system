@@ -1,7 +1,12 @@
 /* =========================================================
    PAG LIBRARY
    ADMIN DASHBOARD
-   Pertamina Inspired
+   PERTAMINA / PAG BLUE THEME
+   CONSISTENT DASHBOARD SYSTEM
+
+   CATATAN:
+   Header sudah dipisahkan ke CSS khusus header.
+   Jangan tambahkan styling .header di file ini.
 ========================================================= */
 
 
@@ -11,13 +16,50 @@
 
 :root {
 
-    /* ---------- DARK THEME ---------- */
+    /* ---------- BRAND ---------- */
 
-    --black: #080b0e;
-    --black-soft: #0d1115;
+    --red: #e31e24;
+    --red-dark: #b51218;
+    --red-soft: rgba(227, 30, 36, 0.14);
 
-    --panel: #11161b;
-    --panel-soft: #151b21;
+
+    /* ---------- BLUE ---------- */
+
+    --blue: #0874c9;
+    --blue-dark: #075fa8;
+    --blue-deep: #044376;
+    --blue-light: #1684d5;
+    --blue-soft: rgba(8, 116, 201, 0.10);
+
+
+    /* ---------- BACKGROUND ---------- */
+
+    --page-overlay-start: rgba(4, 91, 160, 0.92);
+    --page-overlay-end: rgba(15, 132, 216, 0.84);
+
+
+    /* ---------- WHITE SURFACES ---------- */
+
+    --surface: rgba(255, 255, 255, 0.94);
+    --surface-soft: rgba(255, 255, 255, 0.88);
+    --surface-strong: rgba(255, 255, 255, 0.97);
+    --surface-hover: rgba(255, 255, 255, 0.99);
+
+
+    /* ---------- TEXT ---------- */
+
+    --text-dark: #102f49;
+    --text-dark-soft: #38546d;
+    --text-muted-blue: #688199;
+
+    --white: #ffffff;
+
+
+    /* ---------- BORDER ---------- */
+
+    --border: rgba(8, 80, 140, 0.12);
+    --border-light: rgba(255, 255, 255, 0.60);
+    --border-blue: rgba(8, 104, 185, 0.18);
 
 
     /* ---------- SIDEBAR ---------- */
@@ -30,31 +72,77 @@
     --sidebar-muted: #6b7177;
 
 
-    /* ---------- GENERAL COLORS ---------- */
-
-    --white: #ffffff;
-    --text: #f5f5f5;
-    --muted: #8f989f;
-
-
-    /* ---------- BRAND / ACCENT ---------- */
-
-    --red: #e31e24;
-    --red-dark: #b51218;
-    --red-soft: rgba(227, 30, 36, 0.15);
-
-
     /* ---------- STATUS ---------- */
 
     --green: #16a765;
     --yellow: #f5b400;
-    --blue: #4ba3df;
+    --status-blue: #4ba3df;
 
 
     /* ---------- LAYOUT ---------- */
 
     --radius: 14px;
     --sidebar-width: 270px;
+}
+
+/* =========================================================
+   PAG LIBRARY
+   GLOBAL DASHBOARD BACKGROUND
+   ---------------------------------------------------------
+   Digunakan oleh seluruh halaman setelah login:
+   - Dashboard
+   - Books
+   - Authors
+   - Categories
+   - Locations
+   - Reports
+   - dan halaman dashboard lainnya
+========================================================= */
+
+.main.dashboard-page {
+
+    position: relative;
+
+    min-height: 100vh;
+
+    overflow: hidden;
+
+    background-color: #0874c1;
+
+    background-size: cover;
+
+    background-position: 55% 35%;
+
+    background-repeat: no-repeat;
+
+    background-attachment: fixed;
+
+    isolation: isolate;
+}
+
+
+/* =========================================================
+   GLOBAL BLUE OVERLAY
+========================================================= */
+
+.main.dashboard-page::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 0;
+
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(0, 91, 158, 0.58),
+            rgba(15, 135, 214, 0.30)
+        );
 }
 
 
@@ -64,6 +152,7 @@
 
 * {
     box-sizing: border-box;
+
     margin: 0;
     padding: 0;
 }
@@ -75,17 +164,10 @@ html {
 
 
 body {
+
     min-height: 100vh;
 
-    background:
-        radial-gradient(
-            circle at 85% 5%,
-            rgba(227, 30, 36, 0.06),
-            transparent 25%
-        ),
-        var(--black);
-
-    color: var(--text);
+    color: var(--text-dark);
 
     font-family:
         Inter,
@@ -97,10 +179,22 @@ body {
         sans-serif;
 
     font-size: 14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--page-overlay-start),
+            var(--page-overlay-end)
+        ),
+        url("/images/landing/pag-2.webp")
+        center / cover fixed no-repeat;
 }
 
 
 button,
+input,
+textarea,
+select,
 a {
     font: inherit;
 }
@@ -113,17 +207,22 @@ button {
 
 a {
     color: inherit;
+
     text-decoration: none;
 }
 
 
 /* =========================================================
-   APP LAYOUT
+   APP
 ========================================================= */
 
 .app {
+
     display: flex;
+
     min-height: 100vh;
+
+    width: 100%;
 }
 
 
@@ -132,6 +231,7 @@ a {
 ========================================================= */
 
 .sidebar {
+
     position: fixed;
 
     top: 0;
@@ -145,11 +245,13 @@ a {
 
     background: var(--sidebar);
 
-    border-right: 1px solid var(--sidebar-border);
+    border-right:
+        1px solid var(--sidebar-border);
 
     z-index: 1000;
 
-    transition: transform 0.3s ease;
+    transition:
+        transform 0.3s ease;
 }
 
 
@@ -158,6 +260,7 @@ a {
 ========================================================= */
 
 .brand {
+
     min-height: 88px;
 
     display: flex;
@@ -165,13 +268,16 @@ a {
 
     gap: 14px;
 
-    padding: 18px 24px;
+    padding:
+        18px 24px;
 
-    border-bottom: 1px solid var(--sidebar-border);
+    border-bottom:
+        1px solid var(--sidebar-border);
 }
 
 
 .brand-logo {
+
     width: 42px;
     height: 42px;
 
@@ -182,7 +288,9 @@ a {
     flex-shrink: 0;
 }
 
+
 .brand-logo img {
+
     width: 100%;
     height: 100%;
 
@@ -193,6 +301,7 @@ a {
 
 
 .brand-mark img {
+
     width: 32px;
     height: 32px;
 
@@ -203,9 +312,11 @@ a {
 
 
 .brand-title {
+
     color: #17191c;
 
     font-size: 18px;
+
     font-weight: 800;
 
     letter-spacing: -0.3px;
@@ -213,11 +324,13 @@ a {
 
 
 .brand-title span {
+
     color: var(--red);
 }
 
 
 .brand-subtitle {
+
     margin-top: 3px;
 
     color: var(--sidebar-muted);
@@ -231,15 +344,18 @@ a {
 ========================================================= */
 
 .menu {
+
     flex: 1;
 
-    padding: 25px 14px;
+    padding:
+        25px 14px;
 
     overflow-y: auto;
 }
 
 
 .menu-item {
+
     position: relative;
 
     width: 100%;
@@ -249,7 +365,8 @@ a {
 
     gap: 13px;
 
-    padding: 12px 14px;
+    padding:
+        12px 14px;
 
     margin-bottom: 4px;
 
@@ -267,6 +384,7 @@ a {
 
 
 .menu-item:hover {
+
     background: var(--sidebar-hover);
 
     color: #111315;
@@ -274,16 +392,19 @@ a {
 
 
 .menu-item.active {
+
     background: var(--red);
 
     color: var(--white);
 
     box-shadow:
-        0 8px 20px rgba(227, 30, 36, 0.18);
+        0 8px 20px
+        rgba(227, 30, 36, 0.18);
 }
 
 
 .menu-icon {
+
     width: 22px;
     height: 22px;
 
@@ -296,6 +417,7 @@ a {
 
 
 .menu-icon img {
+
     width: 20px;
     height: 20px;
 
@@ -306,6 +428,7 @@ a {
 
 
 .menu-disabled {
+
     cursor: default;
 
     color: var(--sidebar-muted);
@@ -313,6 +436,7 @@ a {
 
 
 .menu-disabled:hover {
+
     background: transparent;
 
     color: var(--sidebar-muted);
@@ -324,13 +448,17 @@ a {
 ========================================================= */
 
 .logout-wrapper {
-    padding: 18px 20px 22px;
 
-    border-top: 1px solid var(--sidebar-border);
+    padding:
+        18px 20px 22px;
+
+    border-top:
+        1px solid var(--sidebar-border);
 }
 
 
 .logout-button {
+
     width: 100%;
 
     display: flex;
@@ -338,13 +466,15 @@ a {
 
     gap: 13px;
 
-    padding: 13px 16px;
+    padding:
+        13px 16px;
 
     border-radius: 12px;
 
     background: #e7e9eb;
 
-    border: 1px solid #d4d7da;
+    border:
+        1px solid #d4d7da;
 
     color: #25282c;
 
@@ -358,15 +488,18 @@ a {
 
 
 .logout-button:hover {
+
     background: var(--red-soft);
 
-    border-color: rgba(227, 30, 36, 0.35);
+    border-color:
+        rgba(227, 30, 36, 0.35);
 
     color: var(--red);
 }
 
 
 .logout-icon {
+
     color: var(--red);
 
     font-size: 20px;
@@ -378,203 +511,73 @@ a {
 ========================================================= */
 
 .main {
+
     flex: 1;
 
     width: auto;
+
     min-width: 0;
+
     min-height: 100vh;
 
     margin-left: var(--sidebar-width);
 
-    background:
-        radial-gradient(
-            circle at 80% 0%,
-            rgba(227, 30, 36, 0.04),
-            transparent 30%
-        ),
-        var(--black-soft);
+    position: relative;
+
+    overflow-x: hidden;
+
+    background: transparent;
 }
 
 
 /* =========================================================
-   HEADER
+   DASHBOARD PAGE BACKGROUND
+   SEMUA HALAMAN YANG MEMAKAI .dashboard-page
 ========================================================= */
 
-.header {
-    position: sticky;
+.main.dashboard-page {
 
-    top: 0;
-
-    height: 68px;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    padding: 0 30px;
-
-    background: rgba(8, 11, 14, 0.92);
-
-    border-bottom: 1px solid var(--border);
-
-    z-index: 500;
-
-    backdrop-filter: blur(12px);
-}
-
-
-.header-left {
-    display: flex;
-    align-items: center;
-
-    gap: 18px;
-}
-
-
-.header-title {
-    color: var(--white);
-
-    font-size: 20px;
-    font-weight: 700;
-}
-
-
-.header-line {
-    width: 34px;
-    height: 2px;
-
-    margin-top: 5px;
-
-    background: var(--red);
-
-    border-radius: 10px;
-}
-
-
-.header-right {
-    display: flex;
-    align-items: center;
-
-    gap: 15px;
-}
-
-
-.header-button {
     position: relative;
 
-    width: 38px;
-    height: 38px;
+    min-height: 100vh;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background: transparent;
-
-    color: #bdc5ca;
-
-    font-size: 20px;
-
-    cursor: pointer;
-
-    border-radius: 50%;
-}
-
-
-.header-button:hover {
-    background: rgba(255, 255, 255, 0.06);
-
-    color: var(--white);
-}
-
-
-.notification-badge {
-    position: absolute;
-
-    top: 0;
-    right: 0;
-
-    width: 17px;
-    height: 17px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background: var(--red);
-
-    color: var(--white);
-
-    border-radius: 50%;
-
-    font-size: 9px;
-    font-weight: 700;
-}
-
-
-.admin-profile {
-    display: flex;
-    align-items: center;
-
-    gap: 10px;
-
-    margin-left: 4px;
-}
-
-
-.avatar {
-    width: 40px;
-    height: 40px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    overflow-x: hidden;
 
     background:
         linear-gradient(
             135deg,
-            var(--red),
-            #9d1015
+            rgba(4, 91, 160, 0.92),
+            rgba(15, 132, 216, 0.84)
+        ),
+        url("/images/landing/pag-2.webp")
+        center / cover fixed no-repeat;
+
+    isolation: isolate;
+}
+
+
+/* =========================================================
+   BLUE BACKGROUND OVERLAY
+========================================================= */
+
+.main.dashboard-page::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 0;
+
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(0, 91, 158, 0.20),
+            rgba(15, 135, 214, 0.08)
         );
-
-    border-radius: 50%;
-
-    color: var(--white);
-
-    font-weight: 700;
-}
-
-
-.admin-name {
-    color: var(--white);
-
-    font-size: 13px;
-    font-weight: 600;
-}
-
-
-.admin-role {
-    margin-top: 2px;
-
-    color: var(--muted);
-
-    font-size: 11px;
-}
-
-
-.sidebar-toggle {
-    display: none;
-
-    width: 38px;
-    height: 38px;
-
-    background: transparent;
-
-    color: var(--white);
-
-    font-size: 21px;
-
-    cursor: pointer;
 }
 
 
@@ -583,11 +586,20 @@ a {
 ========================================================= */
 
 .content {
+
+    position: relative;
+
+    z-index: 2;
+
+    width: 100%;
+
     max-width: 1700px;
 
-    margin: 0 auto;
+    margin:
+        0 auto;
 
-    padding: 30px;
+    padding:
+        30px;
 }
 
 
@@ -596,6 +608,7 @@ a {
 ========================================================= */
 
 .welcome-card {
+
     position: relative;
 
     min-height: 170px;
@@ -604,25 +617,38 @@ a {
     align-items: center;
     justify-content: space-between;
 
+    gap: 30px;
+
     overflow: hidden;
 
-    padding: 30px 60px;
+    padding:
+        30px 60px;
 
-    border-radius: 15px;
+    border-radius: 16px;
 
     background:
         linear-gradient(
-            105deg,
-            #131719 0%,
-            #0d1013 55%,
-            #151719 100%
+            110deg,
+            rgba(255, 255, 255, 0.94),
+            rgba(236, 246, 255, 0.88)
         );
 
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.75);
+
+    box-shadow:
+        0 15px 40px
+        rgba(0, 49, 94, 0.16);
+
+    backdrop-filter: blur(7px);
+
+    -webkit-backdrop-filter: blur(7px);
 }
 
 
 .welcome-card::after {
+
     content: "";
 
     position: absolute;
@@ -642,32 +668,46 @@ a {
             transparent 66%
         );
 
-    opacity: 0.9;
+    opacity: 0.95;
 
     transform: rotate(4deg);
+
+    pointer-events: none;
 }
 
 
 .welcome-content {
+
     position: relative;
 
     z-index: 2;
+
+    max-width: 800px;
 }
 
 
 .welcome-small {
-    color: #e5e5e5;
 
-    font-size: 15px;
+    display: block;
+
+    color: var(--blue);
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    letter-spacing: 0.02em;
 }
 
 
 .welcome-content h1 {
+
     margin-top: 6px;
 
-    color: var(--white);
+    color: var(--text-dark);
 
     font-size: 34px;
+
     font-weight: 800;
 
     line-height: 1.15;
@@ -675,31 +715,39 @@ a {
 
 
 .welcome-content p {
+
     margin-top: 12px;
 
-    color: #aab2b7;
+    color: var(--text-dark-soft);
 
     font-size: 14px;
+
+    line-height: 1.6;
 }
 
 
 .welcome-decoration {
+
     position: relative;
 
     z-index: 2;
+
+    flex-shrink: 0;
 
     margin-right: 100px;
 }
 
 
 .book-decoration {
+
     font-size: 75px;
 
     opacity: 0.85;
 
     filter:
         drop-shadow(
-            0 10px 25px rgba(227, 30, 36, 0.2)
+            0 10px 25px
+            rgba(227, 30, 36, 0.20)
         );
 }
 
@@ -709,6 +757,7 @@ a {
 ========================================================= */
 
 .stats-grid {
+
     display: grid;
 
     grid-template-columns:
@@ -721,6 +770,7 @@ a {
 
 
 .stat-card {
+
     min-height: 155px;
 
     padding: 19px;
@@ -730,11 +780,17 @@ a {
     background:
         linear-gradient(
             145deg,
-            #141a1f,
-            #0f1418
+            rgba(255, 255, 255, 0.96),
+            rgba(239, 247, 255, 0.90)
         );
 
-    border: 1px solid var(--border);
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.70);
+
+    box-shadow:
+        0 10px 30px
+        rgba(0, 49, 94, 0.12);
 
     transition:
         transform 0.2s ease,
@@ -744,16 +800,20 @@ a {
 
 
 .stat-card:hover {
+
     transform: translateY(-3px);
 
-    border-color: rgba(227, 30, 36, 0.35);
+    border-color:
+        rgba(255, 255, 255, 0.95);
 
     box-shadow:
-        0 15px 35px rgba(0, 0, 0, 0.25);
+        0 18px 40px
+        rgba(0, 49, 94, 0.20);
 }
 
 
 .stat-top {
+
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -761,6 +821,7 @@ a {
 
 
 .stat-icon {
+
     width: 42px;
     height: 42px;
 
@@ -777,19 +838,21 @@ a {
             #a80f14
         );
 
-    color: var(--white);
+    color: #ffffff;
 
     font-size: 18px;
 
     box-shadow:
-        0 8px 20px rgba(227, 30, 36, 0.18);
+        0 8px 20px
+        rgba(227, 30, 36, 0.18);
 }
 
 
 .card-more {
+
     background: transparent;
 
-    color: #798188;
+    color: #5f7890;
 
     font-size: 18px;
 
@@ -797,21 +860,30 @@ a {
 }
 
 
+.card-more:hover {
+
+    color: var(--blue);
+}
+
+
 .stat-label {
+
     margin-top: 15px;
 
-    color: #aab1b6;
+    color: var(--text-muted-blue);
 
     font-size: 12px;
 }
 
 
 .stat-value {
+
     margin-top: 4px;
 
-    color: var(--white);
+    color: var(--text-dark);
 
     font-size: 29px;
+
     font-weight: 800;
 
     line-height: 1;
@@ -819,9 +891,10 @@ a {
 
 
 .stat-description {
+
     margin-top: 9px;
 
-    color: #6f787e;
+    color: #70879c;
 
     font-size: 11px;
 }
@@ -832,6 +905,7 @@ a {
 ========================================================= */
 
 .analytics-grid {
+
     display: grid;
 
     grid-template-columns:
@@ -845,64 +919,94 @@ a {
 
 
 .panel {
+
     overflow: hidden;
 
     background:
         linear-gradient(
             145deg,
-            #141a20,
-            #0f1418
+            rgba(255, 255, 255, 0.95),
+            rgba(240, 248, 255, 0.90)
         );
 
-    border: 1px solid var(--border);
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.70);
 
     border-radius: var(--radius);
+
+    box-shadow:
+        0 12px 35px
+        rgba(0, 49, 94, 0.14);
+
+    backdrop-filter: blur(7px);
+
+    -webkit-backdrop-filter: blur(7px);
 }
 
 
 .panel-header {
+
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    padding: 20px 22px;
+    gap: 20px;
+
+    padding:
+        20px 22px;
 }
 
 
 .panel-header h2 {
-    color: var(--white);
+
+    color: var(--text-dark);
 
     font-size: 16px;
+
     font-weight: 700;
 }
 
 
 .panel-header span {
-    color: #7d878e;
+
+    color: var(--text-muted-blue);
 
     font-size: 12px;
 }
 
 
 .period-button {
+
     display: flex;
     align-items: center;
 
     gap: 10px;
 
-    padding: 8px 13px;
+    padding:
+        8px 13px;
 
-    background: rgba(255, 255, 255, 0.03);
+    background:
+        rgba(8, 104, 185, 0.07);
 
-    border: 1px solid var(--border);
+    border:
+        1px solid
+        rgba(8, 104, 185, 0.16);
 
     border-radius: 8px;
 
-    color: #d5d9dc;
+    color: var(--blue);
 
     cursor: pointer;
 
     font-size: 12px;
+}
+
+
+.period-button:hover {
+
+    background:
+        rgba(8, 104, 185, 0.12);
 }
 
 
@@ -911,28 +1015,33 @@ a {
 ========================================================= */
 
 .chart {
+
     display: flex;
 
-    padding: 0 22px 20px;
+    padding:
+        0 22px 20px;
 }
 
 
 .chart-y {
+
     width: 35px;
 
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 
-    padding: 5px 0 30px;
+    padding:
+        5px 0 30px;
 
-    color: #59636a;
+    color: #7890a5;
 
     font-size: 10px;
 }
 
 
 .chart-area {
+
     position: relative;
 
     flex: 1;
@@ -942,6 +1051,7 @@ a {
 
 
 .chart-grid-line {
+
     position: absolute;
 
     left: 0;
@@ -949,7 +1059,8 @@ a {
 
     height: 1px;
 
-    background: rgba(255, 255, 255, 0.06);
+    background:
+        rgba(8, 80, 140, 0.10);
 }
 
 
@@ -979,6 +1090,7 @@ a {
 
 
 .loan-svg {
+
     position: absolute;
 
     top: 0;
@@ -992,29 +1104,35 @@ a {
 
 
 .chart-fill {
+
     fill: url(#loanGradient);
 }
 
 
 .chart-line {
+
     fill: none;
 
     stroke: var(--red);
+
     stroke-width: 3;
 }
 
 
 .chart-x {
+
     position: absolute;
 
     left: 0;
     right: 0;
+
     bottom: 0;
 
     display: flex;
+
     justify-content: space-between;
 
-    color: #747e85;
+    color: #7890a5;
 
     font-size: 11px;
 }
@@ -1025,22 +1143,26 @@ a {
 ========================================================= */
 
 .status-content {
+
     display: flex;
     align-items: center;
 
     gap: 30px;
 
-    padding: 5px 25px 28px;
+    padding:
+        5px 25px 28px;
 }
 
 
 .donut {
+
     position: relative;
 
     width: 190px;
     height: 190px;
 
-    flex: 0 0 190px;
+    flex:
+        0 0 190px;
 
     display: flex;
     align-items: center;
@@ -1053,12 +1175,13 @@ a {
             var(--green) 0 86%,
             var(--red) 86% 97%,
             var(--yellow) 97% 99%,
-            var(--blue) 99% 100%
+            var(--status-blue) 99% 100%
         );
 }
 
 
 .donut::before {
+
     content: "";
 
     position: absolute;
@@ -1067,11 +1190,12 @@ a {
 
     border-radius: 50%;
 
-    background: #12171c;
+    background: #f4f9fd;
 }
 
 
 .donut-hole {
+
     position: relative;
 
     z-index: 2;
@@ -1083,47 +1207,56 @@ a {
 
 
 .donut-hole strong {
-    color: var(--white);
+
+    color: var(--text-dark);
 
     font-size: 25px;
 }
 
 
 .donut-hole span {
+
     margin-top: 3px;
 
-    color: #7c858c;
+    color: #7890a5;
 
     font-size: 11px;
 }
 
 
 .status-list {
+
     flex: 1;
 }
 
 
 .status-row {
+
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    padding: 13px 0;
+    padding:
+        13px 0;
 
-    border-bottom: 1px solid var(--border);
+    border-bottom:
+        1px solid
+        rgba(8, 80, 140, 0.10);
 
-    color: #c5ccd0;
+    color: var(--text-dark-soft);
 
     font-size: 12px;
 }
 
 
 .status-row:last-child {
+
     border-bottom: 0;
 }
 
 
 .status-row span {
+
     display: flex;
     align-items: center;
 
@@ -1132,11 +1265,13 @@ a {
 
 
 .status-row strong {
-    color: var(--white);
+
+    color: var(--text-dark);
 }
 
 
 .dot {
+
     width: 9px;
     height: 9px;
 
@@ -1160,7 +1295,7 @@ a {
 
 
 .dot.damaged {
-    background: var(--blue);
+    background: var(--status-blue);
 }
 
 
@@ -1169,6 +1304,7 @@ a {
 ========================================================= */
 
 .recent-grid {
+
     display: grid;
 
     grid-template-columns:
@@ -1184,50 +1320,76 @@ a {
 
 
 .table-wrapper {
+
     width: 100%;
 
     overflow-x: auto;
 
-    padding: 0 20px 20px;
+    padding:
+        0 20px 20px;
+
+    scrollbar-width: thin;
 }
 
 
 table {
+
     width: 100%;
 
     min-width: 560px;
 
     border-collapse: collapse;
+
+    color: var(--text-dark);
 }
 
 
 th {
-    padding: 11px 8px;
+
+    padding:
+        11px 8px;
 
     text-align: left;
 
-    color: #737d84;
+    background: var(--blue);
+
+    color: #ffffff;
 
     font-size: 10px;
-    font-weight: 600;
 
-    border-bottom: 1px solid var(--border);
+    font-weight: 700;
+
+    border-bottom:
+        1px solid
+        rgba(255, 255, 255, 0.15);
 }
 
 
 td {
-    padding: 13px 8px;
 
-    color: #cbd1d5;
+    padding:
+        13px 8px;
+
+    color: var(--text-dark-soft);
 
     font-size: 11px;
 
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom:
+        1px solid
+        rgba(8, 80, 140, 0.10);
 }
 
 
 tr:last-child td {
+
     border-bottom: 0;
+}
+
+
+tr:hover td {
+
+    background:
+        rgba(8, 104, 185, 0.045);
 }
 
 
@@ -1236,6 +1398,7 @@ tr:last-child td {
 ========================================================= */
 
 .person {
+
     display: flex;
     align-items: center;
 
@@ -1246,6 +1409,7 @@ tr:last-child td {
 
 
 .person span {
+
     width: 28px;
     height: 28px;
 
@@ -1253,67 +1417,91 @@ tr:last-child td {
     align-items: center;
     justify-content: center;
 
-    flex: 0 0 28px;
+    flex:
+        0 0 28px;
 
     background:
         linear-gradient(
             135deg,
-            var(--red),
-            #a90e13
+            var(--blue),
+            var(--blue-dark)
         );
 
     border-radius: 50%;
 
-    color: var(--white);
+    color: #ffffff;
 
     font-size: 9px;
+
     font-weight: 700;
 }
 
 
 /* =========================================================
-   BADGES & BUTTONS
+   BADGES
 ========================================================= */
 
 .badge {
+
     display: inline-flex;
 
-    padding: 5px 9px;
+    padding:
+        5px 9px;
 
     border-radius: 20px;
 
-    background: var(--red-soft);
+    background:
+        var(--red-soft);
 
-    border: 1px solid rgba(227, 30, 36, 0.25);
+    border:
+        1px solid
+        rgba(227, 30, 36, 0.25);
 
-    color: #ff5a5f;
+    color: #d92128;
 
     font-size: 10px;
 }
 
 
+/* =========================================================
+   VIEW ALL
+========================================================= */
+
 .view-all {
-    padding: 8px 12px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding:
+        8px 12px;
 
     border-radius: 8px;
 
     background: var(--red);
 
-    color: var(--white);
+    color: #ffffff;
 
     font-size: 11px;
-    font-weight: 600;
 
-    transition: background 0.2s ease;
+    font-weight: 700;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
 }
 
 
 .view-all:hover {
+
     background: var(--red-dark);
+
+    transform: translateY(-1px);
 }
 
 
 .view-all.disabled {
+
     opacity: 0.45;
 
     cursor: default;
@@ -1325,6 +1513,7 @@ tr:last-child td {
 ========================================================= */
 
 .secondary-grid {
+
     display: grid;
 
     grid-template-columns:
@@ -1337,34 +1526,45 @@ tr:last-child td {
 
 
 .secondary-card {
-    padding: 20px 22px;
+
+    padding:
+        20px 22px;
 
     border-radius: var(--radius);
 
     background:
         linear-gradient(
             145deg,
-            #141a20,
-            #0f1418
+            rgba(255, 255, 255, 0.96),
+            rgba(240, 248, 255, 0.90)
         );
 
-    border: 1px solid var(--border);
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.70);
+
+    box-shadow:
+        0 10px 30px
+        rgba(0, 49, 94, 0.12);
 }
 
 
 .secondary-label {
-    color: #8b949b;
+
+    color: var(--text-muted-blue);
 
     font-size: 12px;
 }
 
 
 .secondary-value {
+
     margin-top: 6px;
 
-    color: var(--white);
+    color: var(--text-dark);
 
     font-size: 25px;
+
     font-weight: 800;
 }
 
@@ -1374,13 +1574,20 @@ tr:last-child td {
 ========================================================= */
 
 .section-title {
+
     margin-top: 28px;
+
     margin-bottom: 14px;
 
-    color: var(--white);
+    color: #ffffff;
 
     font-size: 18px;
+
     font-weight: 700;
+
+    text-shadow:
+        0 2px 5px
+        rgba(0, 40, 80, 0.20);
 }
 
 
@@ -1389,6 +1596,7 @@ tr:last-child td {
 ========================================================= */
 
 .quick-actions {
+
     display: grid;
 
     grid-template-columns:
@@ -1401,44 +1609,61 @@ tr:last-child td {
 
 
 .action {
-    padding: 20px;
+
+    padding:
+        20px;
 
     border-radius: var(--radius);
 
     background:
         linear-gradient(
             145deg,
-            #141a20,
-            #0f1418
+            rgba(255, 255, 255, 0.96),
+            rgba(240, 248, 255, 0.90)
         );
 
-    border: 1px solid var(--border);
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.70);
+
+    box-shadow:
+        0 10px 30px
+        rgba(0, 49, 94, 0.12);
 
     transition:
         transform 0.2s ease,
-        border-color 0.2s ease;
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 
 .action:hover {
+
     transform: translateY(-3px);
 
-    border-color: rgba(227, 30, 36, 0.35);
+    border-color: #ffffff;
+
+    box-shadow:
+        0 18px 40px
+        rgba(0, 49, 94, 0.18);
 }
 
 
 .action-title {
-    color: var(--white);
+
+    color: var(--text-dark);
 
     font-size: 14px;
+
     font-weight: 700;
 }
 
 
 .action-description {
+
     margin-top: 8px;
 
-    color: #747e85;
+    color: var(--text-muted-blue);
 
     font-size: 12px;
 
@@ -1447,636 +1672,64 @@ tr:last-child td {
 
 
 /* =========================================================
+   GENERIC PAGE SURFACES
+   UNTUK HALAMAN DATA BUKU / AUTHORS / CATEGORY / DLL
+========================================================= */
+
+.dashboard-page .content > .panel,
+.dashboard-page .content > .authors-table-panel,
+.dashboard-page .content > .books-panel,
+.dashboard-page .content > .data-panel {
+
+    position: relative;
+
+    z-index: 2;
+}
+
+
+/* =========================================================
    MOBILE OVERLAY
 ========================================================= */
 
 .sidebar-overlay {
+
     display: none;
 
     position: fixed;
 
     inset: 0;
 
-    background: rgba(0, 0, 0, 0.65);
+    background:
+        rgba(0, 35, 65, 0.55);
 
     z-index: 900;
 }
 
 
 /* =========================================================
-   RESPONSIVE
+   TABLET
 ========================================================= */
 
 @media (max-width: 1250px) {
 
     .stats-grid {
+
         grid-template-columns:
             repeat(3, minmax(0, 1fr));
     }
 
 
     .analytics-grid {
+
         grid-template-columns: 1fr;
     }
 
 
     .recent-grid {
+
         grid-template-columns: 1fr;
     }
 
-}
-
-
-@media (max-width: 900px) {
-
-    :root {
-        --sidebar-width: 250px;
-    }
-
-
-    .sidebar {
-        transform: translateX(-100%);
-    }
-
-
-    .sidebar.open {
-        transform: translateX(0);
-    }
-
-
-    .sidebar-overlay.active {
-        display: block;
-    }
-
-
-    .main {
-        width: 100%;
-
-        margin-left: 0;
-    }
-
-
-    .sidebar-toggle {
-        display: block;
-    }
-
-
-    .header {
-        padding: 0 18px;
-    }
-
-
-    .content {
-        padding: 20px;
-    }
-
-
-    .stats-grid {
-        grid-template-columns:
-            repeat(2, minmax(0, 1fr));
-    }
-
-
-    .admin-info {
-        display: none;
-    }
-
-
-    .welcome-card {
-        padding: 25px;
-    }
-
-
-    .welcome-decoration {
-        margin-right: 40px;
-    }
-
-
-    .secondary-grid {
-        grid-template-columns: 1fr;
-    }
-
-
-    .quick-actions {
-        grid-template-columns: 1fr;
-    }
-
-}
-
-
-@media (max-width: 600px) {
-
-    .stats-grid {
-        grid-template-columns: 1fr;
-    }
-
-
-    .header-button {
-        display: none;
-    }
-
-
-    .welcome-card {
-        min-height: 150px;
-    }
-
-
-    .welcome-content h1 {
-        font-size: 27px;
-    }
-
-
-    .welcome-decoration {
-        display: none;
-    }
-
-
-    .status-content {
-        flex-direction: column;
-    }
-
-
-    .donut {
-        width: 170px;
-        height: 170px;
-
-        flex-basis: 170px;
-    }
-
-
-    .panel-header {
-        padding: 17px;
-    }
-
-
-    .chart {
-        padding-left: 10px;
-        padding-right: 10px;
-    }
-
-}
-
-/* =========================================================
-   PAG LIBRARY
-   BLUE DASHBOARD THEME
-   Landing Page Inspired
-========================================================= */
-
-/* =========================================================
-   BLUE THEME VARIABLES
-========================================================= */
-
-:root {
-    --dashboard-blue: #0868b9;
-    --dashboard-blue-dark: #07518f;
-    --dashboard-blue-light: #1684d5;
-
-    --dashboard-bg: #0874c9;
-    --dashboard-bg-dark: #075fa8;
-
-    --surface: rgba(255, 255, 255, 0.94);
-    --surface-soft: rgba(255, 255, 255, 0.88);
-    --surface-hover: rgba(255, 255, 255, 0.98);
-
-    --text-dark: #122b45;
-    --text-dark-soft: #38546d;
-    --text-muted-blue: #688199;
-
-    --border-light: rgba(255, 255, 255, 0.55);
-}
-
-
-/* =========================================================
-   BODY
-========================================================= */
-
-body {
-    background:
-        linear-gradient(
-            135deg,
-            rgba(4, 91, 160, 0.94),
-            rgba(10, 126, 210, 0.88)
-        ),
-        url("/images/landing/pag-2.webp") center / cover fixed no-repeat;
-
-    color: var(--text-dark);
-}
-
-
-/* =========================================================
-   MAIN DASHBOARD
-========================================================= */
-
-.main {
-    background: transparent;
-}
-
-.dashboard-page {
-    background:
-        linear-gradient(
-            135deg,
-            rgba(4, 91, 160, 0.92),
-            rgba(15, 132, 216, 0.88)
-        ),
-        url("/images/landing/pag-2.webp")
-        center / cover fixed no-repeat;
-}
-
-
-/* =========================================================
-   HEADER
-========================================================= */
-
-.header {
-    background: rgba(4, 67, 118, 0.88);
-
-    border-bottom:
-        1px solid rgba(255, 255, 255, 0.18);
-
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-}
-
-
-.header-title {
-    color: #ffffff;
-}
-
-
-.header-line {
-    background: #e31e24;
-}
-
-
-.header-button {
-    color: #ffffff;
-}
-
-
-.header-button:hover {
-    background: rgba(255, 255, 255, 0.12);
-
-    color: #ffffff;
-}
-
-
-.admin-name {
-    color: #ffffff;
-}
-
-
-.admin-role {
-    color: rgba(255, 255, 255, 0.70);
-}
-
-
-.sidebar-toggle {
-    color: #ffffff;
-}
-
-
-/* =========================================================
-   CONTENT
-========================================================= */
-
-.content {
-    padding: 30px;
-}
-
-
-/* =========================================================
-   WELCOME CARD
-========================================================= */
-
-.welcome-card {
-    background:
-        linear-gradient(
-            110deg,
-            rgba(255, 255, 255, 0.94),
-            rgba(236, 246, 255, 0.88)
-        );
-
-    border:
-        1px solid rgba(255, 255, 255, 0.75);
-
-    box-shadow:
-        0 15px 40px rgba(0, 49, 94, 0.16);
-}
-
-
-.welcome-small {
-    color: var(--dashboard-blue);
-}
-
-
-.welcome-content h1 {
-    color: var(--text-dark);
-}
-
-
-.welcome-content p {
-    color: var(--text-dark-soft);
-}
-
-
-/*
-   Dekorasi merah tetap dipertahankan
-   agar identitas PAG tetap terlihat.
-*/
-
-.welcome-card::after {
-    opacity: 0.95;
-}
-
-
-/* =========================================================
-   STATISTICS
-========================================================= */
-
-.stat-card {
-    background:
-        linear-gradient(
-            145deg,
-            rgba(255, 255, 255, 0.96),
-            rgba(239, 247, 255, 0.90)
-        );
-
-    border:
-        1px solid rgba(255, 255, 255, 0.70);
-
-    box-shadow:
-        0 10px 30px rgba(0, 49, 94, 0.12);
-}
-
-
-.stat-card:hover {
-    border-color:
-        rgba(255, 255, 255, 0.95);
-
-    box-shadow:
-        0 18px 40px rgba(0, 49, 94, 0.20);
-}
-
-
-.stat-label {
-    color: var(--text-muted-blue);
-}
-
-
-.stat-value {
-    color: var(--text-dark);
-}
-
-
-.stat-description {
-    color: #70879c;
-}
-
-
-.card-more {
-    color: #5f7890;
-}
-
-
-.card-more:hover {
-    color: var(--dashboard-blue);
-}
-
-
-/* =========================================================
-   ANALYTICS
-========================================================= */
-
-.panel {
-    background:
-        linear-gradient(
-            145deg,
-            rgba(255, 255, 255, 0.95),
-            rgba(240, 248, 255, 0.90)
-        );
-
-    border:
-        1px solid rgba(255, 255, 255, 0.70);
-
-    box-shadow:
-        0 12px 35px rgba(0, 49, 94, 0.14);
-}
-
-
-.panel-header h2 {
-    color: var(--text-dark);
-}
-
-
-.panel-header span {
-    color: var(--text-muted-blue);
-}
-
-
-.period-button {
-    background: rgba(8, 104, 185, 0.07);
-
-    border:
-        1px solid rgba(8, 104, 185, 0.16);
-
-    color: var(--dashboard-blue);
-}
-
-
-.period-button:hover {
-    background: rgba(8, 104, 185, 0.12);
-}
-
-
-/* =========================================================
-   CHART
-========================================================= */
-
-.chart-grid-line {
-    background: rgba(8, 80, 140, 0.10);
-}
-
-
-.chart-y {
-    color: #7890a5;
-}
-
-
-.chart-x {
-    color: #7890a5;
-}
-
-
-/* =========================================================
-   STATUS DONUT
-========================================================= */
-
-.donut::before {
-    background: #f4f9fd;
-}
-
-
-.donut-hole strong {
-    color: var(--text-dark);
-}
-
-
-.donut-hole span {
-    color: #7890a5;
-}
-
-
-.status-row {
-    color: var(--text-dark-soft);
-
-    border-bottom:
-        1px solid rgba(8, 80, 140, 0.10);
-}
-
-
-.status-row strong {
-    color: var(--text-dark);
-}
-
-
-/* =========================================================
-   TABLE
-========================================================= */
-
-.table-wrapper {
-    scrollbar-width: thin;
-}
-
-
-table {
-    color: var(--text-dark);
-}
-
-
-th {
-    background: var(--dashboard-blue);
-
-    color: #ffffff;
-
-    border-bottom:
-        1px solid rgba(255, 255, 255, 0.15);
-}
-
-
-td {
-    color: var(--text-dark-soft);
-
-    border-bottom:
-        1px solid rgba(8, 80, 140, 0.10);
-}
-
-
-tr:hover td {
-    background: rgba(8, 104, 185, 0.045);
-}
-
-
-/* =========================================================
-   PERSON
-========================================================= */
-
-.person span {
-    background:
-        linear-gradient(
-            135deg,
-            var(--dashboard-blue),
-            var(--dashboard-blue-dark)
-        );
-}
-
-
-/* =========================================================
-   SECONDARY CARDS
-========================================================= */
-
-.secondary-card {
-    background:
-        linear-gradient(
-            145deg,
-            rgba(255, 255, 255, 0.96),
-            rgba(240, 248, 255, 0.90)
-        );
-
-    border:
-        1px solid rgba(255, 255, 255, 0.70);
-
-    box-shadow:
-        0 10px 30px rgba(0, 49, 94, 0.12);
-}
-
-
-.secondary-label {
-    color: var(--text-muted-blue);
-}
-
-
-.secondary-value {
-    color: var(--text-dark);
-}
-
-
-/* =========================================================
-   SECTION TITLE
-========================================================= */
-
-.section-title {
-    color: #ffffff;
-
-    text-shadow:
-        0 2px 5px rgba(0, 40, 80, 0.20);
-}
-
-
-/* =========================================================
-   QUICK ACTIONS
-========================================================= */
-
-.action {
-    background:
-        linear-gradient(
-            145deg,
-            rgba(255, 255, 255, 0.96),
-            rgba(240, 248, 255, 0.90)
-        );
-
-    border:
-        1px solid rgba(255, 255, 255, 0.70);
-
-    box-shadow:
-        0 10px 30px rgba(0, 49, 94, 0.12);
-}
-
-
-.action:hover {
-    border-color: #ffffff;
-
-    box-shadow:
-        0 18px 40px rgba(0, 49, 94, 0.18);
-}
-
-
-.action-title {
-    color: var(--text-dark);
-}
-
-
-.action-description {
-    color: var(--text-muted-blue);
-}
-
-
-/* =========================================================
-   MOBILE OVERLAY
-========================================================= */
-
-.sidebar-overlay {
-    background:
-        rgba(0, 35, 65, 0.55);
 }
 
 
@@ -2086,45 +1739,94 @@ tr:hover td {
 
 @media (max-width: 900px) {
 
+    :root {
+        --sidebar-width: 250px;
+    }
+
+
+    .sidebar {
+
+        transform: translateX(-100%);
+    }
+
+
+    .sidebar.open {
+
+        transform: translateX(0);
+    }
+
+
+    .sidebar-overlay.active {
+
+        display: block;
+    }
+
+
     .main {
+
         width: 100%;
+
         margin-left: 0;
     }
 
-    .header {
-        height: 64px;
-
-        padding:
-            0 18px;
-    }
 
     .content {
-        padding: 20px;
+
+        padding:
+            20px;
     }
 
+
     .welcome-card {
+
         min-height: 160px;
 
         padding:
             25px 30px;
     }
 
+
     .welcome-content h1 {
+
         font-size: 30px;
     }
 
+
     .welcome-decoration {
+
         margin-right: 30px;
     }
+
+
+    .secondary-grid {
+
+        grid-template-columns: 1fr;
+    }
+
+
+    .quick-actions {
+
+        grid-template-columns: 1fr;
+    }
+
 
     .stat-card,
     .panel,
     .secondary-card,
     .action,
     .welcome-card {
+
         box-shadow:
-            0 8px 25px rgba(0, 49, 94, 0.12);
+            0 8px 25px
+            rgba(0, 49, 94, 0.12);
     }
+
+
+    .main.dashboard-page {
+
+        background-attachment: scroll;
+    }
+
 }
 
 
@@ -2134,8 +1836,8 @@ tr:hover td {
 
 @media (max-width: 600px) {
 
-    body,
-    .main {
+    body {
+
         background:
             linear-gradient(
                 145deg,
@@ -2144,109 +1846,140 @@ tr:hover td {
             );
     }
 
-    .header {
+
+    .main.dashboard-page {
+
         background:
-            rgba(4, 67, 118, 0.94);
-
-        padding:
-            0 14px;
+            linear-gradient(
+                145deg,
+                rgba(8, 116, 201, 0.96),
+                rgba(7, 93, 165, 0.94)
+            ),
+            url("/images/landing/pag-2.webp")
+            center / cover no-repeat;
     }
 
-    .header-title {
-        font-size: 17px;
-    }
 
     .content {
-        padding: 14px;
+
+        padding:
+            14px;
     }
 
+
     .welcome-card {
+
         min-height: 170px;
 
-        padding: 24px 22px;
+        padding:
+            24px 22px;
 
         border-radius: 14px;
     }
 
+
     .welcome-content h1 {
+
         font-size: 27px;
     }
 
+
     .welcome-small {
+
         font-size: 13px;
     }
 
+
     .welcome-content p {
+
         font-size: 13px;
 
         line-height: 1.6;
     }
 
+
     .welcome-decoration {
+
         display: none;
     }
 
+
     .stats-grid {
+
         grid-template-columns: 1fr;
     }
+
 
     .analytics-grid {
+
         grid-template-columns: 1fr;
     }
+
 
     .recent-grid {
+
         grid-template-columns: 1fr;
     }
+
 
     .secondary-grid {
+
         grid-template-columns: 1fr;
     }
+
 
     .quick-actions {
+
         grid-template-columns: 1fr;
     }
 
+
     .panel-header {
-        padding: 17px;
+
+        padding:
+            17px;
     }
 
+
     .status-content {
+
         flex-direction: column;
 
         padding:
             5px 17px 22px;
     }
 
+
     .donut {
+
         width: 170px;
         height: 170px;
 
         flex-basis: 170px;
     }
 
+
     .chart {
+
         padding:
             0 10px 20px;
     }
 
+
     .table-wrapper {
+
         padding:
             0 12px 15px;
 
         overflow-x: auto;
     }
 
+
     table {
+
         min-width: 650px;
     }
 
-    .admin-profile {
-        gap: 0;
-    }
-
-    .admin-info {
-        display: none;
-    }
 }
 
 
@@ -2257,32 +1990,33 @@ tr:hover td {
 @media (max-width: 400px) {
 
     .content {
+
         padding: 10px;
     }
 
-    .header {
-        padding:
-            0 12px;
-    }
-
-    .header-title {
-        font-size: 16px;
-    }
 
     .welcome-card {
+
         padding:
             22px 18px;
     }
 
+
     .welcome-content h1 {
+
         font-size: 24px;
     }
 
+
     .stat-card {
+
         padding: 16px;
     }
 
+
     .panel-header {
+
         padding: 15px;
     }
+
 }

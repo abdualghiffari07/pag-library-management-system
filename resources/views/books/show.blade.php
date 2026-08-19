@@ -12,11 +12,12 @@
         {{ $book->title }} - PAG Library
     </title>
 
-    @vite([
-        'resources/css/dashboard-admin.css',
-        'resources/css/book-details.css',
-        'resources/js/dashboard-admin.js'
-    ])
+@vite([
+    'resources/css/dashboard-admin.css',
+    'resources/css/book-details.css',
+    'resources/js/dashboard-admin.js',
+    'resources/css/header.css'
+])
 
 </head>
 
@@ -45,79 +46,7 @@
 
         {{-- HEADER --}}
 
-        <header class="header">
-
-            <div class="header-left">
-
-                <button type="button"
-                        id="sidebar-toggle"
-                        class="sidebar-toggle"
-                        aria-label="Buka menu">
-
-                    ☰
-
-                </button>
-
-
-                <div>
-
-                    <div class="header-title">
-                        Detail Buku
-                    </div>
-
-                    <div class="header-line"></div>
-
-                </div>
-
-            </div>
-
-
-            {{-- HEADER RIGHT --}}
-
-            <div class="header-right">
-
-                <button class="header-button"
-                        type="button">
-
-                    ⌕
-
-                </button>
-
-
-                <button type="button"
-                        id="sidebar-toggle"
-                        class="sidebar-toggle"
-                        aria-label="Buka menu">
-                    ☰
-                </button>
-
-
-                <div class="admin-profile">
-
-                    <div class="avatar">
-
-                        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-
-                    </div>
-
-
-                    <div class="admin-info">
-
-                        <div class="admin-name">
-                            {{ auth()->user()->name }}
-                        </div>
-
-                        <div class="admin-role">
-                            Administrator
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </header>
+@include('layouts.header', ['pageTitle' => 'Detail Buku'])
 
 
         {{-- =====================================================

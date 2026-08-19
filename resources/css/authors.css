@@ -1,291 +1,230 @@
 /* =========================================================
+   PAG LIBRARY
+   AUTHORS PAGE
+   DASHBOARD DESIGN SYSTEM
+
+   CATATAN:
+   - Background utama ditangani dashboard-admin.css
+   - Header utama ditangani header.css
+   - File ini hanya mengatur komponen halaman Authors
+========================================================= */
+
+
+/* =========================================================
    AUTHORS PAGE
 ========================================================= */
 
 .authors-page {
+
+    position: relative;
+
+    z-index: 2;
+
     width: 100%;
+
+    max-width: 1700px;
+
+    min-height: calc(100vh - 68px);
+
+    margin: 0 auto;
+
+    padding: 30px 30px 60px;
+
+    box-sizing: border-box;
+
+    background: transparent;
 }
 
 
 /* =========================================================
-   HERO
+   HERO CARD
 ========================================================= */
 
-.authors-hero {
+.authors-page .welcome-card {
+
     position: relative;
 
-    min-height: 170px;
-
     display: flex;
+
     align-items: center;
 
-    padding: 30px 60px;
+    justify-content: space-between;
 
-    margin-bottom: 20px;
+    gap: 30px;
 
-    overflow: hidden;
+    min-height: 180px;
 
-    border: 1px solid var(--border);
+    padding: 35px 40px;
 
-    border-radius: 15px;
+    margin-bottom: 24px;
+
+    border-radius: 0;
 
     background:
-        linear-gradient(
-            135deg,
-            #11161b 0%,
-            #0e1317 65%,
-            #15191d 100%
-        );
+        rgba(255, 255, 255, 0.08);
 
-    box-shadow:
-        0 15px 40px rgba(0, 0, 0, 0.18);
+    border:
+        1px solid rgba(255, 255, 255, 0.15);
+
+    box-shadow: none;
+
+    backdrop-filter: blur(18px);
+
+    -webkit-backdrop-filter: blur(18px);
+
+    overflow: hidden;
 }
 
 
-.authors-hero-content {
+.authors-page .welcome-card::after {
+    display: none;
+}
+
+
+/* =========================================================
+   HERO CONTENT
+========================================================= */
+
+.authors-page .welcome-content {
+
+    position: relative;
+
+    z-index: 2;
+
+    max-width: 750px;
+}
+
+
+/* =========================================================
+   HERO SMALL TEXT
+========================================================= */
+
+.authors-page .welcome-small {
+
+    color: rgba(255,255,255,.75);
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    letter-spacing: .08em;
+}
+
+
+/* =========================================================
+   HERO TITLE
+========================================================= */
+
+.authors-page .welcome-content h1 {
+
+    color: #ffffff !important;
+
+    font-size: 42px;
+
+    font-weight: 800;
+
+    margin: 0;
+}
+
+
+/* =========================================================
+   HERO DESCRIPTION
+========================================================= */
+
+.authors-page .welcome-content p {
+
+    color: rgba(255,255,255,.85) !important;
+
+    margin-top: 12px;
+
+    max-width: 700px;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   HERO ACTION
+========================================================= */
+
+.authors-page .welcome-decoration {
+
     position: relative;
 
     z-index: 3;
 
-    max-width: 650px;
+    flex-shrink: 0;
 }
 
 
-.authors-eyebrow {
-    display: block;
+/* =========================================================
+   ADD AUTHOR BUTTON
+========================================================= */
 
-    margin-bottom: 7px;
+.authors-page .welcome-decoration .view-all {
 
-    color: #d3d9dd;
+    min-height: 48px;
 
-    font-size: 12px;
-    font-weight: 600;
+    padding: 0 22px;
 
-    letter-spacing: 0.4px;
-}
-
-
-.authors-hero h2 {
-    margin: 0;
-
-    color: var(--white);
-
-    font-size: 34px;
-    font-weight: 800;
-
-    letter-spacing: -0.8px;
-}
-
-
-.authors-hero p {
-    margin-top: 8px;
-
-    color: #929ca3;
-
-    font-size: 13px;
-}
-
-
-.authors-hero-decoration {
-    position: absolute;
-
-    right: 0;
-    top: 0;
-
-    width: 250px;
-    height: 100%;
-
-    background:
-        linear-gradient(
-            135deg,
-            transparent 0%,
-            transparent 28%,
-            #e31e24 29%,
-            #d71920 100%
-        );
-
-    clip-path:
-        polygon(
-            42% 0,
-            100% 0,
-            100% 100%,
-            0 100%
-        );
-
-    opacity: 0.95;
-}
-
-
-.decoration-letter {
-    position: absolute;
-
-    right: 52px;
-    top: 50%;
-
-    transform: translateY(-50%);
-
-    color: rgba(255, 255, 255, 0.18);
-
-    font-size: 72px;
-}
-
-
-.authors-add-button {
-    position: absolute;
-
-    right: 160px;
-    top: 50%;
-
-    z-index: 5;
-
-    transform: translateY(-50%);
-
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-    padding: 12px 17px;
-
-    border-radius: 10px;
+    border-radius: 0;
 
     background: #e31e24;
 
-    color: #fff;
+    border: none;
+
+    color: #fff !important;
 
     font-size: 13px;
+
     font-weight: 700;
 
-    box-shadow:
-        0 8px 22px rgba(227, 30, 36, 0.22);
-
-    transition:
-        transform 0.2s ease,
-        background 0.2s ease,
-        box-shadow 0.2s ease;
+    box-shadow: none;
 }
 
 
-.authors-add-button:hover {
-    transform:
-        translateY(-50%)
-        translateY(-2px);
+.authors-page .welcome-decoration .view-all:hover {
 
-    background: #c9161c;
+    background: #b51218;
 
-    box-shadow:
-        0 12px 28px rgba(227, 30, 36, 0.30);
+    transform: translateY(-2px);
 }
 
 
-.authors-add-button span {
-    font-size: 18px;
+.authors-page .welcome-decoration .view-all span {
+
+    font-size: 17px;
+
     line-height: 1;
 }
 
 
 /* =========================================================
-   STATISTICS
+   AUTHORS TABLE PANEL
+   ---------------------------------------------------------
+   BLUE GLASS - SAMA DENGAN DATA BUKU
 ========================================================= */
 
-.authors-stats {
-    display: grid;
-
-    grid-template-columns:
-        repeat(2, minmax(0, 1fr));
-
-    gap: 16px;
-
-    margin-bottom: 20px;
-}
-
-
-.authors-stat-card {
-    display: flex;
-    align-items: center;
-
-    gap: 14px;
-
-    min-height: 88px;
-
-    padding: 18px 20px;
-
-    border: 1px solid var(--border);
-
-    border-radius: var(--radius);
-
-    background: var(--panel);
-
-    transition:
-        transform 0.2s ease,
-        border-color 0.2s ease;
-}
-
-
-.authors-stat-card:hover {
-    transform: translateY(-2px);
-
-    border-color:
-        rgba(227, 30, 36, 0.25);
-}
-
-
-.authors-stat-icon {
-    width: 45px;
-    height: 45px;
-
-    flex: 0 0 45px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 12px;
+.authors-page .authors-table-panel {
 
     background:
-        rgba(227, 30, 36, 0.10);
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.88),
+            rgba(210, 237, 252, 0.92)
+        ) !important;
 
-    color: #e31e24;
-
-    font-size: 20px;
-}
-
-
-.authors-stat-card span {
-    display: block;
-
-    color: #78838a;
-
-    font-size: 11px;
-}
-
-
-.authors-stat-card strong {
-    display: block;
-
-    margin-top: 3px;
-
-    color: var(--white);
-
-    font-size: 23px;
-    font-weight: 800;
-}
-
-
-/* =========================================================
-   PANEL
-========================================================= */
-
-.authors-panel {
-    overflow: hidden;
-
-    border: 1px solid var(--border);
-
-    border-radius: var(--radius);
-
-    background: var(--panel);
+    border:
+        1px solid rgba(255, 255, 255, 0.70);
 
     box-shadow:
-        0 12px 35px rgba(0, 0, 0, 0.12);
+        0 15px 40px rgba(0, 40, 80, 0.18);
+
+    backdrop-filter: blur(10px);
+
+    -webkit-backdrop-filter: blur(10px);
+
+    border-radius: 18px;
 }
 
 
@@ -293,35 +232,65 @@
    PANEL HEADER
 ========================================================= */
 
-.authors-panel-header {
-    min-height: 82px;
+.authors-page .authors-table-panel .panel-header {
 
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
 
-    gap: 20px;
+    gap: 40px;
 
-    padding: 18px 22px;
+    min-height: 110px;
 
-    border-bottom: 1px solid var(--border);
+    padding: 26px 32px;
+
+    box-sizing: border-box;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.78),
+            rgba(225, 243, 255, 0.72)
+        );
+
+    border-bottom:
+        1px solid rgba(120, 170, 205, 0.28);
 }
 
 
-.authors-panel-header h2 {
-    color: var(--white);
+/* =========================================================
+   PANEL TITLE
+========================================================= */
 
-    font-size: 16px;
-    font-weight: 700;
+.authors-page .panel-header h2 {
+
+    margin: 0;
+
+    color: #102f49 !important;
+
+    font-size: 20px;
+
+    font-weight: 800;
 }
 
 
-.authors-panel-header p {
-    margin-top: 4px;
+/* =========================================================
+   PANEL DESCRIPTION
+========================================================= */
 
-    color: #69747c;
+.authors-page .panel-header > div > span {
 
-    font-size: 11px;
+    display: block;
+
+    margin-top: 7px;
+
+    color: #557187 !important;
+
+    font-size: 13px;
+
+    font-weight: 600;
 }
 
 
@@ -329,32 +298,50 @@
    SEARCH
 ========================================================= */
 
-.authors-search {
+.authors-page .author-search {
+
     position: relative;
 
-    width: 280px;
+    width: 345px;
+
+    flex-shrink: 0;
 }
 
 
-.authors-search input {
+/* =========================================================
+   SEARCH INPUT
+========================================================= */
+
+.authors-page .author-search input {
+
     width: 100%;
-    height: 41px;
+
+    height: 50px;
 
     padding:
-        0 14px 0 38px;
+        0 18px 0 48px;
 
-    border: 1px solid
-        rgba(255, 255, 255, 0.10);
-
-    border-radius: 9px;
+    box-sizing: border-box;
 
     outline: none;
 
-    background: #0b1014;
+    border:
+        1px solid #c7d8e4;
 
-    color: var(--white);
+    border-radius: 10px;
 
-    font-size: 12px;
+    background: #ffffff;
+
+    color: #17364d;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    font-weight: 500;
+
+    box-shadow:
+        0 3px 10px rgba(0, 50, 90, 0.05);
 
     transition:
         border-color 0.2s ease,
@@ -362,34 +349,114 @@
 }
 
 
-.authors-search input::placeholder {
-    color: #59646c;
+/* =========================================================
+   SEARCH PLACEHOLDER
+========================================================= */
+
+.authors-page .author-search input::placeholder {
+
+    color: #71889a;
 }
 
 
-.authors-search input:focus {
-    border-color:
-        rgba(227, 30, 36, 0.55);
+/* =========================================================
+   SEARCH FOCUS
+========================================================= */
+
+.authors-page .author-search input:focus {
+
+    border-color: #1683c7;
 
     box-shadow:
         0 0 0 3px
-        rgba(227, 30, 36, 0.08);
+        rgba(22, 131, 199, 0.12);
 }
 
 
-.search-icon {
+/* =========================================================
+   SEARCH ICON
+========================================================= */
+
+.authors-page .author-search .search-icon {
+
     position: absolute;
 
-    left: 13px;
     top: 50%;
+
+    left: 17px;
+
+    z-index: 2;
 
     transform: translateY(-50%);
 
-    color: #748088;
+    color: #53748a;
+
+    font-size: 18px;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   CLEAR SEARCH
+========================================================= */
+
+.authors-page .search-clear {
+
+    position: absolute;
+
+    top: 50%;
+
+    right: 10px;
+
+    width: 24px;
+
+    height: 24px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    transform: translateY(-50%);
+
+    border-radius: 50%;
+
+    color: #71889a;
 
     font-size: 17px;
 
-    pointer-events: none;
+    text-decoration: none;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+
+.authors-page .search-clear:hover {
+
+    background: #edf4f8;
+
+    color: #e31e24;
+}
+
+
+/* =========================================================
+   TABLE WRAPPER
+========================================================= */
+
+.authors-page .table-wrapper {
+
+    width: 100%;
+
+    padding:
+        22px 26px 30px;
+
+    overflow-x: auto;
+
+    box-sizing: border-box;
 }
 
 
@@ -397,39 +464,48 @@
    TABLE
 ========================================================= */
 
-.authors-table-wrapper {
+.authors-page .authors-table {
+
     width: 100%;
 
-    overflow-x: auto;
+    min-width: 900px;
+
+    border-collapse: separate;
+
+    border-spacing: 0;
+
+    overflow: hidden;
+
+    border-radius: 8px;
 }
 
 
-.authors-table {
-    width: 100%;
+/* =========================================================
+   TABLE HEADER
+========================================================= */
 
-    border-collapse: collapse;
+.authors-page .authors-table thead {
 
-    min-width: 760px;
+    background:
+        linear-gradient(
+            135deg,
+            #0868b9,
+            #07518f
+        );
 }
 
 
-.authors-table thead {
-    background: #0b1014;
-}
+.authors-page .authors-table th {
 
+    padding: 12px 14px;
 
-.authors-table th {
-    padding: 13px 20px;
-
-    border-bottom:
-        1px solid var(--border);
-
-    color: #69757d;
+    color: #ffffff;
 
     font-size: 10px;
+
     font-weight: 700;
 
-    letter-spacing: 0.7px;
+    letter-spacing: 0.04em;
 
     text-align: left;
 
@@ -437,206 +513,343 @@
 }
 
 
-.authors-table td {
-    padding: 15px 20px;
+/* =========================================================
+   TABLE HEADER RIGHT
+========================================================= */
 
-    border-bottom:
-        1px solid rgba(255, 255, 255, 0.045);
+.authors-page .authors-table th.text-right {
 
-    color: #aab3b9;
-
-    font-size: 12px;
-
-    vertical-align: middle;
+    text-align: right;
 }
 
 
-.authors-table tbody tr {
+/* =========================================================
+   TABLE BODY
+========================================================= */
+
+.authors-page .authors-table tbody tr {
+
+    background: #ffffff;
+
     transition:
         background 0.2s ease;
 }
 
 
-.authors-table tbody tr:hover {
-    background:
-        rgba(255, 255, 255, 0.025);
-}
+.authors-page .authors-table tbody tr:hover {
 
-
-.authors-table tbody tr:last-child td {
-    border-bottom: 0;
-}
-
-
-.text-right {
-    text-align: right !important;
+    background: #f3f9fd;
 }
 
 
 /* =========================================================
-   AUTHOR
+   TABLE CELLS
 ========================================================= */
 
-.author-id {
-    color: #68747c;
+.authors-page .authors-table td {
 
-    font-size: 11px;
+    padding: 14px;
+
+    color: #38546d;
+
+    font-size: 12px;
+
+    font-weight: 500;
+
+    line-height: 1.5;
+
+    vertical-align: middle;
+
+    border-bottom:
+        1px solid #dce7ee;
 }
 
 
-.author-name-wrapper {
+.authors-page .authors-table tbody tr:last-child td {
+
+    border-bottom: none;
+}
+
+
+/* =========================================================
+   AUTHOR NUMBER
+========================================================= */
+
+.authors-page .author-number {
+
+    color: #688199;
+
+    font-size: 11px;
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   AUTHOR ID
+========================================================= */
+
+.authors-page .author-id {
+
+    color: #688199;
+
+    font-size: 11px;
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   AUTHOR NAME WRAPPER
+========================================================= */
+
+.authors-page .author-name-wrapper {
+
     display: flex;
+
     align-items: center;
 
     gap: 11px;
 }
 
 
+/* =========================================================
+   AUTHOR NAME CONTENT
+========================================================= */
 
+.authors-page .author-name-content {
 
-.author-name-content strong {
-    display: block;
-
-    color: #f0f2f3;
-
-    font-size: 13px;
-    font-weight: 700;
-}
-
-
-.author-name-content span {
-    display: block;
-
-    margin-top: 2px;
-
-    color: #68737b;
-
-    font-size: 10px;
-}
-
-
-.book-count {
-    display: inline-flex;
-
-    align-items: center;
-
-    padding: 5px 9px;
-
-    border-radius: 20px;
-
-    background:
-        rgba(255, 255, 255, 0.045);
-
-    color: #b8c1c6;
-
-    font-size: 10px;
-}
-
-
-.author-date {
-    color: #7d8991;
-
-    font-size: 11px;
+    min-width: 0;
 }
 
 
 /* =========================================================
-   ACTIONS
+   AUTHOR NAME
 ========================================================= */
 
-.author-actions {
-    display: flex;
+.authors-page .author-name {
+
+    color: #122b45;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   AUTHOR DATE
+========================================================= */
+
+.authors-page .author-date {
+
+    color: #688199;
+
+    font-size: 11px;
+
+    font-weight: 500;
+}
+
+
+/* =========================================================
+   BOOK COUNT
+========================================================= */
+
+.authors-page .book-count {
+
+    display: inline-flex;
+
     align-items: center;
+
     justify-content: center;
 
-    gap: 8px;
+    min-height: 26px;
+
+    padding: 0 10px;
+
+    border-radius: 20px;
+
+    background: #eef7fd;
+
+    border:
+        1px solid #c8e1f0;
+
+    color: #126bc0;
+
+    font-size: 10px;
+
+    font-weight: 700;
 
     white-space: nowrap;
 }
 
 
-.author-action {
+/* =========================================================
+   AUTHOR AVATAR
+========================================================= */
+
+.authors-page .author-avatar {
+
+    width: 36px;
+
+    height: 36px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex: 0 0 36px;
+
+    border-radius: 9px;
+
+    background: #eaf4fb;
+
+    border:
+        1px solid #c9dfed;
+
+    color: #0874c1;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   AUTHOR ACTIONS
+========================================================= */
+
+.authors-page .author-actions {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 7px;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   AUTHOR ACTION
+========================================================= */
+
+.authors-page .author-action {
+
+    width: 62px;
+
+    height: 32px;
+
     display: inline-flex;
 
     align-items: center;
+
     justify-content: center;
 
-    height: 34px;
-
-    min-width: 64px;
-
-    padding: 0 12px;
+    padding: 0;
 
     border-radius: 7px;
 
-    font-size: 12px;
-    font-weight: 600;
+    font-family: inherit;
 
-    line-height: 1;
+    font-size: 10px;
+
+    font-weight: 700;
 
     text-decoration: none;
 
     cursor: pointer;
 
-    white-space: nowrap;
+    box-sizing: border-box;
 
     transition:
-        background 0.2s ease,
-        border-color 0.2s ease,
-        color 0.2s ease,
-        transform 0.2s ease;
+        background 0.18s ease,
+        border-color 0.18s ease,
+        color 0.18s ease,
+        transform 0.18s ease,
+        box-shadow 0.18s ease;
 }
 
 
-.author-action:hover {
+.authors-page .author-action:hover {
+
     transform: translateY(-1px);
 }
 
 
 /* =========================================================
-   MANAGE
+   MANAGE BUTTON
 ========================================================= */
 
-.author-action.manage {
-    border: 1px solid rgba(90, 160, 255, 0.20);
+.authors-page .author-action.manage {
 
-    background: rgba(90, 160, 255, 0.08);
+    background: #f2f8fd;
 
-    color: #79b5ff;
+    border:
+        1px solid #8ebddd;
+
+    color: #126bc0;
 }
 
-.author-action.manage:hover {
-    border-color: rgba(90, 160, 255, 0.35);
 
-    background: rgba(90, 160, 255, 0.13);
+.authors-page .author-action.manage:hover {
 
-    color: #9ac8ff;
+    background: #e4f2fc;
+
+    border-color: #5fa3d4;
+
+    color: #0b5da7;
+
+    box-shadow:
+        0 4px 10px rgba(18, 107, 192, 0.12);
 }
 
 
 /* =========================================================
-   DELETE
+   DELETE BUTTON
 ========================================================= */
 
-.author-action.delete {
-    border: 0;
+.authors-page .author-action.delete {
 
-    background: rgba(227, 30, 36, 0.08);
+    background: #fff5f5;
 
-    color: #e9565b;
-}
+    border:
+        1px solid #efa2a5;
 
-.author-action.delete:hover {
-    background: rgba(227, 30, 36, 0.16);
-
-    color: #ff6b70;
+    color: #d92128;
 }
 
 
-.delete-author-form {
-    display: inline-flex;
+.authors-page .author-action.delete:hover {
+
+    background: #ffe8e9;
+
+    border-color: #e56b70;
+
+    color: #b71920;
+
+    box-shadow:
+        0 4px 10px rgba(227, 30, 36, 0.12);
+}
+
+
+/* =========================================================
+   DELETE FORM
+========================================================= */
+
+.authors-page .delete-author-form {
 
     margin: 0;
+
     padding: 0;
 }
 
@@ -645,7 +858,8 @@
    EMPTY STATE
 ========================================================= */
 
-.authors-empty {
+.authors-page .authors-empty {
+
     display: flex;
 
     flex-direction: column;
@@ -654,64 +868,126 @@
 
     justify-content: center;
 
-    min-height: 260px;
+    min-height: 280px;
 
-    padding: 40px;
+    padding: 40px 20px;
 
     text-align: center;
 }
 
 
-.empty-icon {
-    width: 55px;
-    height: 55px;
+/* =========================================================
+   EMPTY ICON
+========================================================= */
+
+.authors-page .empty-icon {
+
+    width: 56px;
+
+    height: 56px;
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
     margin-bottom: 15px;
 
-    border-radius: 15px;
+    border-radius: 12px;
 
-    background:
-        rgba(227, 30, 36, 0.09);
+    background: #eaf4fb;
 
-    color: #e31e24;
+    border:
+        1px solid #c9dfed;
 
-    font-size: 25px;
+    color: #0874c1;
+
+    font-size: 24px;
 }
 
 
-.authors-empty h3 {
-    color: var(--white);
+/* =========================================================
+   EMPTY TITLE
+========================================================= */
 
-    font-size: 16px;
+.authors-page .authors-empty h3 {
+
+    margin: 0;
+
+    color: #122b45;
+
+    font-size: 17px;
+
+    font-weight: 700;
 }
 
 
-.authors-empty p {
-    margin-top: 5px;
+/* =========================================================
+   EMPTY DESCRIPTION
+========================================================= */
 
-    color: #6f7a82;
+.authors-page .authors-empty p {
+
+    margin: 8px 0 18px;
+
+    color: #688199;
 
     font-size: 12px;
+
+    font-weight: 500;
 }
 
 
-.authors-empty-button {
-    margin-top: 18px;
+/* =========================================================
+   EMPTY BUTTON
+========================================================= */
 
-    padding: 9px 14px;
+.authors-page .authors-empty-button {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 40px;
+
+    padding: 0 18px;
 
     border-radius: 8px;
 
     background: #e31e24;
 
-    color: #fff;
+    border:
+        1px solid #e31e24;
+
+    color: #ffffff;
 
     font-size: 11px;
+
     font-weight: 700;
+
+    text-decoration: none;
+
+    box-shadow:
+        0 6px 16px rgba(227, 30, 36, 0.18);
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.authors-page .authors-empty-button:hover {
+
+    background: #b51218;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 9px 20px rgba(227, 30, 36, 0.25);
 }
 
 
@@ -719,77 +995,167 @@
    PAGINATION
 ========================================================= */
 
-.authors-pagination {
+.authors-page .authors-pagination {
+
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
 
-    gap: 20px;
+    gap: 24px;
 
-    padding: 16px 20px;
+    margin-top: 14px;
 
-    border-top: 1px solid var(--border);
+    padding: 4px 20px 20px;
+
+    box-sizing: border-box;
 }
 
 
-.pagination-info {
-    color: #69757d;
+/* =========================================================
+   PAGINATION INFO
+========================================================= */
+
+.authors-page .pagination-info {
+
+    color: #688199;
 
     font-size: 11px;
+
+    line-height: 1.5;
 }
 
 
-.pagination-info strong {
-    color: #aeb7bd;
+.authors-page .pagination-info strong {
+
+    color: #122b45;
+
+    font-weight: 700;
 }
 
 
-.pagination-links nav {
+/* =========================================================
+   PAGINATION LINKS
+========================================================= */
+
+.authors-page .pagination-links {
+
     display: flex;
+
     align-items: center;
-    gap: 5px;
+
+    justify-content: flex-end;
+
+    gap: 7px;
 }
 
 
-.pagination-links a,
-.pagination-links span {
-    display: inline-flex;
+/* =========================================================
+   PAGINATION NUMBERS
+========================================================= */
+
+.authors-page .pagination-numbers {
+
+    display: flex;
+
     align-items: center;
+
+    gap: 7px;
+}
+
+
+/* =========================================================
+   PAGINATION BUTTON
+========================================================= */
+
+.authors-page .pagination-button,
+.authors-page .pagination-number {
+
+    display: inline-flex;
+
+    align-items: center;
+
     justify-content: center;
 
-    min-width: 30px;
-    height: 30px;
+    min-height: 32px;
 
-    padding: 0 8px;
+    padding: 0 11px;
 
-    border: 1px solid
-        rgba(255, 255, 255, 0.07);
+    border:
+        1px solid #c7d8e4;
 
     border-radius: 7px;
 
-    background:
-        rgba(255, 255, 255, 0.025);
+    background: #ffffff;
 
-    color: #9da7ad;
+    color: #557187;
 
-    font-size: 10px;
+    font-size: 11px;
+
+    font-weight: 600;
+
+    text-decoration: none;
+
+    box-sizing: border-box;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease;
 }
 
 
-.pagination-links a:hover {
-    border-color:
-        rgba(227, 30, 36, 0.4);
+/* =========================================================
+   PAGINATION NUMBER
+========================================================= */
 
-    color: #fff;
+.authors-page .pagination-number {
+
+    width: 32px;
+
+    padding: 0;
 }
 
 
-.pagination-links span[aria-current="page"] {
-    border-color: #e31e24;
+/* =========================================================
+   PAGINATION HOVER
+========================================================= */
+
+.authors-page .pagination-button:hover,
+.authors-page .pagination-number:hover {
+
+    background: #f2f8fd;
+
+    border-color: #8ebddd;
+
+    color: #126bc0;
+}
+
+
+/* =========================================================
+   PAGINATION ACTIVE
+========================================================= */
+
+.authors-page .pagination-number.active {
 
     background: #e31e24;
 
-    color: #fff;
+    border-color: #e31e24;
+
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   PAGINATION DISABLED
+========================================================= */
+
+.authors-page .pagination-button.disabled {
+
+    opacity: 0.4;
+
+    pointer-events: none;
 }
 
 
@@ -797,450 +1163,515 @@
    RESPONSIVE
 ========================================================= */
 
-@media (max-width: 1100px) {
+@media (max-width: 900px) {
 
-    .authors-hero {
-        padding: 28px 35px;
-    }
+    .authors-page {
 
-    .authors-add-button {
-        right: 110px;
-    }
-
-}
-
-
-@media (max-width: 800px) {
-
-    .authors-hero {
-        min-height: 190px;
-
-        padding: 25px;
+        padding:
+            24px 18px 40px;
     }
 
 
-    .authors-hero-decoration {
-        width: 180px;
-    }
+    .authors-page .welcome-card {
 
-
-    .authors-add-button {
-        right: 25px;
-        bottom: 20px;
-        top: auto;
-
-        transform: none;
-    }
-
-
-    .authors-add-button:hover {
-        transform: translateY(-2px);
-    }
-
-
-    .authors-panel-header {
         align-items: flex-start;
 
         flex-direction: column;
+
+        padding: 28px;
+
+        margin-bottom: 24px;
     }
 
 
-    .authors-search {
+    .authors-page .welcome-decoration {
+
         width: 100%;
     }
 
 
-    .authors-pagination {
+    .authors-page .welcome-decoration .view-all {
+
+        width: 100%;
+    }
+
+
+    .authors-page .authors-table-panel .panel-header {
+
+        align-items: stretch;
+
+        flex-direction: column;
+
+        gap: 18px;
+
+        padding: 24px;
+    }
+
+
+    .authors-page .author-search {
+
+        width: 100%;
+    }
+
+
+    .authors-page .table-wrapper {
+
+        padding:
+            18px 12px 24px;
+    }
+
+
+    .authors-page .authors-pagination {
+
         align-items: flex-start;
 
         flex-direction: column;
+
+        padding:
+            4px 18px 20px;
     }
 
+
+    .authors-page .pagination-links {
+
+        width: 100%;
+
+        justify-content: flex-start;
+
+        flex-wrap: wrap;
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .authors-page {
+
+        padding:
+            18px 12px 30px;
+    }
+
+
+    .authors-page .welcome-card {
+
+        min-height: auto;
+
+        padding: 24px 20px;
+
+        border-radius: 14px;
+    }
+
+
+    .authors-page .welcome-content h1 {
+
+        font-size: 26px;
+    }
+
+
+    .authors-page .welcome-content p {
+
+        font-size: 12px;
+    }
+
+
+    .authors-page .authors-table-panel {
+
+        border-radius: 14px;
+    }
+
+
+    .authors-page .authors-table-panel .panel-header {
+
+        padding: 20px;
+    }
+
+
+    .authors-page .panel-header h2 {
+
+        font-size: 18px;
+    }
+
+
+    .authors-page .author-search input {
+
+        height: 48px;
+    }
+
+
+    .authors-page .authors-table {
+
+        min-width: 900px;
+    }
+
+
+    .authors-page .authors-table th,
+    .authors-page .authors-table td {
+
+        padding:
+            13px 14px;
+    }
+
+
+    .authors-page .authors-pagination {
+
+        padding:
+            4px 12px 18px;
+    }
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
+
+@media (max-width: 400px) {
+
+    .authors-page {
+
+        padding:
+            14px 10px 25px;
+    }
+
+
+    .authors-page .welcome-card {
+
+        padding:
+            22px 18px;
+    }
+
+
+    .authors-page .welcome-content h1 {
+
+        font-size: 24px;
+    }
+
+
+    .authors-page .authors-table-panel .panel-header {
+
+        padding: 17px;
+    }
+
+
+    .authors-page .pagination-links {
+
+        gap: 5px;
+    }
+
+
+    .authors-page .pagination-button,
+    .authors-page .pagination-number {
+
+        font-size: 10px;
+    }
+}
+/* =========================================================
+   FINAL OVERRIDE
+   AUTHORS HERO / KOLEKSI PERPUSTAKAAN
+   SAMA DENGAN BOOKS.CSS
+========================================================= */
+
+.authors-page .welcome-card {
+
+    position: relative;
+
+    z-index: 2;
+
+    min-height: 165px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 30px;
+
+    margin-bottom: 32px;
+
+    padding: 38px 60px;
+
+    box-sizing: border-box;
+
+    overflow: hidden;
+
+    border-radius: 18px !important;
+
+    background:
+        rgba(255, 255, 255, 0.55) !important;
+
+    border:
+        none !important;
+
+    box-shadow:
+        0 12px 35px rgba(0, 40, 80, 0.12) !important;
+
+    backdrop-filter: blur(5px);
+
+    -webkit-backdrop-filter: blur(5px);
+}
+
+
+/* =========================================================
+   HAPUS DEKORASI
+========================================================= */
+
+.authors-page .welcome-card::before,
+.authors-page .welcome-card::after {
+
+    content: none !important;
+
+    display: none !important;
+
+    background: none !important;
+
+    border: none !important;
+
+    box-shadow: none !important;
+}
+
+
+/* =========================================================
+   HERO SMALL TEXT
+========================================================= */
+
+.authors-page .welcome-small {
+
+    display: block;
+
+    margin-bottom: 10px;
+
+    color: #0876bd !important;
+
+    font-size: 13px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.10em;
+}
+
+
+/* =========================================================
+   HERO TITLE
+========================================================= */
+
+.authors-page .welcome-content h1 {
+
+    margin: 0;
+
+    color: #102f49 !important;
+
+    font-size: 36px;
+
+    font-weight: 800;
+
+    line-height: 1.15;
+}
+
+
+/* =========================================================
+   HERO DESCRIPTION
+========================================================= */
+
+.authors-page .welcome-content p {
+
+    margin: 12px 0 0;
+
+    color: #526a7b !important;
+
+    font-size: 14px;
+
+    font-weight: 500;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   ADD AUTHOR BUTTON
+   SAMA DENGAN ADD BOOK
+========================================================= */
+
+.authors-page .welcome-decoration .view-all {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    min-height: 44px;
+
+    padding: 0 20px;
+
+    border-radius: 9px;
+
+    background: #e31e24 !important;
+
+    border: 1px solid #e31e24 !important;
+
+    color: #ffffff !important;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    box-shadow:
+        0 8px 20px rgba(227, 30, 36, 0.20);
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+/* =========================================================
+   ADD AUTHOR HOVER
+========================================================= */
+
+.authors-page .welcome-decoration .view-all:hover {
+
+    background: #c91820 !important;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 12px 25px rgba(227, 30, 36, 0.28);
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .authors-page .welcome-card {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        padding: 28px;
+
+        margin-bottom: 24px;
+    }
+
+
+    .authors-page .welcome-decoration {
+
+        width: 100%;
+    }
+
+
+    .authors-page .welcome-decoration .view-all {
+
+        width: 100%;
+    }
 }
 
 
 @media (max-width: 600px) {
 
-    .authors-page {
-        padding: 20px !important;
+    .authors-page .welcome-card {
+
+        min-height: auto;
+
+        padding: 24px 20px;
+
+        border-radius: 14px !important;
     }
 
 
-    .authors-hero {
-        min-height: 210px;
+    .authors-page .welcome-content h1 {
 
-        padding: 22px;
+        font-size: 26px;
     }
 
 
-    .authors-hero h2 {
-        font-size: 27px;
+    .authors-page .welcome-content p {
+
+        font-size: 12px;
     }
-
-
-    .authors-hero p {
-        max-width: 80%;
-
-        line-height: 1.6;
-    }
-
-
-    .authors-hero-decoration {
-        opacity: 0.65;
-    }
-
-
-    .authors-stats {
-        grid-template-columns: 1fr;
-    }
-
-
-    .authors-panel-header {
-        padding: 17px;
-    }
-
-
-    .authors-table th,
-    .authors-table td {
-        padding-left: 14px;
-        padding-right: 14px;
-    }
-
 }
 
 /* =========================================================
-   CUSTOM AUTHOR PAGINATION
+   AUTHORS HEADER
+   ---------------------------------------------------------
+   SAMA DENGAN HEADER BOOKS
 ========================================================= */
 
-.authors-pagination {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-    padding: 22px 24px;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
-}
+.main.dashboard-page > .header {
 
-.pagination-info {
-    color: #8290a3;
-    font-size: 12px;
-    line-height: 1.5;
-    white-space: nowrap;
-}
+    position: relative;
 
-.pagination-info strong {
-    color: #d5dce5;
-    font-weight: 600;
-}
+    z-index: 10;
 
-.pagination-links {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 8px;
-}
+    background:
+        rgba(255, 255, 255, 0.08) !important;
 
-.pagination-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    border-bottom:
+        1px solid rgba(255, 255, 255, 0.18) !important;
 
-    min-height: 34px;
-    padding: 0 13px;
+    box-shadow:
+        none !important;
 
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 8px;
+    backdrop-filter: blur(8px);
 
-    background: #11161b;
-    color: #aeb9c7;
-
-    font-size: 12px;
-    font-weight: 500;
-    line-height: 1;
-
-    text-decoration: none;
-
-    transition:
-        background 0.2s ease,
-        border-color 0.2s ease,
-        color 0.2s ease;
-}
-
-.pagination-button:hover {
-    background: #171d23;
-    border-color: rgba(255, 255, 255, 0.14);
-    color: #ffffff;
-}
-
-.pagination-button.disabled {
-    opacity: 0.35;
-    cursor: default;
-    pointer-events: none;
-}
-
-.pagination-numbers {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.pagination-number {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 34px;
-    height: 34px;
-
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 8px;
-
-    background: #11161b;
-    color: #9da9b8;
-
-    font-size: 12px;
-    font-weight: 500;
-
-    text-decoration: none;
-
-    transition:
-        background 0.2s ease,
-        border-color 0.2s ease,
-        color 0.2s ease;
-}
-
-.pagination-number:hover {
-    background: #171d23;
-    border-color: rgba(255, 255, 255, 0.14);
-    color: #ffffff;
-}
-
-.pagination-number.active {
-    background: #e51f2a;
-    border-color: #e51f2a;
-    color: #ffffff;
-    font-weight: 600;
-}
-
-
-/* RESPONSIVE */
-@media (max-width: 700px) {
-
-    .authors-pagination {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 16px;
-    }
-
-    .pagination-info {
-        text-align: center;
-    }
-
-    .pagination-links {
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-
-}
-
-/* =========================================================
-   AUTHOR FORM
-========================================================= */
-
-.author-form-page {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 32px 0 60px;
-}
-
-.author-form-card {
-    background: #ffffff;
-    border: 1px solid #e8e8e8;
-    border-radius: 18px;
-    padding: 36px;
-    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.06);
-}
-
-.author-form-header {
-    margin-bottom: 32px;
-}
-
-.author-form-header h2 {
-    margin: 8px 0 10px;
-    font-size: 28px;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-}
-
-.author-form-header p {
-    margin: 0;
-    color: #777;
-    font-size: 14px;
-    line-height: 1.7;
-}
-
-.author-form {
-    width: 100%;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 9px;
-}
-
-.form-group label {
-    font-size: 14px;
-    font-weight: 600;
-    color: #252525;
-}
-
-.form-group input {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 14px 16px;
-
-    border: 1px solid #dcdcdc;
-    border-radius: 10px;
-
-    background: #ffffff;
-    color: #222;
-
-    font-family: inherit;
-    font-size: 14px;
-
-    outline: none;
-
-    transition:
-        border-color 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-.form-group input::placeholder {
-    color: #aaa;
-}
-
-.form-group input:focus {
-    border-color: #222;
-    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
-}
-
-.form-group small {
-    color: #888;
-    font-size: 12px;
-}
-
-.author-form-errors {
-    margin-bottom: 24px;
-    padding: 15px 18px;
-
-    border: 1px solid #f1caca;
-    border-radius: 10px;
-
-    background: #fff5f5;
-    color: #a33;
-}
-
-.author-form-errors strong {
-    display: block;
-    margin-bottom: 8px;
-}
-
-.author-form-errors ul {
-    margin: 0;
-    padding-left: 20px;
-}
-
-.author-form-errors li {
-    margin-bottom: 4px;
-}
-
-.author-form-actions {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 12px;
-
-    margin-top: 32px;
-    padding-top: 24px;
-
-    border-top: 1px solid #eeeeee;
-}
-
-.author-form-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    min-height: 44px;
-    padding: 0 20px;
-
-    border-radius: 9px;
-
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 600;
-
-    text-decoration: none;
-    cursor: pointer;
-
-    transition:
-        transform 0.2s ease,
-        opacity 0.2s ease,
-        background 0.2s ease;
-}
-
-.author-form-button:hover {
-    transform: translateY(-1px);
-}
-
-.author-form-button.cancel {
-    border: 1px solid #dddddd;
-    background: #ffffff;
-    color: #555;
-}
-
-.author-form-button.cancel:hover {
-    background: #f7f7f7;
-}
-
-.author-form-button.submit {
-    border: 1px solid #222;
-    background: #222;
-    color: #ffffff;
-}
-
-.author-form-button.submit:hover {
-    background: #000;
+    -webkit-backdrop-filter: blur(8px);
 }
 
 
 /* =========================================================
-   RESPONSIVE
+   HEADER TITLE
 ========================================================= */
 
-@media (max-width: 768px) {
+.main.dashboard-page .header-title {
 
-    .author-form-page {
-        padding: 20px 0 40px;
-    }
+    color: #ffffff !important;
 
-    .author-form-card {
-        padding: 24px;
-        border-radius: 14px;
-    }
+    font-size: 20px;
 
-    .author-form-header h2 {
-        font-size: 24px;
-    }
+    font-weight: 800;
+}
 
-    .author-form-actions {
-        flex-direction: column-reverse;
-        align-items: stretch;
-    }
 
-    .author-form-button {
-        width: 100%;
-    }
+/* =========================================================
+   HEADER RED LINE
+========================================================= */
 
+.main.dashboard-page .header-line {
+
+    background: #e31e24 !important;
+}
+
+
+/* =========================================================
+   ADMIN NAME
+========================================================= */
+
+.main.dashboard-page .admin-name {
+
+    color: #ffffff !important;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   ADMIN ROLE
+========================================================= */
+
+.main.dashboard-page .admin-role {
+
+    color:
+        rgba(255, 255, 255, 0.80) !important;
 }
