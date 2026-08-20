@@ -2,21 +2,20 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use Notifiable;
 
     protected $table = 'users';
 
     protected $primaryKey = 'user_id';
 
-    public $timestamps = false;
+    public $incrementing = false;
+
+    protected $keyType = 'string';
 
     protected $fillable = [
         'role_id',
@@ -30,27 +29,22 @@ class User extends Authenticatable
 
     protected $hidden = [
         'password_hash',
+        'remember_token',
     ];
 
-    protected function casts(): array
-    {
-        return [
-            'is_active' => 'boolean',
-        ];
-    }
-
-    public function role(): BelongsTo
-    {
-        return $this->belongsTo(Role::class, 'role_id', 'role_id');
-    }
-
-    public function loans(): HasMany
-    {
-        return $this->hasMany(Loan::class, 'user_id', 'user_id');
-    }
-
+    /**
+     * Password authentication menggunakan password_hash
+     */
     public function getAuthPassword()
     {
         return $this->password_hash;
+    }
+
+    /**
+     * Relasi User -> Role
+     */
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'role_id', 'role_id');
     }
 }

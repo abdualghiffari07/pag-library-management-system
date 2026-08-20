@@ -1,62 +1,51 @@
-import './landing';
-import './book-edit';
-/* =========================================================
-   PAG LIBRARY - ADMIN DASHBOARD
-   Entry point JS. Daftarkan fitur interaktif baru sebagai
-   fungsi init terpisah, lalu panggil di dalam DOMContentLoaded
-   di bagian paling bawah file ini.
-   ========================================================= */
+import './bootstrap';
+import Alpine from 'alpinejs';
+import ApexCharts from 'apexcharts';
 
-'use strict';
-
-/* =========================================================
-   SIDEBAR MOBILE TOGGLE (placeholder)
-   ---------------------------------------------------------
-   TODO: Saat ini sidebar disembunyikan penuh di layar
-   <= 600px (lihat dashboard.css) tanpa ada tombol untuk
-   membukanya kembali. Tambahkan tombol hamburger di
-   .header (mirip #mobile-menu-button pada landing page),
-   lalu implementasikan toggle-nya di sini, misalnya:
-
-   function initSidebarToggle() {
-       const toggleButton = document.getElementById('sidebar-toggle');
-       const sidebar = document.querySelector('.sidebar');
-
-       if (!toggleButton || !sidebar) {
-           return;
-       }
-
-       toggleButton.addEventListener('click', () => {
-           sidebar.classList.toggle('sidebar-open');
-       });
-   }
-   ========================================================= */
-
-function initSidebarToggle() {
-    // Belum diimplementasikan - lihat TODO di atas.
-}
+// flatpickr
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
+// FullCalendar
+import { Calendar } from '@fullcalendar/core';
 
 
-/* =========================================================
-   STAT CARD INTERACTIVITY (placeholder)
-   ---------------------------------------------------------
-   Tempat untuk menambahkan interaktivitas pada kartu
-   statistik di masa depan, misalnya refresh data via
-   fetch/AJAX tanpa reload halaman.
-   ========================================================= */
 
-function initStatCards() {
-    // Belum diimplementasikan.
-}
+window.Alpine = Alpine;
+window.ApexCharts = ApexCharts;
+window.flatpickr = flatpickr;
+window.FullCalendar = Calendar;
 
+Alpine.start();
 
-/* =========================================================
-   INIT
-   ========================================================= */
-
+// Initialize components on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
+    // Map imports
+    if (document.querySelector('#mapOne')) {
+        import('./components/map').then(module => module.initMap());
+    }
 
-    initSidebarToggle();
-    initStatCards();
+    // Chart imports
+    if (document.querySelector('#chartOne')) {
+        import('./components/chart/chart-1').then(module => module.initChartOne());
+    }
+    if (document.querySelector('#chartTwo')) {
+        import('./components/chart/chart-2').then(module => module.initChartTwo());
+    }
+    if (document.querySelector('#chartThree')) {
+        import('./components/chart/chart-3').then(module => module.initChartThree());
+    }
+    if (document.querySelector('#chartSix')) {
+        import('./components/chart/chart-6').then(module => module.initChartSix());
+    }
+    if (document.querySelector('#chartEight')) {
+        import('./components/chart/chart-8').then(module => module.initChartEight());
+    }
+    if (document.querySelector('#chartThirteen')) {
+        import('./components/chart/chart-13').then(module => module.initChartThirteen());
+    }
 
+    // Calendar init
+    if (document.querySelector('#calendar')) {
+        import('./components/calendar-init').then(module => module.calendarInit());
+    }
 });

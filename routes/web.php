@@ -4,33 +4,14 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
-use App\Http\Controllers\BookController;
-use App\Http\Controllers\AuthorController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\LocationController;
-use App\Http\Controllers\LoanController;
-use App\Http\Controllers\BookCopyController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ReportController;
-
-
-/*
-|--------------------------------------------------------------------------
-| Public
-|--------------------------------------------------------------------------
-*/
+// LANDING PAGE
 
 Route::get('/', function () {
-    return view('welcome');
-});
+    return view('landing');
+})->name('landing');
 
 
-/*
-|--------------------------------------------------------------------------
-| Authentication
-|--------------------------------------------------------------------------
-*/
-
+// LOGIN
 Route::post('/login', function (Request $request) {
 
     $credentials = $request->validate([
@@ -42,7 +23,6 @@ Route::post('/login', function (Request $request) {
 
         $user = Auth::user();
 
-        // Hanya ADMIN yang diperbolehkan login
         if (!$user->role || $user->role->role_name !== 'admin') {
 
             Auth::logout();
@@ -70,238 +50,72 @@ Route::post('/login', function (Request $request) {
 
 })->name('login.process');
 
+// HALAMAN SETELAH LOGIN
+Route::middleware('admin')->group(function () {
 
-/*
-|--------------------------------------------------------------------------
-| Logout
-|--------------------------------------------------------------------------
-*/
+    // Dashboard
+    Route::get('/dashboard', function () {
+        return view('pages.dashboard.ecommerce', [
+            'title' => 'E-commerce Dashboard'
+        ]);
+    })->name('dashboard');
 
-Route::post('/logout', function (Request $request) {
 
+    // Profile
+    Route::get('/profile', function () {
+        return view('pages.profile', [
+            'title' => 'Profile'
+        ]);
+    })->name('profile');
+
+
+    // Form
+    Route::get('/form-elements', function () {
+        return view('pages.form.form-elements', [
+            'title' => 'Form Elements'
+        ]);
+    })->name('form-elements');
+
+
+    // Basic Tables
+    Route::get('/basic-tables', function () {
+        return view('pages.tables.basic-tables', [
+            'title' => 'Basic Tables'
+        ]);
+    })->name('basic-tables');
+
+
+    // Data Buku
+    Route::get('/data-buku', function () {
+        return view('pages.tables.data-buku', [
+            'title' => 'Data Buku'
+        ]);
+    })->name('data-buku');
+
+
+    // Authors
+    Route::get('/authors', function () {
+        return view('pages.tables.authors', [
+            'title' => 'Authors'
+        ]);
+    })->name('authors');
+
+
+    // Pengunjung
+    Route::get('/visitors', function () {
+        return view('pages.tables.visitors', [
+            'title' => 'Daftar Pengunjung'
+        ]);
+    })->name('visitors');
+
+// Logout
+Route::post('/logout', function () {
     Auth::logout();
 
-    $request->session()->invalidate();
-    $request->session()->regenerateToken();
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
 
     return redirect('/');
-
 })->name('logout');
 
-
-/*
-|--------------------------------------------------------------------------
-| Dashboard Admin
-|--------------------------------------------------------------------------
-*/
-
-Route::get('/dashboard', function () {
-    return redirect()->route('books.index');
-})
-    ->middleware(['role:admin', 'no-cache'])
-    ->name('dashboard');
-
-
-/*
-|--------------------------------------------------------------------------
-| Laporan Admin
-|--------------------------------------------------------------------------
-*/
-
-Route::get('/laporan', [ReportController::class, 'index'])
-    ->middleware(['role:admin', 'no-cache'])
-    ->name('reports.index');
-
-
-/*
-|--------------------------------------------------------------------------
-| Admin Only
-|--------------------------------------------------------------------------
-*/
-
-Route::get('/admin-test', function () {
-
-    return 'Anda berhasil masuk sebagai ADMIN.';
-
-})->middleware('role:admin');
-
-
-/*
-|--------------------------------------------------------------------------
-| Admin & Librarian
-|--------------------------------------------------------------------------
-*/
-
-Route::middleware(['role:admin', 'no-cache'])->group(function () {
-
-    /*
-    |--------------------------------------------------------------------------
-    | Autocomplete Penulis & Kategori
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/authors/search', [BookController::class, 'searchAuthors'])
-        ->name('authors.search');
-
-    Route::post('/authors/quick-store', [BookController::class, 'storeAuthor'])
-        ->name('authors.quick-store');
-
-    Route::get('/categories/search', [BookController::class, 'searchCategories'])
-        ->name('categories.search');
-
-    Route::post('/categories/quick-store', [BookController::class, 'storeCategory'])
-        ->name('categories.quick-store');
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Buku
-    |--------------------------------------------------------------------------
-    */
-
-    Route::resource('books', BookController::class)
-        ->except([
-            'index',
-            'show'
-        ]);
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Eksemplar Buku
-    |--------------------------------------------------------------------------
-    */
-
-    Route::resource(
-        'book-copies',
-        BookCopyController::class
-    );
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Penulis
-    |--------------------------------------------------------------------------
-    */
-
-    Route::resource('authors', AuthorController::class)
-        ->except([
-            'index',
-            'show'
-        ]);
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Kategori
-    |--------------------------------------------------------------------------
-    */
-
-    Route::resource('categories', CategoryController::class)
-        ->except([
-            'index',
-            'show'
-        ]);
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Lokasi
-    |--------------------------------------------------------------------------
-    */
-
-    Route::resource(
-        'locations',
-        LocationController::class
-    );
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Peminjaman
-    |--------------------------------------------------------------------------
-    */
-
-    Route::resource(
-        'loans',
-        LoanController::class
-    );
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Pengembalian Buku
-    |--------------------------------------------------------------------------
-    */
-
-    Route::post(
-        '/loan-details/{loanDetail}/return',
-        [LoanController::class, 'returnBookDetail']
-    )->name('loan-details.return');
-
 });
-
-
-/*
-|--------------------------------------------------------------------------
-| Admin, Librarian & Member - Read Only
-|--------------------------------------------------------------------------
-*/
-
-Route::middleware(['role:admin', 'no-cache'])->group(function () {
-
-    /*
-    |--------------------------------------------------------------------------
-    | Buku
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get(
-        '/books',
-        [BookController::class, 'index']
-    )->name('books.index');
-
-
-    Route::get(
-        '/books/{book}',
-        [BookController::class, 'show']
-    )->name('books.show');
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Penulis
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get(
-        '/authors',
-        [AuthorController::class, 'index']
-    )->name('authors.index');
-
-
-    Route::get(
-        '/authors/{author}',
-        [AuthorController::class, 'show']
-    )->name('authors.show');
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Kategori
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get(
-        '/categories',
-        [CategoryController::class, 'index']
-    )->name('categories.index');
-
-
-    Route::get(
-        '/categories/{category}',
-        [CategoryController::class, 'show']
-    )->name('categories.show');
-
-});
-
