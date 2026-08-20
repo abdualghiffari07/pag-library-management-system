@@ -4,6 +4,6 @@
     <x-common.page-breadcrumb pageTitle="Daftar Buku" />
 
     <div class="space-y-6">
-        <x-tables.basic-tables.data-books />
+        <x-tables.basic-tables.books-data.books-data :books="$books" />
     </div>
 @endsection

@@ -16,7 +16,7 @@ class MenuHelper
             [
                 'name' => 'Data Buku',
                 'icon' => 'tables',
-                'path' => '/data-buku',
+                'path' => '/books-data',
             ],
 
             [

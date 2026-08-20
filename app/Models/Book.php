@@ -25,6 +25,9 @@ class Book extends Model
         'location_id',
         'status',
         'description',
+        'book_code',
+        'cat_no',
+        'publisher',
     ];
 
     public function location(): BelongsTo

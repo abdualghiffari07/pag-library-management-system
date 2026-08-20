@@ -2,7 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\BookController;
 use Illuminate\Http\Request;
+use App\Models\Book;
 
 // LANDING PAGE
 
@@ -86,12 +88,35 @@ Route::middleware('admin')->group(function () {
 
 
     // Data Buku
-    Route::get('/data-buku', function () {
-        return view('pages.tables.data-buku', [
-            'title' => 'Data Buku'
-        ]);
-    })->name('data-buku');
+    Route::get('/books-data', function () {
+        $books = Book::with([
+            'location',
+            'authors',
+            'copies',
+        ])->get();
 
+        return view('pages.tables.books.books-data', [
+            'title' => 'Data Buku',
+            'books' => $books,
+        ]);
+    })->middleware('admin')->name('data-buku');
+
+    // Tambah Buku
+    Route::get('/books/create', function () {
+        return view('pages.tables.books.add-books', [
+            'title' => 'Tambah Buku',
+        ]);
+    })->middleware('admin')->name('books.create');
+
+    // Simpan Buku
+    Route::post('/books', [BookController::class, 'store'])
+        ->middleware('admin')
+        ->name('books.store');
+
+    // Cek Book No.
+    Route::get('/books/check-book-no', [BookController::class, 'checkBookNo'])
+        ->middleware('admin')
+        ->name('books.check-book-no');
 
     // Authors
     Route::get('/authors', function () {
