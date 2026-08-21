@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BookCopy extends Model
 {
@@ -21,7 +20,7 @@ class BookCopy extends Model
         'notes',
     ];
 
-    public function book(): BelongsTo
+    public function book()
     {
         return $this->belongsTo(
             Book::class,

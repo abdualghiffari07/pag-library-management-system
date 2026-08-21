@@ -5,6 +5,7 @@
 
     <div class="space-y-6">
         <x-common.component-card title="Tambah Buku">
+
             <form
                 action="{{ route('books.store') }}"
                 method="POST"
@@ -27,14 +28,17 @@
 
                         try {
                             const response = await fetch(
-                                '{{ route('books.check-book-no') }}?book_no=' + encodeURIComponent(value)
+                                '{{ route('books.check-book-no') }}?book_no=' +
+                                encodeURIComponent(value)
                             );
 
                             const data = await response.json();
 
                             this.bookNoExists = data.exists;
+
                         } catch (error) {
                             console.error(error);
+
                         } finally {
                             this.checkingBookNo = false;
                         }
@@ -42,17 +46,28 @@
                 }"
                 @submit="if (bookNoExists || checkingBookNo) $event.preventDefault()"
             >
+
                 @csrf
+
+                {{-- =====================================================
+                     INFORMASI UTAMA BUKU
+                ====================================================== --}}
 
                 <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
 
-                    {{-- Book No. --}}
+                    {{-- =================================================
+                         BOOK NO.
+                    ================================================== --}}
+
                     <div>
-                        <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                        <label
+                            class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
+                        >
                             BOOK NO.
                         </label>
 
                         <div class="relative">
+
                             <input
                                 type="text"
                                 name="book_no"
@@ -61,11 +76,13 @@
                                 value="{{ old('book_no') }}"
                                 required
                                 placeholder="Masukkan nomor buku"
-                                class="h-11 w-full rounded-lg border bg-transparent px-4 py-2.5 pr-10 text-sm text-gray-800 dark:text-white/90 shadow-theme-xs placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:bg-gray-900 dark:placeholder:text-gray-400"
+                                class="h-11 w-full rounded-lg border bg-transparent px-4 py-2.5 pr-10 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-gray-400"
                                 :class="bookNoExists
                                     ? 'border-error-300 focus:border-error-300 focus:ring-error-500/10 dark:border-error-700'
                                     : 'border-gray-300 focus:border-brand-300 focus:ring-brand-500/10 dark:border-gray-700 dark:focus:border-brand-800'"
                             >
+
+                            {{-- Icon error --}}
 
                             <span
                                 x-show="bookNoExists"
@@ -87,7 +104,10 @@
                                     />
                                 </svg>
                             </span>
+
                         </div>
+
+                        {{-- Book No duplicate --}}
 
                         <p
                             x-show="bookNoExists"
@@ -102,11 +122,19 @@
                                 {{ $message }}
                             </p>
                         @enderror
+
                     </div>
 
-                    {{-- Cat. No. --}}
+
+                    {{-- =================================================
+                         CAT. NO.
+                    ================================================== --}}
+
                     <div>
-                        <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+
+                        <label
+                            class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
+                        >
                             CAT. NO.
                         </label>
 
@@ -116,45 +144,57 @@
                             value="{{ old('cat_no') }}"
                             required
                             placeholder="Masukkan nomor katalog"
-                            class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 dark:text-white/90 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:placeholder:text-gray-400"
+                            class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-gray-400"
                         >
 
                         @error('cat_no')
-                            <p class="mt-1.5 text-xs text-error-500">{{ $message }}</p>
+                            <p class="mt-1.5 text-xs text-error-500">
+                                {{ $message }}
+                            </p>
                         @enderror
+
                     </div>
 
-                    {{-- Location --}}
+
+                    {{-- =================================================
+                         RAK
+                    ================================================== --}}
+
                     <div>
-                        <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-                            LOCATION
+
+                        <label
+                            class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
+                        >
+                            RAK
                         </label>
 
-                        <select
-                            name="location_id"
+                        <input
+                            type="text"
+                            name="rack"
+                            value="{{ old('rack') }}"
                             required
-                            class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 dark:text-white/90 shadow-theme-xs focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900"
+                            placeholder="Masukkan nomor atau nama rak"
+                            class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-gray-400"
                         >
-                            <option value="">Pilih lokasi</option>
 
-                            @foreach(\App\Models\Location::all() as $location)
-                                <option
-                                    value="{{ $location->location_id }}"
-                                    {{ old('location_id') == $location->location_id ? 'selected' : '' }}
-                                >
-                                    {{ $location->location_name }}
-                                </option>
-                            @endforeach
-                        </select>
-
-                        @error('location_id')
-                            <p class="mt-1.5 text-xs text-error-500">{{ $message }}</p>
+                        @error('rack')
+                            <p class="mt-1.5 text-xs text-error-500">
+                                {{ $message }}
+                            </p>
                         @enderror
+
                     </div>
 
-                    {{-- Title --}}
+
+                    {{-- =================================================
+                         TITLE
+                    ================================================== --}}
+
                     <div>
-                        <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+
+                        <label
+                            class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
+                        >
                             TITLE
                         </label>
 
@@ -164,17 +204,27 @@
                             value="{{ old('title') }}"
                             required
                             placeholder="Masukkan judul buku"
-                            class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 dark:text-white/90 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:placeholder:text-gray-400"
+                            class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-gray-400"
                         >
 
                         @error('title')
-                            <p class="mt-1.5 text-xs text-error-500">{{ $message }}</p>
+                            <p class="mt-1.5 text-xs text-error-500">
+                                {{ $message }}
+                            </p>
                         @enderror
+
                     </div>
 
-                    {{-- Author --}}
+
+                    {{-- =================================================
+                         AUTHOR
+                    ================================================== --}}
+
                     <div>
-                        <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+
+                        <label
+                            class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
+                        >
                             AUTHOR
                         </label>
 
@@ -184,17 +234,27 @@
                             value="{{ old('author') }}"
                             required
                             placeholder="Masukkan nama penulis"
-                            class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 dark:text-white/90 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:placeholder:text-gray-400"
+                            class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-gray-400"
                         >
 
                         @error('author')
-                            <p class="mt-1.5 text-xs text-error-500">{{ $message }}</p>
+                            <p class="mt-1.5 text-xs text-error-500">
+                                {{ $message }}
+                            </p>
                         @enderror
+
                     </div>
 
-                    {{-- Publisher --}}
+
+                    {{-- =================================================
+                         PUBLISHER
+                    ================================================== --}}
+
                     <div>
-                        <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+
+                        <label
+                            class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
+                        >
                             PUBLISHER
                         </label>
 
@@ -204,17 +264,27 @@
                             value="{{ old('publisher') }}"
                             required
                             placeholder="Masukkan nama penerbit"
-                            class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 dark:text-white/90 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:placeholder:text-gray-400"
+                            class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-gray-400"
                         >
 
                         @error('publisher')
-                            <p class="mt-1.5 text-xs text-error-500">{{ $message }}</p>
+                            <p class="mt-1.5 text-xs text-error-500">
+                                {{ $message }}
+                            </p>
                         @enderror
+
                     </div>
 
-                    {{-- Quantity --}}
+
+                    {{-- =================================================
+                         QTY
+                    ================================================== --}}
+
                     <div>
-                        <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+
+                        <label
+                            class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
+                        >
                             QTY
                         </label>
 
@@ -225,18 +295,29 @@
                             min="1"
                             required
                             placeholder="Masukkan jumlah buku"
-                            class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 dark:text-white/90 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:placeholder:text-gray-400"
+                            class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-gray-400"
                         >
 
                         @error('qty')
-                            <p class="mt-1.5 text-xs text-error-500">{{ $message }}</p>
+                            <p class="mt-1.5 text-xs text-error-500">
+                                {{ $message }}
+                            </p>
                         @enderror
+
                     </div>
+
                 </div>
 
-                {{-- Description --}}
+
+                {{-- =====================================================
+                     DESCRIPTION
+                ====================================================== --}}
+
                 <div>
-                    <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+
+                    <label
+                        class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
+                    >
                         DESCRIPTION
                     </label>
 
@@ -244,16 +325,26 @@
                         name="description"
                         rows="6"
                         placeholder="Masukkan deskripsi buku..."
-                        class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 dark:text-white/90 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:placeholder:text-gray-400"
+                        class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-gray-400"
                     >{{ old('description') }}</textarea>
 
                     @error('description')
-                        <p class="mt-1.5 text-xs text-error-500">{{ $message }}</p>
+                        <p class="mt-1.5 text-xs text-error-500">
+                            {{ $message }}
+                        </p>
                     @enderror
+
                 </div>
 
-                {{-- Actions --}}
-                <div class="flex items-center justify-end gap-3 border-t border-gray-200 pt-5 dark:border-gray-800">
+
+                {{-- =====================================================
+                     ACTIONS
+                ====================================================== --}}
+
+                <div
+                    class="flex items-center justify-end gap-3 border-t border-gray-200 pt-5 dark:border-gray-800"
+                >
+
                     <a
                         href="{{ route('data-buku') }}"
                         class="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-theme-xs transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03]"
@@ -271,8 +362,11 @@
                     >
                         Simpan Buku
                     </button>
+
                 </div>
+
             </form>
+
         </x-common.component-card>
     </div>
 @endsection

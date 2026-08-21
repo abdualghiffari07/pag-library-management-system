@@ -3,11 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Models\BookCopy;
-
 
 class Book extends Model
 {
@@ -22,22 +19,13 @@ class Book extends Model
         'origin',
         'cover',
         'publication_year',
-        'location_id',
+        'rack',
         'status',
         'description',
         'book_code',
         'cat_no',
         'publisher',
     ];
-
-    public function location(): BelongsTo
-    {
-        return $this->belongsTo(
-            Location::class,
-            'location_id',
-            'location_id'
-        );
-    }
 
     public function authors(): BelongsToMany
     {

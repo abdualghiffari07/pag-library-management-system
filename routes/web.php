@@ -86,20 +86,22 @@ Route::middleware('admin')->group(function () {
         ]);
     })->name('basic-tables');
 
+// Data Buku
+Route::get('/books-data', function () {
 
-    // Data Buku
-    Route::get('/books-data', function () {
-        $books = Book::with([
-            'location',
+    $books = Book::where('status', 'public')
+        ->with([
             'authors',
             'copies',
-        ])->get();
+        ])
+        ->get();
 
-        return view('pages.tables.books.books-data', [
-            'title' => 'Data Buku',
-            'books' => $books,
-        ]);
-    })->middleware('admin')->name('data-buku');
+    return view('pages.tables.books.books-data', [
+        'title' => 'Data Buku',
+        'books' => $books,
+    ]);
+
+})->middleware('admin')->name('data-buku');
 
     // Tambah Buku
     Route::get('/books/create', function () {
@@ -117,6 +119,27 @@ Route::middleware('admin')->group(function () {
     Route::get('/books/check-book-no', [BookController::class, 'checkBookNo'])
         ->middleware('admin')
         ->name('books.check-book-no');
+    //Pinjam dan kembalikan buku
+    Route::post('/books/{book_id}/borrow', [BookController::class, 'borrow'])
+        ->name('books.borrow');
+
+    Route::post(
+        'books/{book_id}/return/{loan_detail_id}',
+        [BookController::class, 'returnBook']
+    )->name('books.return');
+    
+    //Edit
+    Route::get('/books/{book_id}/edit', [BookController::class, 'edit'])
+        ->middleware('admin')
+        ->name('books.edit');
+
+    Route::put('/books/{book_id}', [BookController::class, 'update'])
+        ->middleware('admin')
+        ->name('books.update');
+
+    Route::delete('/books/{book_code}', [BookController::class, 'destroy'])
+        ->middleware('admin')
+        ->name('books.destroy');
 
     // Authors
     Route::get('/authors', function () {

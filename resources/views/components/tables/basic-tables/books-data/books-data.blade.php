@@ -20,7 +20,10 @@
             'id' => $book->book_id,
             'bookNo' => $book->book_code ?? '-',
             'catNo' => $book->cat_no ?? '-',
-            'location' => $book->location->location_name ?? '-',
+
+            // RAK sekarang langsung diambil dari kolom books.rack
+            'rack' => $book->rack ?? '-',
+
             'title' => $book->title ?? '-',
             'author' => $book->authors->pluck('author_name')->join(', ') ?: '-',
             'publisher' => $book->publisher ?? '-',
@@ -147,7 +150,9 @@
 >
     <div class="overflow-hidden rounded-xl border border-gray-200 bg-white pt-3 dark:border-white/[0.05] dark:bg-white/[0.03]">
 
+        {{-- HEADER --}}
         <div class="mb-3 flex flex-col gap-3 px-4 sm:flex-row sm:items-center sm:justify-between">
+
             <div>
                 <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">
                     Data Buku
@@ -159,6 +164,8 @@
             </div>
 
             <div class="flex flex-wrap items-center gap-2">
+
+                {{-- FILTER --}}
                 <button
                     type="button"
                     class="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs font-medium text-gray-700 shadow-theme-xs transition hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200"
@@ -190,6 +197,7 @@
                     Filter
                 </button>
 
+                {{-- SEE ALL --}}
                 <button
                     type="button"
                     class="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs font-medium text-gray-700 shadow-theme-xs transition hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200"
@@ -197,6 +205,7 @@
                     See all
                 </button>
 
+                {{-- TAMBAH BUKU --}}
                 <a
                     href="{{ route('books.create') }}"
                     class="inline-flex items-center gap-1.5 rounded-lg bg-brand-500 px-3 py-2 text-xs font-medium text-white shadow-theme-xs transition hover:bg-brand-600"
@@ -217,16 +226,27 @@
 
                     Tambah Buku
                 </a>
+
             </div>
         </div>
 
+        {{-- TABLE --}}
         <div class="max-w-full overflow-x-auto">
+
             <table class="w-full min-w-[1200px] table-fixed">
+
+                {{-- TABLE HEADER --}}
                 <thead class="border-y border-gray-100 bg-gray-50 dark:border-white/[0.05] dark:bg-gray-900">
+
                     <tr>
+
+                        {{-- BOOK NO --}}
                         <th class="w-[105px] px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+
                             <div class="flex items-center gap-2">
-                                <div
+
+                                <button
+                                    type="button"
                                     @click="handleSelectAll()"
                                     class="flex h-4 w-4 cursor-pointer items-center justify-center rounded border"
                                     :class="selectAll
@@ -234,7 +254,7 @@
                                         : 'border-gray-300 bg-white dark:border-gray-700 dark:bg-transparent'"
                                 >
                                     <svg
-                                        :class="selectAll ? 'block' : 'hidden'"
+                                        x-show="selectAll"
                                         width="11"
                                         height="11"
                                         viewBox="0 0 14 14"
@@ -248,60 +268,80 @@
                                             stroke-linejoin="round"
                                         />
                                     </svg>
-                                </div>
+                                </button>
 
                                 <span>BOOK NO.</span>
+
                             </div>
+
                         </th>
 
+                        {{-- CAT NO --}}
                         <th class="w-[95px] px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
                             CAT. NO.
                         </th>
 
+                        {{-- RAK --}}
                         <th class="w-[115px] px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
-                            LOCATION
+                            RAK
                         </th>
 
+                        {{-- TITLE --}}
                         <th class="w-[190px] px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
                             TITLE
                         </th>
 
+                        {{-- AUTHOR --}}
                         <th class="w-[150px] px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
                             AUTHOR
                         </th>
 
+                        {{-- PUBLISHER --}}
                         <th class="w-[130px] px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
                             PUBLISHER
                         </th>
 
+                        {{-- QTY --}}
                         <th class="w-[55px] px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
                             QTY
                         </th>
 
+                        {{-- STATUS --}}
                         <th class="w-[130px] px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
                             STATUS PINJAMAN
                         </th>
 
+                        {{-- TANGGAL --}}
                         <th class="w-[130px] px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
                             TANGGAL PINJAMAN
                         </th>
 
+                        {{-- ACTION --}}
                         <th class="w-[80px] px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
                             ACTION
                         </th>
+
                     </tr>
+
                 </thead>
 
+                {{-- TABLE BODY --}}
                 <tbody>
+
                     <template
                         x-for="row in paginatedRows"
                         :key="row.id"
                     >
+
                         <tr class="border-b border-gray-100 transition-colors hover:bg-gray-50 dark:border-white/[0.05] dark:hover:bg-white/[0.02]">
 
+                            {{-- BOOK NO --}}
                             <td class="px-3 py-3">
+
                                 <div class="flex items-center gap-2">
-                                    <div
+
+                                    <button
+                                        type="button"
                                         @click="handleRowSelect(row.id)"
                                         class="flex h-4 w-4 shrink-0 cursor-pointer items-center justify-center rounded border"
                                         :class="selectedRows.includes(row.id)
@@ -309,7 +349,7 @@
                                             : 'border-gray-300 bg-white dark:border-gray-700 dark:bg-transparent'"
                                     >
                                         <svg
-                                            :class="selectedRows.includes(row.id) ? 'block' : 'hidden'"
+                                            x-show="selectedRows.includes(row.id)"
                                             width="11"
                                             height="11"
                                             viewBox="0 0 14 14"
@@ -323,79 +363,108 @@
                                                 stroke-linejoin="round"
                                             />
                                         </svg>
-                                    </div>
+                                    </button>
 
                                     <span
                                         class="truncate text-xs font-semibold text-gray-700 dark:text-gray-300"
                                         x-text="row.bookNo"
                                     ></span>
+
                                 </div>
+
                             </td>
 
+                            {{-- CAT NO --}}
                             <td class="px-3 py-3">
+
                                 <span
                                     class="text-xs text-gray-600 dark:text-gray-400"
                                     x-text="row.catNo"
                                 ></span>
+
                             </td>
 
+                            {{-- RAK --}}
                             <td class="px-3 py-3">
+
                                 <span
                                     class="block truncate text-xs text-gray-600 dark:text-gray-400"
-                                    x-text="row.location"
+                                    x-text="row.rack"
                                 ></span>
+
                             </td>
 
+                            {{-- TITLE --}}
                             <td class="px-3 py-3">
+
                                 <span
                                     class="block truncate text-xs font-medium text-gray-700 dark:text-gray-300"
                                     x-text="row.title"
                                 ></span>
+
                             </td>
 
+                            {{-- AUTHOR --}}
                             <td class="px-3 py-3">
+
                                 <span
                                     class="block truncate text-xs text-gray-600 dark:text-gray-400"
                                     x-text="row.author"
                                 ></span>
+
                             </td>
 
+                            {{-- PUBLISHER --}}
                             <td class="px-3 py-3">
+
                                 <span
                                     class="block truncate text-xs text-gray-600 dark:text-gray-400"
                                     x-text="row.publisher"
                                 ></span>
+
                             </td>
 
+                            {{-- QTY --}}
                             <td class="px-3 py-3">
+
                                 <span
                                     class="text-xs font-medium text-gray-700 dark:text-gray-300"
                                     x-text="row.qty"
                                 ></span>
+
                             </td>
 
+                            {{-- STATUS --}}
                             <td class="px-3 py-3">
+
                                 <span
                                     class="inline-block whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-medium"
                                     :class="getStatusClass(row.loanStatus)"
                                     x-text="row.loanStatus"
                                 ></span>
+
                             </td>
 
+                            {{-- TANGGAL PINJAMAN --}}
                             <td class="px-3 py-3">
+
                                 <span
                                     class="whitespace-nowrap text-xs text-gray-600 dark:text-gray-400"
                                     x-text="row.loanDate"
                                 ></span>
+
                             </td>
 
+                            {{-- ACTION --}}
                             <td class="px-3 py-3">
-                                <div class="flex items-center gap-2">
 
-                                    <button
-                                        type="button"
+                                <div class="flex items-center gap-3">
+
+                                    {{-- EDIT --}}
+                                    <a
+                                        :href="'{{ url('/books') }}/' + row.id + '/edit'"
                                         class="text-gray-500 transition-colors hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400"
-                                        title="Lihat detail"
+                                        title="Edit buku"
                                     >
                                         <svg
                                             class="h-4 w-4"
@@ -407,66 +476,93 @@
                                                 stroke-linecap="round"
                                                 stroke-linejoin="round"
                                                 stroke-width="2"
-                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5"
                                             />
 
                                             <path
                                                 stroke-linecap="round"
                                                 stroke-linejoin="round"
                                                 stroke-width="2"
-                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                                                d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"
                                             />
                                         </svg>
-                                    </button>
+                                    </a>
 
-                                    <button
-                                        type="button"
-                                        class="text-gray-500 transition-colors hover:text-red-500 dark:text-gray-400 dark:hover:text-red-500"
-                                        title="Hapus buku"
+                                    {{-- HAPUS --}}
+                                    <form
+                                        method="POST"
+                                        :action="'{{ url('/books') }}/' + encodeURIComponent(row.bookNo)"
+                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus buku ini?')"
                                     >
-                                        <svg
-                                            class="h-4 w-4"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
+                                        @csrf
+                                        @method('DELETE')
+
+                                        <button
+                                            type="submit"
+                                            class="text-gray-500 transition-colors hover:text-red-500 dark:text-gray-400 dark:hover:text-red-500"
+                                            title="Hapus buku"
                                         >
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                stroke-width="2"
-                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                            />
-                                        </svg>
-                                    </button>
+                                            <svg
+                                                class="h-4 w-4"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                                />
+                                            </svg>
+                                        </button>
+
+                                    </form>
 
                                 </div>
+
                             </td>
+
                         </tr>
+
                     </template>
 
+                    {{-- DATA KOSONG --}}
                     <template x-if="tableRowData.length === 0">
+
                         <tr>
+
                             <td
                                 colspan="10"
                                 class="px-3 py-10 text-center text-sm text-gray-500 dark:text-gray-400"
                             >
                                 Belum ada data buku.
                             </td>
+
                         </tr>
+
                     </template>
+
                 </tbody>
+
             </table>
+
         </div>
 
+        {{-- PAGINATION --}}
         <div class="border-t border-gray-200 px-4 py-4 dark:border-white/[0.05]">
+
             <div class="flex items-center justify-between">
 
+                {{-- PREVIOUS --}}
                 <button
+                    type="button"
                     @click="prevPage"
                     :disabled="currentPage === 1"
-                    :class="currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''"
+                    :class="currentPage === 1 ? 'cursor-not-allowed opacity-50' : ''"
                     class="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-3 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200 sm:px-3.5"
                 >
+
                     <svg
                         width="20"
                         height="20"
@@ -474,30 +570,42 @@
                         fill="none"
                     >
                         <path
-                            fill-rule="evenodd"
-                            clip-rule="evenodd"
-                            d="M2.58301 9.99868C2.58272 10.1909 2.65588 10.3833 2.80249 10.53L7.79915 15.5301C8.09194 15.8231 8.56682 15.8233 8.85981 15.5305C9.15281 15.2377 9.15297 14.7629 8.86018 14.4699L5.14009 10.7472L16.6675 10.7472C17.0817 10.7472 17.4175 10.4114 17.4175 9.99715C17.4175 9.58294 17.0817 9.24715 16.6675 9.24715L5.14554 9.24715L8.86017 5.53016C9.15297 5.23717 9.15282 4.7623 8.85983 4.4695C8.56684 4.1767 8.09197 4.17685 7.79917 4.4695C8.56684 4.1767 8.09197 4.17685 7.79917 4.46984L2.84167 9.43049C2.68321 9.568 2.58301 9.77087 2.58301 9.99715C2.58301 9.99766 2.58301 9.99817 2.58301 9.99868Z"
-                            fill="currentColor"
+                            d="M2.58301 9.99868L8.86018 4.46984M2.58301 9.99868L8.86018 15.5301M2.58301 9.99868H17.4175"
+                            stroke="currentColor"
+                            stroke-width="1.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
                         />
                     </svg>
 
-                    <span class="hidden sm:inline">Previous</span>
+                    <span class="hidden sm:inline">
+                        Previous
+                    </span>
+
                 </button>
 
+                {{-- MOBILE PAGE --}}
                 <span class="block text-sm font-medium text-gray-700 dark:text-gray-400 sm:hidden">
+
                     Page
                     <span x-text="currentPage"></span>
                     of
                     <span x-text="totalPages"></span>
+
                 </span>
 
+                {{-- DESKTOP PAGINATION --}}
                 <ul class="hidden items-center gap-0.5 sm:flex">
+
                     <template
                         x-for="page in displayedPages"
                         :key="page"
                     >
+
                         <li>
+
                             <button
+                                type="button"
                                 x-show="page !== '...'"
                                 @click="goToPage(page)"
                                 :class="currentPage === page
@@ -513,17 +621,25 @@
                             >
                                 ...
                             </span>
+
                         </li>
+
                     </template>
+
                 </ul>
 
+                {{-- NEXT --}}
                 <button
+                    type="button"
                     @click="nextPage"
                     :disabled="currentPage === totalPages"
-                    :class="currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''"
+                    :class="currentPage === totalPages ? 'cursor-not-allowed opacity-50' : ''"
                     class="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-3 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200 sm:px-3.5"
                 >
-                    <span class="hidden sm:inline">Next</span>
+
+                    <span class="hidden sm:inline">
+                        Next
+                    </span>
 
                     <svg
                         width="20"
@@ -532,15 +648,19 @@
                         fill="none"
                     >
                         <path
-                            fill-rule="evenodd"
-                            clip-rule="evenodd"
-                            d="M17.4175 9.9986C17.4178 10.1909 17.3446 10.3832 17.198 10.53L12.2013 15.5301C11.9085 15.8233 11.4336 15.8233 11.1407 15.5305C10.8477 15.2377 10.8475 14.7629 11.1403 14.4699L14.8604 10.7472L3.33301 10.7472C2.91879 10.7472 2.58301 10.4114 2.58301 9.99715C2.58301 9.58294 2.91879 9.24715 3.33301 9.24715L14.8549 9.24715L11.1403 5.53016C10.8475 5.23717 10.8477 4.7623 11.1407 4.4695C11.4336 4.1767 11.9085 4.17685 12.2013 4.46984L17.1588 9.43049C17.3173 9.568 17.4175 9.77087 17.4175 9.99715C17.4175 9.99812 17.4175 9.9986 17.4175 9.9986Z"
-                            fill="currentColor"
+                            d="M17.4175 9.9986L11.1403 4.46984M17.4175 9.9986L11.1403 15.5301M17.4175 9.9986H2.58301"
+                            stroke="currentColor"
+                            stroke-width="1.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
                         />
                     </svg>
+
                 </button>
 
             </div>
+
         </div>
+
     </div>
 </div>
