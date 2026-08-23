@@ -8,110 +8,104 @@ use Illuminate\Http\Request;
 class AuthorController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Menampilkan daftar penulis.
      */
-public function index(Request $request)
-{
-    $search = $request->input('search');
+    public function index()
+    {
+        $authors = Author::withCount('books')
+            ->orderBy('author_id', 'asc')
+            ->get();
 
-    $authors = Author::when($search, function ($query, $search) {
-        $query->where('author_name', 'like', '%' . $search . '%');
-    })
-    ->orderBy('author_name', 'asc')
-    ->paginate(10)
-    ->withQueryString();
-
-    return view('authors.index', compact('authors', 'search'));
-}
+        return view('pages.tables.authors.authors', [
+            'title' => 'Data Penulis',
+            'authors' => $authors,
+        ]);
+    }
 
     /**
-     * Show the form for creating a new resource.
+     * Menampilkan form tambah penulis.
      */
     public function create()
     {
-        return view('authors.create');
+        return view('pages.tables.authors.create', [
+            'title' => 'Tambah Penulis',
+        ]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Menyimpan penulis baru.
      */
-public function store(Request $request)
-{
-    $validated = $request->validate([
-        'author_name' => 'required|string|max:255',
-        'pseudonym' => 'nullable|string|max:255',
-        'birth_date' => 'nullable|date',
-        'nationality' => 'nullable|string|max:100',
-        'biography' => 'nullable|string',
-        'website' => 'nullable|url|max:255',
-    ], [
-        'author_name.required' => 'Nama penulis wajib diisi.',
-        'birth_date.date' => 'Format tanggal lahir tidak valid.',
-        'website.url' => 'Website harus berupa URL yang valid.',
-    ]);
-
-    Author::create($validated);
-
-    return redirect()
-        ->route('authors.index')
-        ->with('success', 'Penulis berhasil ditambahkan.');
-}
-    /** 
-     * Display the specified resource.
-     */
-    public function show(Author $author)
+    public function store(Request $request)
     {
-        $author->load('books');
+        $validated = $request->validate([
+            'author_name' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+        ], [
+            'author_name.required' => 'Nama penulis wajib diisi.',
+            'author_name.string' => 'Nama penulis harus berupa teks.',
+            'author_name.max' => 'Nama penulis maksimal 255 karakter.',
+        ]);
 
-        return view('authors.show', compact('author'));
+        Author::create([
+            'author_name' => $validated['author_name'],
+        ]);
+
+        return redirect()
+            ->route('authors')
+            ->with('success', 'Penulis berhasil ditambahkan.');
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Form edit penulis.
      */
-    public function edit(Author $author)
+    public function edit($id)
     {
-        return view('authors.edit', compact('author'));
+        $author = Author::findOrFail($id);
+
+        return view('pages.tables.authors.edit', [
+            'title' => 'Edit Penulis',
+            'author' => $author,
+        ]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update penulis.
      */
-public function update(Request $request, Author $author)
-{
-    $validated = $request->validate([
-        'author_name'  => 'required|string|max:255',
-        'pseudonym'    => 'nullable|string|max:255',
-        'birth_date'   => 'nullable|date',
-        'nationality'  => 'nullable|string|max:100',
-        'website'      => 'nullable|url|max:255',
-        'biography'    => 'nullable|string',
-    ]);
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'author_name' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+        ]);
 
-    $author->update([
-        'author_name'  => $validated['author_name'],
-        'pseudonym'    => $validated['pseudonym'] ?? null,
-        'birth_date'   => $validated['birth_date'] ?? null,
-        'nationality'  => $validated['nationality'] ?? null,
-        'website'      => $validated['website'] ?? null,
-        'biography'    => $validated['biography'] ?? null,
-    ]);
+        $author = Author::findOrFail($id);
 
-    return redirect()->route('authors.show', $author->author_id)
-        ->with('success', 'Data penulis berhasil diperbarui.');
-}
+        $author->update([
+            'author_name' => $validated['author_name'],
+        ]);
+
+        return redirect()
+            ->route('authors')
+            ->with('success', 'Penulis berhasil diperbarui.');
+    }
 
     /**
-     * Remove the specified resource from storage.
+     * Hapus penulis.
      */
-    public function destroy(Author $author)
+    public function destroy($id)
     {
-        $author->books()->detach();
+        $author = Author::findOrFail($id);
 
         $author->delete();
 
         return redirect()
-            ->route('authors.index')
+            ->route('authors')
             ->with('success', 'Penulis berhasil dihapus.');
     }
 }

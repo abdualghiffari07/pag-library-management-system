@@ -2,31 +2,33 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\BookController;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+
 use App\Models\Book;
+use App\Models\Location;
+use App\Http\Controllers\BookController;
+use App\Http\Controllers\AuthorController;
+use App\Http\Controllers\VisitorController;
+use App\Http\Controllers\ReportController;
 
-// LANDING PAGE
-
+// Landing Page
 Route::get('/', function () {
-    return view('landing');
+    return view('pages.landing-page.landing');
 })->name('landing');
 
-
-// LOGIN
+// Login
 Route::post('/login', function (Request $request) {
-
     $credentials = $request->validate([
         'email' => ['required', 'email'],
         'password' => ['required'],
     ]);
 
     if (Auth::attempt($credentials)) {
-
         $user = Auth::user();
 
+        // Hanya admin yang dapat masuk
         if (!$user->role || $user->role->role_name !== 'admin') {
-
             Auth::logout();
 
             $request->session()->invalidate();
@@ -49,121 +51,149 @@ Route::post('/login', function (Request $request) {
             'email' => 'Email atau password salah.',
         ])
         ->onlyInput('email');
-
 })->name('login.process');
 
-// HALAMAN SETELAH LOGIN
+// Pengunjung dari landing page
+Route::post('/visitors', [VisitorController::class, 'store'])
+    ->name('visitors.store');
+
+// Halaman admin
 Route::middleware('admin')->group(function () {
 
     // Dashboard
-    Route::get('/dashboard', function () {
-        return view('pages.dashboard.ecommerce', [
-            'title' => 'E-commerce Dashboard'
-        ]);
-    })->name('dashboard');
-
+    Route::get('/dashboard', [ReportController::class, 'index'])
+        ->name('dashboard');
 
     // Profile
     Route::get('/profile', function () {
         return view('pages.profile', [
-            'title' => 'Profile'
+            'title' => 'Profile',
         ]);
     })->name('profile');
-
 
     // Form
     Route::get('/form-elements', function () {
         return view('pages.form.form-elements', [
-            'title' => 'Form Elements'
+            'title' => 'Form Elements',
         ]);
     })->name('form-elements');
-
 
     // Basic Tables
     Route::get('/basic-tables', function () {
         return view('pages.tables.basic-tables', [
-            'title' => 'Basic Tables'
+            'title' => 'Basic Tables',
         ]);
     })->name('basic-tables');
 
-// Data Buku
-Route::get('/books-data', function () {
+    // Data Buku
+    Route::get('/books-data', function () {
+        $books = Book::where('status', 'public')
+            ->with([
+                'authors',
+                'copies',
+                'location',
+            ])
+            ->get();
 
-    $books = Book::where('status', 'public')
-        ->with([
-            'authors',
-            'copies',
-        ])
-        ->get();
-
-    return view('pages.tables.books.books-data', [
-        'title' => 'Data Buku',
-        'books' => $books,
-    ]);
-
-})->middleware('admin')->name('data-buku');
+        return view('pages.tables.books.books-data', [
+            'title' => 'Data Buku',
+            'books' => $books,
+        ]);
+    })->name('data-buku');
 
     // Tambah Buku
     Route::get('/books/create', function () {
+        $locations = Location::orderBy('location_name')->get();
+
         return view('pages.tables.books.add-books', [
             'title' => 'Tambah Buku',
+            'locations' => $locations,
         ]);
-    })->middleware('admin')->name('books.create');
+    })->name('books.create');
 
     // Simpan Buku
     Route::post('/books', [BookController::class, 'store'])
-        ->middleware('admin')
         ->name('books.store');
 
-    // Cek Book No.
+    // Cek Book No
     Route::get('/books/check-book-no', [BookController::class, 'checkBookNo'])
-        ->middleware('admin')
         ->name('books.check-book-no');
-    //Pinjam dan kembalikan buku
+
+    // Pinjam Buku
     Route::post('/books/{book_id}/borrow', [BookController::class, 'borrow'])
         ->name('books.borrow');
 
+    // Kembalikan Buku
     Route::post(
-        'books/{book_id}/return/{loan_detail_id}',
+        '/books/{book_id}/return/{loan_detail_id}',
         [BookController::class, 'returnBook']
     )->name('books.return');
-    
-    //Edit
+
+    // Edit Buku
     Route::get('/books/{book_id}/edit', [BookController::class, 'edit'])
-        ->middleware('admin')
         ->name('books.edit');
 
+    // Update Buku
     Route::put('/books/{book_id}', [BookController::class, 'update'])
-        ->middleware('admin')
         ->name('books.update');
 
+    // Hapus Buku
     Route::delete('/books/{book_code}', [BookController::class, 'destroy'])
-        ->middleware('admin')
         ->name('books.destroy');
+    
+    // Search buku
+    Route::get('/books-search', [BookController::class, 'search'])
+    ->name('books.search');
 
     // Authors
-    Route::get('/authors', function () {
-        return view('pages.tables.authors', [
-            'title' => 'Authors'
-        ]);
-    })->name('authors');
+    Route::get('/authors', [AuthorController::class, 'index'])
+        ->name('authors');
 
+    Route::get('/authors/create', [AuthorController::class, 'create'])
+        ->name('authors.create');
 
-    // Pengunjung
+    Route::post('/authors', [AuthorController::class, 'store'])
+        ->name('authors.store');
+
+    Route::get('/authors/{id}/edit', [AuthorController::class, 'edit'])
+        ->name('authors.edit');
+
+    Route::put('/authors/{id}', [AuthorController::class, 'update'])
+        ->name('authors.update');
+
+    Route::delete('/authors/{id}', [AuthorController::class, 'destroy'])
+        ->name('authors.destroy');
+
+    // Daftar Pengunjung
     Route::get('/visitors', function () {
-        return view('pages.tables.visitors', [
-            'title' => 'Daftar Pengunjung'
+        $visitors = DB::table('visitors')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('pages.tables.Visitors.visitors', [
+            'title' => 'Daftar Pengunjung',
+            'visitors' => $visitors,
         ]);
     })->name('visitors');
 
-// Logout
-Route::post('/logout', function () {
-    Auth::logout();
+    // Hapus Pengunjung
+    Route::delete('/visitors/{visitor}', function ($visitor) {
+        DB::table('visitors')
+            ->where('visitor_id', $visitor)
+            ->delete();
 
-    request()->session()->invalidate();
-    request()->session()->regenerateToken();
+        return redirect()
+            ->route('visitors')
+            ->with('success', 'Data pengunjung berhasil dihapus.');
+    })->name('visitors.destroy');
 
-    return redirect('/');
-})->name('logout');
+    // Logout
+    Route::post('/logout', function () {
+        Auth::logout();
 
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
+
+        return redirect('/');
+    })->name('logout');
 });

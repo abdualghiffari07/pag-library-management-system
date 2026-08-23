@@ -41,5 +41,4 @@ class Author extends Model
             'book_id'
         );
     }
-    
 }

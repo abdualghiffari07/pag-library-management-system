@@ -1,14 +1,66 @@
 /* =========================================================
-   RESET SCROLL POSITION
+   SCROLL POSITION
    ========================================================= */
 
 if ('scrollRestoration' in history) {
     history.scrollRestoration = 'manual';
 }
 
+
+/*
+ * Simpan posisi scroll sebelum form pengunjung dikirim.
+ */
+document.addEventListener('DOMContentLoaded', () => {
+
+    const visitorForm =
+        document.querySelector('#visitor form');
+
+
+    if (visitorForm) {
+
+        visitorForm.addEventListener('submit', () => {
+
+            sessionStorage.setItem(
+                'visitorScrollPosition',
+                window.scrollY
+            );
+
+        });
+
+    }
+
+});
+
+
+/*
+ * Setelah halaman selesai dimuat kembali,
+ * kembalikan posisi scroll sebelumnya.
+ */
 window.addEventListener('load', () => {
 
-    window.scrollTo(0, 0);
+    const savedScrollPosition =
+        sessionStorage.getItem('visitorScrollPosition');
+
+
+    if (savedScrollPosition !== null) {
+
+        window.scrollTo(
+            0,
+            parseInt(savedScrollPosition, 10)
+        );
+
+
+        sessionStorage.removeItem(
+            'visitorScrollPosition'
+        );
+
+    } else {
+
+        // Hanya kembali ke atas jika tidak ada
+        // posisi scroll yang perlu dipulihkan.
+        window.scrollTo(0, 0);
+
+    }
 
 });
 
@@ -293,3 +345,4 @@ if (loginModal) {
     );
 
 }
+

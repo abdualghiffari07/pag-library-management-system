@@ -2,8 +2,6 @@
 
 @section('content')
 
-    <x-common.page-breadcrumb pageTitle="Edit Buku" />
-
     <div
         class="space-y-6"
         x-data="{
@@ -115,13 +113,13 @@
                             </p>
                         @enderror
                     </div>
-{{-- Rak --}}
+{{-- lOCATION --}}
 
 <div>
     <label
         class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400"
     >
-        RAK
+        LOCATION
     </label>
 
     <input
@@ -129,7 +127,7 @@
         name="rack"
         value="{{ old('rack', $book->rack) }}"
         required
-        placeholder="Masukkan rak buku"
+        placeholder="Masukkan lokasi buku"
         class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
     >
 
