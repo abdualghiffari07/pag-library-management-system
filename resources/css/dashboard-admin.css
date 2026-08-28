@@ -85,41 +85,6 @@
     --sidebar-width: 270px;
 }
 
-/* =========================================================
-   PAG LIBRARY
-   GLOBAL DASHBOARD BACKGROUND
-   ---------------------------------------------------------
-   Digunakan oleh seluruh halaman setelah login:
-   - Dashboard
-   - Books
-   - Authors
-   - Categories
-   - Locations
-   - Reports
-   - dan halaman dashboard lainnya
-========================================================= */
-
-.main.dashboard-page {
-
-    position: relative;
-
-    min-height: 100vh;
-
-    overflow: hidden;
-
-    background-color: #0874c1;
-
-    background-size: cover;
-
-    background-position: 55% 35%;
-
-    background-repeat: no-repeat;
-
-    background-attachment: fixed;
-
-    isolation: isolate;
-}
-
 
 /* =========================================================
    GLOBAL BLUE OVERLAY
@@ -211,6 +176,44 @@ a {
     text-decoration: none;
 }
 
+/* =========================================================
+   GLOBAL HORIZONTAL OVERFLOW
+========================================================= */
+
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden !important;
+}
+
+.app {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+}
+
+.main {
+    width: auto;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+}
+
+.main.dashboard-page {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+}
+
+.content {
+    width: 100%;
+    max-width: 1700px;
+    min-width: 0;
+    overflow-x: hidden;
+}
 
 /* =========================================================
    APP
@@ -511,21 +514,14 @@ a {
 ========================================================= */
 
 .main {
-
     flex: 1;
-
     width: auto;
-
+    max-width: 100%;
     min-width: 0;
-
     min-height: 100vh;
-
     margin-left: var(--sidebar-width);
-
     position: relative;
-
     overflow-x: hidden;
-
     background: transparent;
 }
 
@@ -586,20 +582,14 @@ a {
 ========================================================= */
 
 .content {
-
     position: relative;
-
     z-index: 2;
-
     width: 100%;
-
     max-width: 1700px;
-
-    margin:
-        0 auto;
-
-    padding:
-        30px;
+    min-width: 0;
+    margin: 0 auto;
+    padding: 30px;
+    overflow-x: hidden;
 }
 
 

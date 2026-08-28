@@ -22,11 +22,16 @@
                 @foreach ($menuGroup['items'] as $itemIndex => $item)
                     @if (isset($item['subItems']))
                         // Check if any submenu item matches current path
-                        @foreach ($item['subItems'] as $subItem)
-                            if (currentPath === '{{ ltrim($subItem['path'], '/') }}' ||
-                                window.location.pathname === '{{ $subItem['path'] }}') {
-                                this.openSubmenus['{{ $groupIndex }}-{{ $itemIndex }}'] = true;
-                            } @endforeach
+@foreach ($item['subItems'] as $subItem)
+    @if (isset($subItem['path']))
+        if (
+            currentPath === '{{ ltrim($subItem['path'], '/') }}' ||
+            window.location.pathname === '{{ $subItem['path'] }}'
+        ) {
+            this.openSubmenus['{{ $groupIndex }}-{{ $itemIndex }}'] = true;
+        }
+    @endif
+@endforeach
             @endif
             @endforeach
             @endforeach

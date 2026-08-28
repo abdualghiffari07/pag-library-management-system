@@ -46,6 +46,27 @@
                 {{-- INFORMASI UTAMA BUKU --}}
                 <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
 
+                    {{-- TAG NO. --}}
+                    <div>
+                        <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                            TAG NO.
+                        </label>
+
+                        <input
+                            type="text"
+                            name="tag_no"
+                            value="{{ old('tag_no') }}"
+                            placeholder="Masukkan Tag No."
+                            class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-gray-400"
+                        >
+
+                        @error('tag_no')
+                            <p class="mt-1.5 text-xs text-error-500">
+                                {{ $message }}
+                            </p>
+                        @enderror
+                    </div>
+
                     {{-- BOOK NO. --}}
                     <div>
                         <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
@@ -77,7 +98,6 @@
                                     height="16"
                                     viewBox="0 0 16 16"
                                     fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
                                 >
                                     <path
                                         fill-rule="evenodd"
@@ -126,27 +146,52 @@
                         @enderror
                     </div>
 
-                {{-- LOCATION --}}
-                <div>
-                    <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-                        LOCATION
-                    </label>
+                    {{-- EQUIPMENT --}}
+                    <div>
+                        <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                            EQUIPMENT
+                        </label>
 
-                    <input
-                        type="text"
-                        name="location"
-                        value="{{ old('location') }}"
-                        required
-                        placeholder="Masukkan lokasi buku"
-                        class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-gray-400"
-                    >
+                        <div class="relative">
+                            <select
+                                name="equipment_id"
+                                required
+                                class="h-11 w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+                            >
+                                <option value="">Pilih Equipment</option>
 
-                    @error('location')
-                        <p class="mt-1.5 text-xs text-error-500">
-                            {{ $message }}
-                        </p>
-                    @enderror
-                </div>
+                                @foreach ($equipments as $equipment)
+                                    <option
+                                        value="{{ $equipment->equipment_id }}"
+                                        {{ old('equipment_id') == $equipment->equipment_id ? 'selected' : '' }}
+                                    >
+                                        {{ $equipment->equipment_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+
+                            <span class="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-gray-500 dark:text-gray-400">
+                                <svg
+                                    class="fill-current"
+                                    width="20"
+                                    height="20"
+                                    viewBox="0 0 20 20"
+                                >
+                                    <path
+                                        fill-rule="evenodd"
+                                        clip-rule="evenodd"
+                                        d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                                    />
+                                </svg>
+                            </span>
+                        </div>
+
+                        @error('equipment_id')
+                            <p class="mt-1.5 text-xs text-error-500">
+                                {{ $message }}
+                            </p>
+                        @enderror
+                    </div>
 
                     {{-- TITLE --}}
                     <div>
@@ -164,6 +209,28 @@
                         >
 
                         @error('title')
+                            <p class="mt-1.5 text-xs text-error-500">
+                                {{ $message }}
+                            </p>
+                        @enderror
+                    </div>
+
+                    {{-- LOCATION --}}
+                    <div>
+                        <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                            LOCATION
+                        </label>
+
+                        <input
+                            type="text"
+                            name="location"
+                            value="{{ old('location') }}"
+                            required
+                            placeholder="Masukkan lokasi buku"
+                            class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-gray-400"
+                        >
+
+                        @error('location')
                             <p class="mt-1.5 text-xs text-error-500">
                                 {{ $message }}
                             </p>
@@ -246,12 +313,32 @@
 
                     <textarea
                         name="description"
-                        rows="6"
+                        rows="5"
                         placeholder="Masukkan deskripsi buku..."
                         class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-gray-400"
                     >{{ old('description') }}</textarea>
 
                     @error('description')
+                        <p class="mt-1.5 text-xs text-error-500">
+                            {{ $message }}
+                        </p>
+                    @enderror
+                </div>
+
+                {{-- REMARK --}}
+                <div>
+                    <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+                        REMARK
+                    </label>
+
+                    <textarea
+                        name="remark"
+                        rows="4"
+                        placeholder="Masukkan remark..."
+                        class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-gray-400"
+                    >{{ old('remark') }}</textarea>
+
+                    @error('remark')
                         <p class="mt-1.5 text-xs text-error-500">
                             {{ $message }}
                         </p>

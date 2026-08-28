@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use App\Models\Location;
+use App\Models\Equipment;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Models\Location;
 
 class Book extends Model
 {
@@ -17,17 +18,15 @@ class Book extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'title',
-        'origin',
-        'cover',
-        'publication_year',
-        'rack',
-        'status',
-        'description',
+        'tag_no',
         'book_code',
         'cat_no',
+        'equipment_id',
+        'title',
+        'rack',
+        'remark',
         'publisher',
-        'location_id',
+        'description',
     ];
 
     public function location(): BelongsTo
@@ -36,6 +35,15 @@ class Book extends Model
             Location::class,
             'location_id',
             'location_id'
+        );
+    }
+
+    public function equipment(): BelongsTo
+    {
+        return $this->belongsTo(
+            Equipment::class,
+            'equipment_id',
+            'equipment_id'
         );
     }
 
