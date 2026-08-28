@@ -345,4 +345,64 @@ if (loginModal) {
     );
 
 }
+// Counter Animation
+document.addEventListener('DOMContentLoaded', () => {
+    const counters = document.querySelectorAll('[data-counter]');
+
+    if (!counters.length) {
+        return;
+    }
+
+    const animateCounter = (counter) => {
+        const target = Number(counter.dataset.counter);
+
+        if (isNaN(target)) {
+            return;
+        }
+
+        const duration = 1800;
+        const startTime = performance.now();
+
+        const updateCounter = (currentTime) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+
+            // Ease out
+            const easedProgress = 1 - Math.pow(1 - progress, 3);
+
+            const currentValue = Math.floor(target * easedProgress);
+
+            counter.textContent = currentValue.toLocaleString('id-ID');
+
+            if (progress < 1) {
+                requestAnimationFrame(updateCounter);
+            } else {
+                counter.textContent = target.toLocaleString('id-ID');
+            }
+        };
+
+        requestAnimationFrame(updateCounter);
+    };
+
+    const counterObserver = new IntersectionObserver(
+        (entries, observer) => {
+            entries.forEach((entry) => {
+                if (!entry.isIntersecting) {
+                    return;
+                }
+
+                animateCounter(entry.target);
+
+                observer.unobserve(entry.target);
+            });
+        },
+        {
+            threshold: 0.5
+        }
+    );
+
+    counters.forEach((counter) => {
+        counterObserver.observe(counter);
+    });
+});
 

@@ -154,77 +154,80 @@
 
         {{-- HEADER --}}
         <div
-            class="relative z-10 mb-3 flex min-w-0 max-w-full flex-col gap-3 bg-white px-4 pt-3 dark:bg-transparent sm:flex-row sm:items-center sm:justify-between"
+            class="relative z-10 border-b border-gray-100 bg-white px-4 py-4 dark:border-white/[0.05] dark:bg-transparent sm:px-5"
         >
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
 
-            <div class="min-w-0">
-                <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">
-                    Data Buku
-                </h3>
+                {{-- TITLE --}}
+                <div class="min-w-0">
+                    <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">
+                        Data Buku
+                    </h3>
 
-                <p class="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
-                    Daftar koleksi buku perpustakaan
-                </p>
-            </div>
+                    <p class="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
+                        Daftar koleksi buku perpustakaan
+                    </p>
 
-            <div class="flex w-full min-w-0 max-w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+                    {{-- SEARCH --}}
+                    <div class="relative mt-4 w-full sm:w-80">
 
-                {{-- SEARCH --}}
-                <div class="relative w-full sm:w-64">
-
-                    <span
-                        class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                    >
-                        <svg
-                            class="h-4 w-4"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
+                        <span
+                            class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
                         >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="m21 21-4.35-4.35m2.35-5.65a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"
-                            />
-                        </svg>
-                    </span>
+                            <svg
+                                class="h-4 w-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="m21 21-4.35-4.35m2.35-5.65a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"
+                                />
+                            </svg>
+                        </span>
 
-                    <input
-                        type="text"
-                        x-model="search"
-                        @input="currentPage = 1"
-                        placeholder="Cari buku..."
-                        class="h-10 w-full rounded-lg border border-gray-300 bg-transparent pl-9 pr-9 text-xs text-gray-800 shadow-theme-xs outline-none transition focus:border-brand-500 focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-gray-400"
-                    >
-
-                    <button
-                        type="button"
-                        x-show="search.length > 0"
-                        @click="search = ''; currentPage = 1"
-                        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
-                    >
-                        <svg
-                            class="h-4 w-4"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
+                        <input
+                            type="text"
+                            x-model="search"
+                            @input="currentPage = 1"
+                            placeholder="Cari buku..."
+                            autocomplete="off"
+                            class="h-10 w-full rounded-lg border border-gray-300 bg-white pl-9 pr-9 text-xs text-gray-800 shadow-theme-xs outline-none transition focus:border-brand-500 focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-gray-400"
                         >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M6 6l12 12M18 6L6 18"
-                            />
-                        </svg>
-                    </button>
 
+                        <button
+                            type="button"
+                            x-show="search.length > 0"
+                            x-cloak
+                            @click="search = ''; currentPage = 1"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 transition hover:text-gray-600 dark:hover:text-gray-200"
+                            title="Hapus pencarian"
+                        >
+                            <svg
+                                class="h-4 w-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M6 6l12 12M18 6L6 18"
+                                />
+                            </svg>
+                        </button>
+
+                    </div>
                 </div>
 
                 {{-- TAMBAH BUKU --}}
                 <a
                     href="{{ route('books.create') }}"
-                    class="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-lg bg-brand-500 px-3 py-2 text-xs font-medium text-white shadow-theme-xs transition hover:bg-brand-600"
+                    class="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-lg bg-brand-500 px-3 py-2.5 text-xs font-medium text-white shadow-theme-xs transition hover:bg-brand-600"
                 >
                     <svg
                         class="h-4 w-4"
@@ -244,13 +247,10 @@
                 </a>
 
             </div>
-
         </div>
 
         {{-- TABLE --}}
-        <div
-            class="relative z-0 block w-full max-w-full overflow-x-auto"
-        >
+        <div class="relative z-0 block w-full max-w-full overflow-x-auto">
             <table class="min-w-[2100px] table-fixed">
 
                 {{-- TABLE HEADER --}}
@@ -258,7 +258,6 @@
                     class="border-y border-gray-100 bg-gray-50 dark:border-white/[0.05] dark:bg-gray-900"
                 >
                     <tr>
-
                         <th class="w-[55px] px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
                             NO
                         </th>
@@ -318,13 +317,11 @@
                         <th class="w-[80px] px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
                             ACTION
                         </th>
-
                     </tr>
                 </thead>
 
                 {{-- TABLE BODY --}}
                 <tbody>
-
                     <template
                         x-for="(row, index) in paginatedRows"
                         :key="row.id"
@@ -332,7 +329,6 @@
                         <tr
                             class="border-b border-gray-100 transition-colors hover:bg-gray-50 dark:border-white/[0.05] dark:hover:bg-white/[0.02]"
                         >
-
                             <td class="px-3 py-3">
                                 <span
                                     class="text-xs text-gray-600 dark:text-gray-400"
@@ -495,7 +491,6 @@
 
                                 </div>
                             </td>
-
                         </tr>
                     </template>
 
@@ -517,7 +512,6 @@
                             </td>
                         </tr>
                     </template>
-
                 </tbody>
             </table>
         </div>
@@ -535,7 +529,12 @@
                     :class="currentPage === 1 ? 'cursor-not-allowed opacity-50' : ''"
                     class="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-3 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200 sm:px-3.5"
                 >
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                    >
                         <path
                             d="M2.58301 9.99868L8.86018 4.46984M2.58301 9.99868L8.86018 15.5301M2.58301 9.99868H17.4175"
                             stroke="currentColor"
@@ -558,13 +557,11 @@
                 </span>
 
                 <ul class="hidden items-center gap-0.5 sm:flex">
-
                     <template
                         x-for="page in displayedPages"
                         :key="page"
                     >
                         <li>
-
                             <button
                                 type="button"
                                 x-show="page !== '...'"
@@ -582,10 +579,8 @@
                             >
                                 ...
                             </span>
-
                         </li>
                     </template>
-
                 </ul>
 
                 <button
@@ -599,7 +594,12 @@
                         Next
                     </span>
 
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                    >
                         <path
                             d="M17.4175 9.9986L11.1403 4.46984M17.4175 9.9986L11.1403 15.5301M17.4175 9.9986H2.58301"
                             stroke="currentColor"
@@ -612,6 +612,5 @@
 
             </div>
         </div>
-
     </div>
 </div>

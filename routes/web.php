@@ -6,8 +6,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 use App\Models\Book;
-use App\Models\Location;
-use App\Models\Equipment;
 
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\AuthorController;
@@ -17,7 +15,13 @@ use App\Http\Controllers\EquipmentController;
 
 // Landing Page
 Route::get('/', function () {
-    return view('pages.landing-page.landing');
+    $totalBooks = Book::where('status', 'public')->count();
+    $totalVisitors = DB::table('visitors')->count();
+
+    return view('pages.landing-page.landing', [
+        'totalBooks' => $totalBooks,
+        'totalVisitors' => $totalVisitors,
+    ]);
 })->name('landing');
 
 // Login
@@ -56,7 +60,12 @@ Route::post('/login', function (Request $request) {
         ->onlyInput('email');
 })->name('login.process');
 
-// Pengunjung dari landing page
+// Halaman Daftar Pengunjung
+Route::get('/visitor-register', function () {
+    return view('pages.visitors.visitor-form');
+})->name('visitors.register');
+
+// Simpan Pengunjung
 Route::post('/visitors', [VisitorController::class, 'store'])
     ->name('visitors.store');
 
@@ -92,6 +101,7 @@ Route::middleware('admin')->group(function () {
     // DATA BUKU
     // =====================================================
 
+    // Daftar Buku
     Route::get('/books-data', function () {
         $books = Book::where('status', 'public')
             ->with([
@@ -108,16 +118,11 @@ Route::middleware('admin')->group(function () {
         ]);
     })->name('data-buku');
 
-    // Tambah Buku
-    Route::get('/books/create', function () {
-        return view('pages.tables.books.add-books', [
-            'title' => 'Tambah Buku',
-            'locations' => Location::orderBy('location_name')->get(),
-            'equipments' => Equipment::orderBy('equipment_name')->get(),
-        ]);
-    })->name('books.create');
+    // Form tambah buku
+    Route::get('/books/create', [BookController::class, 'create'])
+        ->name('books.create');
 
-    // Simpan Buku
+    // Simpan buku
     Route::post('/books', [BookController::class, 'store'])
         ->name('books.store');
 
@@ -155,21 +160,27 @@ Route::middleware('admin')->group(function () {
     // AUTHORS
     // =====================================================
 
+    // Daftar Author
     Route::get('/authors', [AuthorController::class, 'index'])
         ->name('authors');
 
+    // Tambah Author
     Route::get('/authors/create', [AuthorController::class, 'create'])
         ->name('authors.create');
 
+    // Simpan Author
     Route::post('/authors', [AuthorController::class, 'store'])
         ->name('authors.store');
 
+    // Edit Author
     Route::get('/authors/{id}/edit', [AuthorController::class, 'edit'])
         ->name('authors.edit');
 
+    // Update Author
     Route::put('/authors/{id}', [AuthorController::class, 'update'])
         ->name('authors.update');
 
+    // Hapus Author
     Route::delete('/authors/{id}', [AuthorController::class, 'destroy'])
         ->name('authors.destroy');
 
@@ -181,7 +192,7 @@ Route::middleware('admin')->group(function () {
     Route::get('/equipment', [EquipmentController::class, 'index'])
         ->name('equipment.index');
 
-    // Form Tambah Equipment
+    // Tambah Equipment
     Route::get('/equipment/create', [EquipmentController::class, 'create'])
         ->name('equipment.create');
 
@@ -189,22 +200,29 @@ Route::middleware('admin')->group(function () {
     Route::post('/equipment', [EquipmentController::class, 'store'])
         ->name('equipment.store');
 
-    // Form Edit Equipment
-    Route::get('/equipment/{equipment_id}/edit', [EquipmentController::class, 'edit'])
-        ->name('equipment.edit');
+    // Edit Equipment
+    Route::get(
+        '/equipment/{equipment_id}/edit',
+        [EquipmentController::class, 'edit']
+    )->name('equipment.edit');
 
     // Update Equipment
-    Route::put('/equipment/{equipment_id}', [EquipmentController::class, 'update'])
-        ->name('equipment.update');
+    Route::put(
+        '/equipment/{equipment_id}',
+        [EquipmentController::class, 'update']
+    )->name('equipment.update');
 
     // Hapus Equipment
-    Route::delete('/equipment/{equipment_id}', [EquipmentController::class, 'destroy'])
-        ->name('equipment.destroy');
+    Route::delete(
+        '/equipment/{equipment_id}',
+        [EquipmentController::class, 'destroy']
+    )->name('equipment.destroy');
 
     // =====================================================
     // DAFTAR PENGUNJUNG
     // =====================================================
 
+    // Daftar Pengunjung
     Route::get('/visitors', function (Request $request) {
         $search = $request->input('search');
 

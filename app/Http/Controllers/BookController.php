@@ -182,109 +182,120 @@ class BookController extends Controller
         );
     }
 
-    // Form tambah buku
-    public function create()
-    {
-        $equipments = Equipment::orderBy('equipment_name')->get();
+// Form tambah buku
+public function create()
+{
+    $authors = Author::orderBy('author_name')->get();
+    $equipments = Equipment::orderBy('equipment_name')->get();
 
-        return view(
-            'pages.tables.books.create-books',
-            [
-                'title' => 'Tambah Buku',
-                'equipments' => $equipments,
-            ]
-        );
+    return view('pages.tables.books.add-books', [
+        'title' => 'Tambah Buku',
+        'authors' => $authors,
+        'equipments' => $equipments,
+    ]);
+}
+
+// Tambah buku
+public function store(Request $request)
+{
+    $validated = $request->validate([
+        'book_no' => [
+            'required',
+            'string',
+            'max:100',
+            Rule::unique('books', 'book_code'),
+        ],
+        'tag_no' => 'nullable|string|max:100',
+        'cat_no' => 'required|string|max:200',
+
+        'equipment' => 'required|string|max:255',
+
+        'location' => 'required|string|max:255',
+
+        'title' => 'required|string|max:255',
+
+        'author' => 'required|string|max:255',
+
+        'publisher' => 'required|string|max:510',
+
+        'qty' => 'required|integer|min:1',
+
+        'description' => 'nullable|string',
+
+        'remark' => 'nullable|string|max:255',
+    ], $this->bookValidationMessages());
+
+    try {
+        DB::transaction(function () use ($validated) {
+
+            // Simpan atau ambil equipment
+            $equipment = Equipment::firstOrCreate([
+                'equipment_name' => trim($validated['equipment']),
+            ]);
+
+            // Simpan buku
+            $book = Book::create([
+                'book_code' => trim($validated['book_no']),
+                'tag_no' => trim($validated['tag_no'] ?? ''),
+                'cat_no' => trim($validated['cat_no']),
+                'equipment_id' => $equipment->equipment_id,
+                'title' => trim($validated['title']),
+                'rack' => trim($validated['location']),
+                'remark' => trim($validated['remark'] ?? ''),
+                'publisher' => trim($validated['publisher']),
+                'description' => $validated['description'] ?? null,
+                'status' => 'public',
+            ]);
+
+            // Simpan atau ambil author
+            $author = Author::firstOrCreate([
+                'author_name' => trim($validated['author']),
+            ]);
+
+            // Hubungkan buku dengan author
+            $book->authors()->sync([
+                $author->author_id,
+            ]);
+
+            // Buat eksemplar buku
+            for (
+                $i = 1;
+                $i <= (int) $validated['qty'];
+                $i++
+            ) {
+                BookCopy::create([
+                    'book_id' => $book->book_id,
+                    'copy_code' => $book->book_code . '-' . str_pad(
+                        $i,
+                        3,
+                        '0',
+                        STR_PAD_LEFT
+                    ),
+                    'condition' => 'Baik',
+                    'status' => 'Tersedia',
+                    'notes' => null,
+                ]);
+            }
+        });
+
+        return redirect()
+            ->route('data-buku')
+            ->with(
+                'success',
+                'Buku berhasil ditambahkan.'
+            );
+
+    } catch (\Throwable $e) {
+
+        return redirect()
+            ->back()
+            ->withInput()
+            ->with(
+                'error',
+                'Gagal menambahkan buku: ' . $e->getMessage()
+            );
     }
-
-    // Tambah buku
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'book_no' => [
-                'required',
-                'string',
-                'max:100',
-                Rule::unique('books', 'book_code'),
-            ],
-            'tag_no' => 'nullable|string|max:100',
-            'cat_no' => 'required|string|max:200',
-            'equipment_id' => [
-                'required',
-                'integer',
-                'exists:equipment,equipment_id',
-            ],
-            'location' => 'required|string|max:255',
-            'title' => 'required|string|max:255',
-            'author' => 'required|string|max:255',
-            'publisher' => 'required|string|max:510',
-            'qty' => 'required|integer|min:1',
-            'description' => 'nullable|string',
-            'remark' => 'nullable|string|max:255',
-        ], $this->bookValidationMessages());
-
-        try {
-            DB::transaction(function () use ($validated) {
-                // Simpan buku
-                $book = Book::create([
-                    'book_code' => trim($validated['book_no']),
-                    'tag_no' => trim($validated['tag_no'] ?? ''),
-                    'cat_no' => trim($validated['cat_no']),
-                    'equipment_id' => $validated['equipment_id'],
-                    'title' => trim($validated['title']),
-                    'rack' => trim($validated['location']),
-                    'remark' => trim($validated['remark'] ?? ''),
-                    'publisher' => trim($validated['publisher']),
-                    'description' => $validated['description'] ?? null,
-                    'status' => 'public',
-                ]);
-
-                // Simpan author
-                $author = Author::firstOrCreate([
-                    'author_name' => trim($validated['author']),
-                ]);
-
-                // Hubungkan buku dengan author
-                $book->authors()->sync([
-                    $author->author_id,
-                ]);
-
-                // Buat eksemplar buku
-                for (
-                    $i = 1;
-                    $i <= (int) $validated['qty'];
-                    $i++
-                ) {
-                    BookCopy::create([
-                        'book_id' => $book->book_id,
-                        'copy_code' => $book->book_code . '-' . str_pad(
-                            $i,
-                            3,
-                            '0',
-                            STR_PAD_LEFT
-                        ),
-                        'condition' => 'Baik',
-                        'status' => 'Tersedia',
-                        'notes' => null,
-                    ]);
-                }
-            });
-
-            return redirect()
-                ->route('data-buku')
-                ->with(
-                    'success',
-                    'Buku berhasil ditambahkan.'
-                );
-        } catch (\Throwable $e) {
-            return redirect()
-                ->back()
-                ->withInput()
-                ->with(
-                    'error',
-                    'Gagal menambahkan buku: ' . $e->getMessage()
-                );
-        }
-    }
+}
 
     // Cek Book No
     public function checkBookNo(Request $request)

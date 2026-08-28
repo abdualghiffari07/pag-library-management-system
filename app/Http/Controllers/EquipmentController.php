@@ -11,22 +11,17 @@ class EquipmentController extends Controller
     // Daftar equipment
     public function index(Request $request)
     {
-        $search = trim($request->query('search', ''));
+        $search = $request->input('search');
 
-        $equipments = Equipment::query()
-            ->withCount('books')
-            ->when($search !== '', function ($query) use ($search) {
-                $query->where(
-                    'equipment_name',
-                    'like',
-                    "%{$search}%"
-                );
+        $equipments = Equipment::withCount('books')
+            ->when($search, function ($query, $search) {
+                $query->where('equipment_name', 'like', '%' . $search . '%');
             })
             ->orderBy('equipment_name')
             ->paginate(10)
             ->withQueryString();
 
-        return view('components.tables.basic-tables.Equipment.equipment', [
+        return view('pages.tables.equipment.equipment', [
             'title' => 'Data Equipment',
             'equipments' => $equipments,
             'search' => $search,

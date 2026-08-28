@@ -16,9 +16,7 @@
 
 <body class="page-load-animation overflow-x-hidden bg-white text-slate-800">
 
-    {{-- =========================================================
-         NAVBAR
-    ========================================================== --}}
+    {{-- Navbar --}}
     <header class="fixed left-0 top-0 z-50 w-full border-b border-white/20 bg-white/90 backdrop-blur-md">
 
         <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:h-20 sm:px-6 lg:px-8">
@@ -36,7 +34,7 @@
 
                 <div class="min-w-0">
 
-                    <h1 class="truncate text-sm font-bold leading-none sm:text-lg font-['Inter',sans-serif]">
+                    <h1 class="truncate font-['Inter',sans-serif] text-sm font-bold leading-none sm:text-lg">
                         Perta Arun Gas Library
                     </h1>
 
@@ -73,7 +71,7 @@
                 </a>
 
                 <a
-                    href="#visitor"
+                    href="{{ route('visitors.register') }}"
                     class="rounded-full bg-[#005DAA] px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-[#004b89] lg:px-6"
                 >
                     Pengunjung
@@ -146,7 +144,7 @@
                 </a>
 
                 <a
-                    href="#visitor"
+                    href="{{ route('visitors.register') }}"
                     class="mobile-menu-link mt-2 rounded-lg bg-[#005DAA] px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-[#004b89]"
                 >
                     Pengunjung
@@ -165,16 +163,10 @@
 
     </header>
 
-
-    {{-- =========================================================
-         MAIN CONTENT
-    ========================================================== --}}
+    {{-- Main Content --}}
     <main id="home">
 
-
-        {{-- =====================================================
-             HERO
-        ====================================================== --}}
+        {{-- Hero --}}
         <section class="hero-section">
 
             <div
@@ -211,8 +203,8 @@
                     </p>
 
                     <h1 class="text-4xl font-bold leading-tight tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
-                        Perpustakaan
-                        <span>PAG</span>
+                        Perpustakaan 
+                        <span>Perta Arun Gas</span>
                     </h1>
 
                     <p class="mx-auto mt-5 max-w-2xl text-base leading-7 text-white/90 sm:mt-6 sm:text-lg sm:leading-relaxed md:text-xl lg:mx-0">
@@ -220,24 +212,6 @@
                         mendukung budaya membaca, pembelajaran, dan
                         berbagi pengetahuan.
                     </p>
-
-                    <div class="mt-7 flex flex-col justify-center gap-3 sm:mt-9 sm:flex-row sm:justify-start">
-
-                        <a
-                            href="#library"
-                            class="rounded-full bg-white px-6 py-3.5 text-center text-sm font-semibold text-[#005DAA] shadow-lg transition hover:-translate-y-1 hover:shadow-xl sm:px-7"
-                        >
-                            Explore Library
-                        </a>
-
-                        <a
-                            href="#visitor"
-                            class="rounded-full bg-[#E31E24] px-6 py-3.5 text-center text-sm font-semibold text-white shadow-lg transition hover:-translate-y-1 hover:bg-[#c91820] hover:shadow-xl sm:px-7"
-                        >
-                            Daftar Pengunjung
-                        </a>
-
-                    </div>
 
                 </div>
 
@@ -267,10 +241,7 @@
 
         </section>
 
-
-        {{-- =====================================================
-             ABOUT
-        ====================================================== --}}
+        {{-- About --}}
         <section
             id="about"
             class="bg-white px-5 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24"
@@ -326,10 +297,7 @@
 
         </section>
 
-
-        {{-- =====================================================
-             LIBRARY
-        ====================================================== --}}
+        {{-- Library --}}
         <section
             id="library"
             class="bg-[#F5F7FA] px-5 py-16 sm:px-6 sm:py-20 lg:px-8 lg:py-24"
@@ -354,77 +322,74 @@
 
                 </div>
 
-                <div class="mt-10 grid gap-5 sm:mt-12 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
+<div class="mt-10 grid gap-5 sm:mt-12 sm:gap-6 md:grid-cols-2">
 
-                    <div class="library-card">
+    {{-- Koleksi Buku --}}
+    <div class="library-card flex flex-col">
 
-                        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-2xl sm:h-14 sm:w-14">
-                            📚
-                        </div>
+        <div class="flex items-start justify-between gap-4">
 
-                        <h3 class="mt-5 text-lg font-bold text-[#102A43] sm:mt-6 sm:text-xl">
-                            Koleksi Buku
-                        </h3>
+            <div>
+                <p class="text-sm font-medium text-slate-500">
+                    Koleksi Buku
+                </p>
 
-                        <p class="mt-2 text-sm leading-6 text-slate-600 sm:mt-3 sm:text-base sm:leading-7">
-                            Kelola informasi buku dan berbagai eksemplar
-                            yang tersedia di perpustakaan.
-                        </p>
+        <p
+            class="mt-2 text-4xl font-bold tracking-tight text-[#102A43] sm:text-5xl"
+            data-counter="{{ $totalBooks }}"
+        >
+            0
+        </p>
 
-                    </div>
+                <p class="mt-2 text-sm text-slate-500">
+                    Buku tersedia di perpustakaan
+                </p>
+            </div>
+        </div>
 
-                    <div class="library-card">
+        <div class="mt-6 h-1 w-full overflow-hidden rounded-full bg-slate-100">
+            <div class="h-full w-full rounded-full bg-[#005DAA]"></div>
+        </div>
 
-                        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-green-50 text-2xl sm:h-14 sm:w-14">
-                            👥
-                        </div>
+    </div>
 
-                        <h3 class="mt-5 text-lg font-bold text-[#102A43] sm:mt-6 sm:text-xl">
-                            Pengguna
-                        </h3>
 
-                        <p class="mt-2 text-sm leading-6 text-slate-600 sm:mt-3 sm:text-base sm:leading-7">
-                            Pengelolaan pengguna berdasarkan peran
-                            Admin, Librarian, dan Member.
-                        </p>
+    {{-- Pengguna --}}
+    <div class="library-card flex flex-col">
 
-                    </div>
+        <div class="flex items-start justify-between gap-4">
 
-                    <div class="library-card md:col-span-2 lg:col-span-1">
+            <div>
+                <p class="text-sm font-medium text-slate-500">
+                    Pengunjung
+                </p>
 
-                        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-red-50 text-2xl sm:h-14 sm:w-14">
-                            🔄
-                        </div>
+            <p
+                class="mt-2 text-4xl font-bold tracking-tight text-[#102A43] sm:text-5xl"
+                data-counter="{{ $totalVisitors }}"
+            >
+                0
+            </p>
 
-                        <h3 class="mt-5 text-lg font-bold text-[#102A43] sm:mt-6 sm:text-xl">
-                            Peminjaman
-                        </h3>
+                <p class="mt-2 text-sm text-slate-500">
+                    Pengunjung terdaftar
+                </p>
+            </div>
+        </div>
 
-                        <p class="mt-2 text-sm leading-6 text-slate-600 sm:mt-3 sm:text-base sm:leading-7">
-                            Kelola proses peminjaman, pengembalian,
-                            status buku, hingga keterlambatan.
-                        </p>
+        <div class="mt-6 h-1 w-full overflow-hidden rounded-full bg-slate-100">
+            <div class="h-full w-full rounded-full bg-[#00A651]"></div>
+        </div>
 
-                    </div>
+    </div>
 
-                </div>
+</div>
 
             </div>
 
         </section>
 
-
-        {{-- =====================================================
-             FORM DAFTAR PENGUNJUNG
-             Dipisahkan ke:
-             pages/landing-page/visitor-form.blade.php
-        ====================================================== --}}
-        @include('pages.landing-page.visitor-form')
-
-
-        {{-- =====================================================
-             FOOTER
-        ====================================================== --}}
+        {{-- Footer --}}
         <footer class="bg-[#102A43] px-5 py-8 text-white sm:px-6 sm:py-10 lg:px-8">
 
             <div class="mx-auto flex max-w-7xl flex-col items-center gap-4 text-center sm:flex-row sm:justify-between sm:text-left">
@@ -451,12 +416,7 @@
 
     </main>
 
-
-    {{-- =========================================================
-         LOGIN FORM
-         Dipisahkan ke:
-         pages/landing-page/login-form.blade.php
-    ========================================================== --}}
+    {{-- Login Form --}}
     @include('pages.landing-page.login-form')
 
 </body>

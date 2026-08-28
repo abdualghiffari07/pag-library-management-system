@@ -12,6 +12,54 @@
                     bookNoExists: false,
                     checkingBookNo: false,
 
+                    authorOpen: false,
+                    equipmentOpen: false,
+
+                    authorSearch: '{{ old('author') }}',
+                    equipmentSearch: '{{ old('equipment') }}',
+
+                    authors: @js(
+                        $authors->map(function ($author) {
+                            return [
+                                'id' => $author->author_id,
+                                'name' => $author->author_name,
+                            ];
+                        })->values()
+                    ),
+
+                    equipments: @js(
+                        $equipments->map(function ($equipment) {
+                            return [
+                                'id' => $equipment->equipment_id,
+                                'name' => $equipment->equipment_name,
+                            ];
+                        })->values()
+                    ),
+
+                    get filteredAuthors() {
+                        const search = this.authorSearch.trim().toLowerCase();
+
+                        if (!search) {
+                            return this.authors;
+                        }
+
+                        return this.authors.filter(author =>
+                            author.name.toLowerCase().includes(search)
+                        );
+                    },
+
+                    get filteredEquipments() {
+                        const search = this.equipmentSearch.trim().toLowerCase();
+
+                        if (!search) {
+                            return this.equipments;
+                        }
+
+                        return this.equipments.filter(equipment =>
+                            equipment.name.toLowerCase().includes(search)
+                        );
+                    },
+
                     async checkBookNo() {
                         const value = this.bookNo.trim();
 
@@ -37,13 +85,29 @@
                         } finally {
                             this.checkingBookNo = false;
                         }
+                    },
+
+                    selectAuthor(author) {
+                        this.authorSearch = author.name;
+                        this.authorOpen = false;
+                    },
+
+                    selectEquipment(equipment) {
+                        this.equipmentSearch = equipment.name;
+                        this.equipmentOpen = false;
+                    },
+
+                    closeDropdowns() {
+                        this.authorOpen = false;
+                        this.equipmentOpen = false;
                     }
                 }"
+                @click.outside="closeDropdowns()"
                 @submit="if (bookNoExists || checkingBookNo) $event.preventDefault()"
             >
                 @csrf
 
-                {{-- INFORMASI UTAMA BUKU --}}
+                {{-- INFORMASI UTAMA --}}
                 <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
 
                     {{-- TAG NO. --}}
@@ -79,7 +143,6 @@
                                 name="book_no"
                                 x-model="bookNo"
                                 @input.debounce.400ms="checkBookNo()"
-                                value="{{ old('book_no') }}"
                                 required
                                 placeholder="Masukkan nomor buku"
                                 class="h-11 w-full rounded-lg border bg-transparent px-4 py-2.5 pr-10 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:ring-3 focus:outline-hidden dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-gray-400"
@@ -147,46 +210,86 @@
                     </div>
 
                     {{-- EQUIPMENT --}}
-                    <div>
+                    <div class="relative">
                         <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
                             EQUIPMENT
                         </label>
 
                         <div class="relative">
-                            <select
-                                name="equipment_id"
+                            <input
+                                type="text"
+                                name="equipment"
+                                x-model="equipmentSearch"
+                                @focus="equipmentOpen = true; authorOpen = false"
+                                @input="equipmentOpen = true"
+                                autocomplete="off"
                                 required
-                                class="h-11 w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+                                placeholder="Ketik atau pilih equipment"
+                                class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 pr-11 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-gray-400"
                             >
-                                <option value="">Pilih Equipment</option>
 
-                                @foreach ($equipments as $equipment)
-                                    <option
-                                        value="{{ $equipment->equipment_id }}"
-                                        {{ old('equipment_id') == $equipment->equipment_id ? 'selected' : '' }}
-                                    >
-                                        {{ $equipment->equipment_name }}
-                                    </option>
-                                @endforeach
-                            </select>
-
-                            <span class="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-gray-500 dark:text-gray-400">
+                            <button
+                                type="button"
+                                @click.stop="
+                                    equipmentOpen = !equipmentOpen;
+                                    authorOpen = false;
+                                "
+                                class="absolute top-1/2 right-0 flex h-11 w-11 -translate-y-1/2 items-center justify-center text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"
+                            >
                                 <svg
-                                    class="fill-current"
                                     width="20"
                                     height="20"
                                     viewBox="0 0 20 20"
+                                    fill="none"
+                                    class="transition-transform duration-200"
+                                    :class="equipmentOpen ? 'rotate-180' : ''"
                                 >
                                     <path
-                                        fill-rule="evenodd"
-                                        clip-rule="evenodd"
-                                        d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                                        d="M5 7.5L10 12.5L15 7.5"
+                                        stroke="currentColor"
+                                        stroke-width="1.5"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
                                     />
                                 </svg>
-                            </span>
+                            </button>
                         </div>
 
-                        @error('equipment_id')
+                        {{-- EQUIPMENT DROPDOWN --}}
+                        <div
+                            x-show="equipmentOpen"
+                            x-cloak
+                            x-transition
+                            class="absolute z-50 mt-1 w-full overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800"
+                        >
+                            <div class="max-h-[220px] overflow-y-auto py-1">
+
+                                <template x-if="filteredEquipments.length === 0">
+                                    <div class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
+                                        Equipment belum tersedia.
+                                    </div>
+                                </template>
+
+                                <template
+                                    x-for="equipment in filteredEquipments"
+                                    :key="equipment.id"
+                                >
+                                    <button
+                                        type="button"
+                                        @click="selectEquipment(equipment)"
+                                        class="flex w-full items-center px-4 py-2.5 text-left text-sm text-gray-700 transition hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+                                        x-text="equipment.name"
+                                    ></button>
+                                </template>
+
+                            </div>
+                        </div>
+
+                        <p class="mt-1.5 text-xs text-gray-400">
+                            Ketik equipment baru atau pilih dari daftar.
+                        </p>
+
+                        @error('equipment')
                             <p class="mt-1.5 text-xs text-error-500">
                                 {{ $message }}
                             </p>
@@ -226,6 +329,7 @@
                             name="location"
                             value="{{ old('location') }}"
                             required
+                            autocomplete="off"
                             placeholder="Masukkan lokasi buku"
                             class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-gray-400"
                         >
@@ -238,19 +342,84 @@
                     </div>
 
                     {{-- AUTHOR --}}
-                    <div>
+                    <div class="relative">
                         <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
                             AUTHOR
                         </label>
 
-                        <input
-                            type="text"
-                            name="author"
-                            value="{{ old('author') }}"
-                            required
-                            placeholder="Masukkan nama penulis"
-                            class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-gray-400"
+                        <div class="relative">
+                            <input
+                                type="text"
+                                name="author"
+                                x-model="authorSearch"
+                                @focus="authorOpen = true; equipmentOpen = false"
+                                @input="authorOpen = true"
+                                autocomplete="off"
+                                required
+                                placeholder="Ketik atau pilih nama penulis"
+                                class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 pr-11 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-gray-400"
+                            >
+
+                            <button
+                                type="button"
+                                @click.stop="
+                                    authorOpen = !authorOpen;
+                                    equipmentOpen = false;
+                                "
+                                class="absolute top-1/2 right-0 flex h-11 w-11 -translate-y-1/2 items-center justify-center text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-white"
+                            >
+                                <svg
+                                    width="20"
+                                    height="20"
+                                    viewBox="0 0 20 20"
+                                    fill="none"
+                                    class="transition-transform duration-200"
+                                    :class="authorOpen ? 'rotate-180' : ''"
+                                >
+                                    <path
+                                        d="M5 7.5L10 12.5L15 7.5"
+                                        stroke="currentColor"
+                                        stroke-width="1.5"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    />
+                                </svg>
+                            </button>
+                        </div>
+
+                        {{-- AUTHOR DROPDOWN --}}
+                        <div
+                            x-show="authorOpen"
+                            x-cloak
+                            x-transition
+                            class="absolute z-50 mt-1 w-full overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800"
                         >
+                            <div class="max-h-[220px] overflow-y-auto py-1">
+
+                                <template x-if="filteredAuthors.length === 0">
+                                    <div class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
+                                        Author belum tersedia.
+                                    </div>
+                                </template>
+
+                                <template
+                                    x-for="author in filteredAuthors"
+                                    :key="author.id"
+                                >
+                                    <button
+                                        type="button"
+                                        @click="selectAuthor(author)"
+                                        class="flex w-full items-center px-4 py-2.5 text-left text-sm text-gray-700 transition hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+                                        x-text="author.name"
+                                    ></button>
+                                </template>
+
+                            </div>
+                        </div>
+
+                        <p class="mt-1.5 text-xs text-gray-400">
+                            Ketik nama penulis baru atau pilih dari daftar.
+                        </p>
 
                         @error('author')
                             <p class="mt-1.5 text-xs text-error-500">
@@ -315,7 +484,7 @@
                         name="description"
                         rows="5"
                         placeholder="Masukkan deskripsi buku..."
-                        class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-gray-400"
+                        class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:ring-brand-500/10 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-gray-400"
                     >{{ old('description') }}</textarea>
 
                     @error('description')
@@ -335,7 +504,7 @@
                         name="remark"
                         rows="4"
                         placeholder="Masukkan remark..."
-                        class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-gray-400"
+                        class="w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:ring-brand-500/10 focus:outline-hidden dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-gray-400"
                     >{{ old('remark') }}</textarea>
 
                     @error('remark')
