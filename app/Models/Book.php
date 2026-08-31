@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Location;
-use App\Models\Equipment;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -27,8 +25,10 @@ class Book extends Model
         'remark',
         'publisher',
         'description',
+        'status',
     ];
 
+    // Lokasi buku
     public function location(): BelongsTo
     {
         return $this->belongsTo(
@@ -38,6 +38,7 @@ class Book extends Model
         );
     }
 
+    // Equipment buku
     public function equipment(): BelongsTo
     {
         return $this->belongsTo(
@@ -47,6 +48,7 @@ class Book extends Model
         );
     }
 
+    // Author buku
     public function authors(): BelongsToMany
     {
         return $this->belongsToMany(
@@ -59,6 +61,7 @@ class Book extends Model
         );
     }
 
+    // Kategori buku
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(
@@ -71,6 +74,7 @@ class Book extends Model
         );
     }
 
+    // Detail peminjaman
     public function loanDetails(): HasMany
     {
         return $this->hasMany(
@@ -80,6 +84,7 @@ class Book extends Model
         );
     }
 
+    // Eksemplar buku
     public function copies(): HasMany
     {
         return $this->hasMany(

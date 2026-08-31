@@ -5,11 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Author;
 use App\Models\Book;
 use App\Models\BookCopy;
+use App\Models\Equipment;
 use App\Models\Loan;
 use App\Models\LoanDetail;
-use App\Models\User;
 use App\Models\Location;
-use App\Models\Equipment;
+use App\Models\Visitor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -28,11 +28,7 @@ class BookController extends Controller
         $keyword = "%{$search}%";
         $results = collect();
 
-        // Buku
-        $books = Book::with([
-            'authors',
-            'equipment',
-        ])
+        $books = Book::with(['authors', 'equipment'])
             ->where('status', 'public')
             ->where(function ($query) use ($keyword) {
                 $query->where('book_code', 'like', $keyword)
@@ -41,19 +37,11 @@ class BookController extends Controller
                     ->orWhere('title', 'like', $keyword)
                     ->orWhere('publisher', 'like', $keyword)
                     ->orWhere('rack', 'like', $keyword)
-                    ->orWhereHas('authors', function ($authorQuery) use ($keyword) {
-                        $authorQuery->where(
-                            'author_name',
-                            'like',
-                            $keyword
-                        );
+                    ->orWhereHas('authors', function ($query) use ($keyword) {
+                        $query->where('author_name', 'like', $keyword);
                     })
-                    ->orWhereHas('equipment', function ($equipmentQuery) use ($keyword) {
-                        $equipmentQuery->where(
-                            'equipment_name',
-                            'like',
-                            $keyword
-                        );
+                    ->orWhereHas('equipment', function ($query) use ($keyword) {
+                        $query->where('equipment_name', 'like', $keyword);
                     });
             })
             ->orderBy('title')
@@ -72,21 +60,14 @@ class BookController extends Controller
                 'description' => $book->book_code
                     ? $book->book_code . ' • ' . ($authors ?: '-')
                     : ($authors ?: '-'),
-                'meta' => $book->equipment
-                    ? $book->equipment->equipment_name
-                    : ($book->rack ?? '-'),
+                'meta' => $book->equipment?->equipment_name ?? $book->rack ?? '-',
                 'url' => route('books.edit', [
                     'book_id' => $book->book_id,
                 ]),
             ]);
         }
 
-        // Penulis
-        $authors = Author::where(
-            'author_name',
-            'like',
-            $keyword
-        )
+        $authors = Author::where('author_name', 'like', $keyword)
             ->orderBy('author_name')
             ->limit(5)
             ->get();
@@ -102,12 +83,7 @@ class BookController extends Controller
             ]);
         }
 
-        // Lokasi / Rak
-        $locations = Location::where(
-            'location_name',
-            'like',
-            $keyword
-        )
+        $locations = Location::where('location_name', 'like', $keyword)
             ->orderBy('location_name')
             ->limit(5)
             ->get();
@@ -123,12 +99,7 @@ class BookController extends Controller
             ]);
         }
 
-        // Equipment
-        $equipments = Equipment::where(
-            'equipment_name',
-            'like',
-            $keyword
-        )
+        $equipments = Equipment::where('equipment_name', 'like', $keyword)
             ->orderBy('equipment_name')
             ->limit(5)
             ->get();
@@ -144,32 +115,30 @@ class BookController extends Controller
             ]);
         }
 
-        // Pengunjung
-        $visitors = DB::table('visitors')
-            ->where(function ($query) use ($keyword) {
-                $query->where(
-                    'visitor_name',
-                    'like',
-                    $keyword
-                )
-                    ->orWhere(
-                        'employee_number',
-                        'like',
-                        $keyword
-                    );
-            })
+        $visitors = Visitor::where(function ($query) use ($keyword) {
+            $query->where('visitor_name', 'like', $keyword)
+                ->orWhere('employee_number', 'like', $keyword)
+                ->orWhere('visitor_category', 'like', $keyword);
+        })
             ->orderBy('visitor_name')
             ->limit(5)
             ->get();
 
         foreach ($visitors as $visitor) {
+            $category = match ($visitor->visitor_category) {
+                'pekerja' => 'Pekerja',
+                'mahasiswa' => 'Mahasiswa',
+                'tamu' => 'Tamu',
+                default => 'Lainnya',
+            };
+
             $results->push([
                 'type' => 'Pengunjung',
                 'icon' => 'user',
                 'title' => $visitor->visitor_name,
                 'description' => $visitor->employee_number
-                    ? 'No. Pekerja: ' . $visitor->employee_number
-                    : 'Data pengunjung',
+                    ? $category . ' • ' . $visitor->employee_number
+                    : $category,
                 'meta' => 'Pengunjung',
                 'url' => route('visitors', [
                     'search' => $visitor->visitor_name,
@@ -182,127 +151,95 @@ class BookController extends Controller
         );
     }
 
-// Form tambah buku
-public function create()
-{
-    $authors = Author::orderBy('author_name')->get();
-    $equipments = Equipment::orderBy('equipment_name')->get();
-
-    return view('pages.tables.books.add-books', [
-        'title' => 'Tambah Buku',
-        'authors' => $authors,
-        'equipments' => $equipments,
-    ]);
-}
-
-// Tambah buku
-public function store(Request $request)
-{
-    $validated = $request->validate([
-        'book_no' => [
-            'required',
-            'string',
-            'max:100',
-            Rule::unique('books', 'book_code'),
-        ],
-        'tag_no' => 'nullable|string|max:100',
-        'cat_no' => 'required|string|max:200',
-
-        'equipment' => 'required|string|max:255',
-
-        'location' => 'required|string|max:255',
-
-        'title' => 'required|string|max:255',
-
-        'author' => 'required|string|max:255',
-
-        'publisher' => 'required|string|max:510',
-
-        'qty' => 'required|integer|min:1',
-
-        'description' => 'nullable|string',
-
-        'remark' => 'nullable|string|max:255',
-    ], $this->bookValidationMessages());
-
-    try {
-        DB::transaction(function () use ($validated) {
-
-            // Simpan atau ambil equipment
-            $equipment = Equipment::firstOrCreate([
-                'equipment_name' => trim($validated['equipment']),
-            ]);
-
-            // Simpan buku
-            $book = Book::create([
-                'book_code' => trim($validated['book_no']),
-                'tag_no' => trim($validated['tag_no'] ?? ''),
-                'cat_no' => trim($validated['cat_no']),
-                'equipment_id' => $equipment->equipment_id,
-                'title' => trim($validated['title']),
-                'rack' => trim($validated['location']),
-                'remark' => trim($validated['remark'] ?? ''),
-                'publisher' => trim($validated['publisher']),
-                'description' => $validated['description'] ?? null,
-                'status' => 'public',
-            ]);
-
-            // Simpan atau ambil author
-            $author = Author::firstOrCreate([
-                'author_name' => trim($validated['author']),
-            ]);
-
-            // Hubungkan buku dengan author
-            $book->authors()->sync([
-                $author->author_id,
-            ]);
-
-            // Buat eksemplar buku
-            for (
-                $i = 1;
-                $i <= (int) $validated['qty'];
-                $i++
-            ) {
-                BookCopy::create([
-                    'book_id' => $book->book_id,
-                    'copy_code' => $book->book_code . '-' . str_pad(
-                        $i,
-                        3,
-                        '0',
-                        STR_PAD_LEFT
-                    ),
-                    'condition' => 'Baik',
-                    'status' => 'Tersedia',
-                    'notes' => null,
-                ]);
-            }
-        });
-
-        return redirect()
-            ->route('data-buku')
-            ->with(
-                'success',
-                'Buku berhasil ditambahkan.'
-            );
-
-    } catch (\Throwable $e) {
-
-        return redirect()
-            ->back()
-            ->withInput()
-            ->with(
-                'error',
-                'Gagal menambahkan buku: ' . $e->getMessage()
-            );
+    // Form tambah buku
+    public function create()
+    {
+        return view('pages.tables.books.add-books', [
+            'title' => 'Tambah Buku',
+            'authors' => Author::orderBy('author_name')->get(),
+            'equipments' => Equipment::orderBy('equipment_name')->get(),
+        ]);
     }
-}
+
+    // Simpan buku
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'book_no' => [
+                'required',
+                'string',
+                'max:100',
+                Rule::unique('books', 'book_code'),
+            ],
+            'tag_no' => 'nullable|string|max:100',
+            'cat_no' => 'required|string|max:200',
+            'equipment' => 'required|string|max:255',
+            'location' => 'required|string|max:255',
+            'title' => 'required|string|max:255',
+            'author' => 'required|string|max:255',
+            'publisher' => 'required|string|max:510',
+            'qty' => 'required|integer|min:1',
+            'description' => 'nullable|string',
+            'remark' => 'nullable|string|max:255',
+        ], $this->bookValidationMessages());
+
+        try {
+            DB::transaction(function () use ($validated) {
+                $equipment = Equipment::firstOrCreate([
+                    'equipment_name' => trim($validated['equipment']),
+                ]);
+
+                $book = Book::create([
+                    'book_code' => trim($validated['book_no']),
+                    'tag_no' => trim($validated['tag_no'] ?? ''),
+                    'cat_no' => trim($validated['cat_no']),
+                    'equipment_id' => $equipment->equipment_id,
+                    'title' => trim($validated['title']),
+                    'rack' => trim($validated['location']),
+                    'remark' => trim($validated['remark'] ?? ''),
+                    'publisher' => trim($validated['publisher']),
+                    'description' => $validated['description'] ?? null,
+                    'status' => 'public',
+                ]);
+
+                $author = Author::firstOrCreate([
+                    'author_name' => trim($validated['author']),
+                ]);
+
+                $book->authors()->sync([
+                    $author->author_id,
+                ]);
+
+                for ($i = 1; $i <= (int) $validated['qty']; $i++) {
+                    BookCopy::create([
+                        'book_id' => $book->book_id,
+                        'copy_code' => $book->book_code . '-' . str_pad(
+                            $i,
+                            3,
+                            '0',
+                            STR_PAD_LEFT
+                        ),
+                        'condition' => 'Baik',
+                        'status' => 'Tersedia',
+                        'notes' => null,
+                    ]);
+                }
+            });
+
+            return redirect()
+                ->route('data-buku')
+                ->with('success', 'Buku berhasil ditambahkan.');
+        } catch (\Throwable $e) {
+            return back()
+                ->withInput()
+                ->with('error', 'Gagal menambahkan buku: ' . $e->getMessage());
+        }
+    }
 
     // Cek Book No
     public function checkBookNo(Request $request)
     {
-        $bookNo = trim(
-            $request->query('book_no', '')
-        );
+        $bookNo = trim($request->query('book_no', ''));
 
         if ($bookNo === '') {
             return response()->json([
@@ -312,10 +249,7 @@ public function store(Request $request)
             ]);
         }
 
-        $exists = Book::where(
-            'book_code',
-            $bookNo
-        )->exists();
+        $exists = Book::where('book_code', $bookNo)->exists();
 
         return response()->json([
             'exists' => $exists,
@@ -333,116 +267,66 @@ public function store(Request $request)
             'authors',
             'copies',
             'equipment',
-        ])
-            ->where('book_id', $book_id)
-            ->first();
+        ])->find($book_id);
 
         if (!$book) {
             return redirect()
                 ->route('data-buku')
-                ->with(
-                    'error',
-                    'Buku tidak ditemukan.'
-                );
+                ->with('error', 'Buku tidak ditemukan.');
         }
 
         $totalQty = $book->copies->count();
+        $borrowedCopies = $book->copies->where('status', 'Dipinjam')->count();
+        $availableCopies = $book->copies->where('status', 'Tersedia')->count();
 
-        $borrowedCopies = $book->copies
-            ->where('status', 'Dipinjam')
-            ->count();
-
-        $availableCopies = $book->copies
-            ->where('status', 'Tersedia')
-            ->count();
-
-        // Peminjaman aktif
-        $activeLoans = LoanDetail::with([
-            'loan',
-            'bookCopy',
-        ])
-            ->where(
-                'book_id',
-                $book->book_id
-            )
+        $activeLoans = LoanDetail::with(['loan', 'bookCopy'])
+            ->where('book_id', $book->book_id)
             ->whereNull('returned_date')
-            ->whereHas(
-                'loan',
-                function ($query) {
-                    $query->where(
-                        'status',
-                        'borrowed'
-                    );
-                }
-            )
+            ->whereHas('loan', function ($query) {
+                $query->where('status', 'borrowed');
+            })
             ->orderBy('loan_detail_id')
             ->get();
 
-        // Data equipment untuk dropdown
-        $equipments = Equipment::orderBy(
-            'equipment_name'
-        )->get();
-
-        return view(
-            'pages.tables.books.edit-books',
-            [
-                'title' => 'Edit Buku',
-                'book' => $book,
-                'totalQty' => $totalQty,
-                'borrowedCopies' => $borrowedCopies,
-                'availableCopies' => $availableCopies,
-                'activeLoans' => $activeLoans,
-                'equipments' => $equipments,
-            ]
-        );
+        return view('pages.tables.books.edit-books', [
+            'title' => 'Edit Buku',
+            'book' => $book,
+            'totalQty' => $totalQty,
+            'borrowedCopies' => $borrowedCopies,
+            'availableCopies' => $availableCopies,
+            'activeLoans' => $activeLoans,
+            'equipments' => Equipment::orderBy('equipment_name')->get(),
+            'authors' => Author::orderBy('author_name')->get(),
+        ]);
     }
 
     // Pinjam buku
-    public function borrow(
-        Request $request,
-        string $book_id
-    ) {
+    public function borrow(Request $request, string $book_id)
+    {
         $validated = $request->validate([
             'borrower_name' => 'required|string|max:255',
             'nopek' => 'nullable|string|max:100',
             'loan_date' => 'required|date',
         ], [
-            'borrower_name.required' =>
-                'Nama peminjam wajib diisi.',
-            'borrower_name.max' =>
-                'Nama peminjam terlalu panjang.',
-            'nopek.max' =>
-                'No. Pekerja terlalu panjang.',
-            'loan_date.required' =>
-                'Tanggal peminjaman wajib diisi.',
-            'loan_date.date' =>
-                'Tanggal peminjaman tidak valid.',
+            'borrower_name.required' => 'Nama peminjam wajib diisi.',
+            'borrower_name.max' => 'Nama peminjam terlalu panjang.',
+            'nopek.max' => 'No. Pekerja terlalu panjang.',
+            'loan_date.required' => 'Tanggal peminjaman wajib diisi.',
+            'loan_date.date' => 'Tanggal peminjaman tidak valid.',
         ]);
 
-        $book = Book::where(
-            'book_id',
-            $book_id
-        )->first();
+        $book = Book::find($book_id);
 
         if (!$book) {
             return redirect()
                 ->route('data-buku')
-                ->with(
-                    'error',
-                    'Buku tidak ditemukan.'
-                );
+                ->with('error', 'Buku tidak ditemukan.');
         }
 
         try {
-            DB::transaction(function () use (
-                $book,
-                $validated
-            ) {
-                // Cari eksemplar tersedia
+            DB::transaction(function () use ($book, $validated) {
                 $copy = $book->copies()
-                    ->whereRaw(
-                        "LOWER(status) = 'tersedia'"
-                    )
+                    ->whereRaw('LOWER(status) = ?', ['tersedia'])
                     ->orderBy('copy_id')
                     ->lockForUpdate()
                     ->first();
@@ -453,28 +337,18 @@ public function store(Request $request)
                     );
                 }
 
-                // Buat peminjaman
                 $loan = Loan::create([
-                    'borrower_name' => trim(
-                        $validated['borrower_name']
-                    ),
-                    'nopek' => !empty(
-                        $validated['nopek']
-                    )
+                    'borrower_name' => trim($validated['borrower_name']),
+                    'nopek' => !empty($validated['nopek'])
                         ? trim($validated['nopek'])
                         : null,
-                    'loan_date' =>
-                        $validated['loan_date'],
-                    'due_date' =>
-                        now()
-                            ->addDays(7)
-                            ->toDateString(),
+                    'loan_date' => $validated['loan_date'],
+                    'due_date' => now()->addDays(7)->toDateString(),
                     'status' => 'borrowed',
                     'returned_date' => null,
                     'notes' => null,
                 ]);
 
-                // Buat detail peminjaman
                 LoanDetail::create([
                     'loan_id' => $loan->loan_id,
                     'book_id' => $book->book_id,
@@ -485,7 +359,6 @@ public function store(Request $request)
                     'notes' => null,
                 ]);
 
-                // Ubah status eksemplar
                 $copy->update([
                     'status' => 'Dipinjam',
                 ]);
@@ -502,63 +375,31 @@ public function store(Request $request)
                     '.'
                 );
         } catch (\Throwable $e) {
-            return redirect()
-                ->back()
-                ->with(
-                    'error',
-                    'Gagal meminjam buku: ' .
-                    $e->getMessage()
-                );
+            return back()
+                ->with('error', 'Gagal meminjam buku: ' . $e->getMessage());
         }
     }
 
     // Kembalikan buku
-    public function returnBook(
-        string $book_id,
-        string $loan_detail_id
-    ) {
-        $book = Book::where(
-            'book_id',
-            $book_id
-        )->first();
+    public function returnBook(string $book_id, string $loan_detail_id)
+    {
+        $book = Book::find($book_id);
 
         if (!$book) {
             return redirect()
                 ->route('data-buku')
-                ->with(
-                    'error',
-                    'Buku tidak ditemukan.'
-                );
+                ->with('error', 'Buku tidak ditemukan.');
         }
 
         try {
-            DB::transaction(function () use (
-                $book,
-                $loan_detail_id
-            ) {
-                // Cari peminjaman aktif
-                $loanDetail = LoanDetail::with([
-                    'loan',
-                    'bookCopy',
-                ])
-                    ->where(
-                        'loan_detail_id',
-                        $loan_detail_id
-                    )
-                    ->where(
-                        'book_id',
-                        $book->book_id
-                    )
+            DB::transaction(function () use ($book, $loan_detail_id) {
+                $loanDetail = LoanDetail::with(['loan', 'bookCopy'])
+                    ->where('loan_detail_id', $loan_detail_id)
+                    ->where('book_id', $book->book_id)
                     ->whereNull('returned_date')
-                    ->whereHas(
-                        'loan',
-                        function ($query) {
-                            $query->where(
-                                'status',
-                                'borrowed'
-                            );
-                        }
-                    )
+                    ->whereHas('loan', function ($query) {
+                        $query->where('status', 'borrowed');
+                    })
                     ->lockForUpdate()
                     ->first();
 
@@ -570,27 +411,22 @@ public function store(Request $request)
 
                 $today = now()->toDateString();
 
-                // Tandai detail dikembalikan
                 $loanDetail->update([
                     'returned_date' => $today,
                 ]);
 
-                // Eksemplar kembali tersedia
                 if ($loanDetail->bookCopy) {
                     $loanDetail->bookCopy->update([
                         'status' => 'Tersedia',
                     ]);
                 }
 
-                // Cek detail aktif lainnya
                 $loan = $loanDetail->loan;
 
-                $activeDetails = $loan
-                    ->loanDetails()
+                $activeDetails = $loan->loanDetails()
                     ->whereNull('returned_date')
                     ->count();
 
-                // Semua buku sudah kembali
                 if ($activeDetails === 0) {
                     $loan->update([
                         'status' => 'returned',
@@ -603,43 +439,25 @@ public function store(Request $request)
                 ->route('books.edit', [
                     'book_id' => $book->book_id,
                 ])
-                ->with(
-                    'success',
-                    'Buku berhasil dikembalikan.'
-                );
+                ->with('success', 'Buku berhasil dikembalikan.');
         } catch (\Throwable $e) {
-            return redirect()
-                ->back()
-                ->with(
-                    'error',
-                    'Gagal mengembalikan buku: ' .
-                    $e->getMessage()
-                );
+            return back()
+                ->with('error', 'Gagal mengembalikan buku: ' . $e->getMessage());
         }
     }
 
     // Update buku
-    public function update(
-        Request $request,
-        string $book_id
-    ) {
-        $book = Book::where(
-            'book_id',
-            $book_id
-        )->firstOrFail();
+    public function update(Request $request, string $book_id)
+    {
+        $book = Book::findOrFail($book_id);
 
         $validated = $request->validate([
             'book_no' => [
                 'required',
                 'string',
                 'max:100',
-                Rule::unique(
-                    'books',
-                    'book_code'
-                )->ignore(
-                    $book->book_id,
-                    'book_id'
-                ),
+                Rule::unique('books', 'book_code')
+                    ->ignore($book->book_id, 'book_id'),
             ],
             'tag_no' => 'nullable|string|max:100',
             'cat_no' => 'required|string|max:200',
@@ -658,68 +476,40 @@ public function store(Request $request)
         ], $this->bookValidationMessages());
 
         try {
-            DB::transaction(function () use (
-                $book,
-                $validated
-            ) {
-                // Update buku
+            DB::transaction(function () use ($book, $validated) {
                 $book->update([
-                    'book_code' =>
-                        trim($validated['book_no']),
-                    'tag_no' =>
-                        trim($validated['tag_no'] ?? ''),
-                    'cat_no' =>
-                        trim($validated['cat_no']),
-                    'equipment_id' =>
-                        $validated['equipment_id'],
-                    'title' =>
-                        trim($validated['title']),
-                    'publisher' =>
-                        trim($validated['publisher']),
-                    'rack' =>
-                        trim($validated['location']),
-                    'remark' =>
-                        trim($validated['remark'] ?? ''),
-                    'description' =>
-                        $validated['description'] ?? null,
+                    'book_code' => trim($validated['book_no']),
+                    'tag_no' => trim($validated['tag_no'] ?? ''),
+                    'cat_no' => trim($validated['cat_no']),
+                    'equipment_id' => $validated['equipment_id'],
+                    'title' => trim($validated['title']),
+                    'publisher' => trim($validated['publisher']),
+                    'rack' => trim($validated['location']),
+                    'remark' => trim($validated['remark'] ?? ''),
+                    'description' => $validated['description'] ?? null,
                 ]);
 
-                // Update author
                 $author = Author::firstOrCreate([
-                    'author_name' =>
-                        trim($validated['author']),
+                    'author_name' => trim($validated['author']),
                 ]);
 
                 $book->authors()->sync([
                     $author->author_id,
                 ]);
 
-                // Update jumlah eksemplar
-                $currentQty = $book
-                    ->copies()
-                    ->count();
-
+                $currentQty = $book->copies()->count();
                 $newQty = (int) $validated['qty'];
 
-                // Tambah eksemplar
                 if ($newQty > $currentQty) {
-                    for (
-                        $i = $currentQty + 1;
-                        $i <= $newQty;
-                        $i++
-                    ) {
+                    for ($i = $currentQty + 1; $i <= $newQty; $i++) {
                         BookCopy::create([
-                            'book_id' =>
-                                $book->book_id,
-                            'copy_code' =>
-                                $book->book_code .
-                                '-' .
-                                str_pad(
-                                    $i,
-                                    3,
-                                    '0',
-                                    STR_PAD_LEFT
-                                ),
+                            'book_id' => $book->book_id,
+                            'copy_code' => $book->book_code . '-' . str_pad(
+                                $i,
+                                3,
+                                '0',
+                                STR_PAD_LEFT
+                            ),
                             'condition' => 'Baik',
                             'status' => 'Tersedia',
                             'notes' => null,
@@ -727,34 +517,22 @@ public function store(Request $request)
                     }
                 }
 
-                // Kurangi eksemplar
                 if ($newQty < $currentQty) {
-                    $difference =
-                        $currentQty - $newQty;
+                    $difference = $currentQty - $newQty;
 
-                    $availableCopies = $book
-                        ->copies()
-                        ->where(
-                            'status',
-                            'Tersedia'
-                        )
+                    $availableCopies = $book->copies()
+                        ->where('status', 'Tersedia')
                         ->orderByDesc('copy_id')
                         ->limit($difference)
                         ->get();
 
-                    if (
-                        $availableCopies->count()
-                        < $difference
-                    ) {
+                    if ($availableCopies->count() < $difference) {
                         throw new \Exception(
                             'Jumlah buku tidak dapat dikurangi karena terdapat eksemplar yang sedang dipinjam.'
                         );
                     }
 
-                    foreach (
-                        $availableCopies
-                        as $copy
-                    ) {
+                    foreach ($availableCopies as $copy) {
                         $copy->delete();
                     }
                 }
@@ -762,45 +540,27 @@ public function store(Request $request)
 
             return redirect()
                 ->route('data-buku')
-                ->with(
-                    'success',
-                    'Buku berhasil diperbarui.'
-                );
+                ->with('success', 'Buku berhasil diperbarui.');
         } catch (\Throwable $e) {
-            return redirect()
-                ->back()
+            return back()
                 ->withInput()
-                ->with(
-                    'error',
-                    'Gagal memperbarui buku: ' .
-                    $e->getMessage()
-                );
+                ->with('error', 'Gagal memperbarui buku: ' . $e->getMessage());
         }
     }
 
-    // Hapus atau arsipkan buku
-    public function destroy(string $book_code)
+    // Arsipkan buku
+    public function destroy(string $book_id)
     {
-        $book = Book::where(
-            'book_code',
-            $book_code
-        )->first();
+        $book = Book::find($book_id);
 
         if (!$book) {
             return redirect()
                 ->route('data-buku')
-                ->with(
-                    'error',
-                    'Buku tidak ditemukan.'
-                );
+                ->with('error', 'Buku tidak ditemukan.');
         }
 
-        // Cek buku yang sedang dipinjam
-        $borrowedCopies = $book
-            ->copies()
-            ->whereRaw(
-                "LOWER(status) = 'dipinjam'"
-            )
+        $borrowedCopies = $book->copies()
+            ->whereRaw('LOWER(status) = ?', ['dipinjam'])
             ->count();
 
         if ($borrowedCopies > 0) {
@@ -813,30 +573,28 @@ public function store(Request $request)
         }
 
         try {
-            // Arsipkan buku
-            $book->update([
-                'status' => 'arsip',
-            ]);
+            DB::transaction(function () use ($book) {
+                $book->update([
+                    'status' => 'arsip',
+                ]);
 
-            session()->forget(
-                "book_borrowers.{$book->book_id}"
-            );
+                session()->forget(
+                    "book_borrowers.{$book->book_id}"
+                );
+            });
 
             return redirect()
                 ->route('data-buku')
                 ->with(
                     'success',
-                    'Buku "' .
-                    $book->book_code .
-                    '" berhasil dihapus.'
+                    'Buku "' . $book->book_code . '" berhasil dihapus.'
                 );
         } catch (\Throwable $e) {
             return redirect()
                 ->route('data-buku')
                 ->with(
                     'error',
-                    'Gagal menghapus buku: ' .
-                    $e->getMessage()
+                    'Gagal menghapus buku: ' . $e->getMessage()
                 );
         }
     }
@@ -845,47 +603,21 @@ public function store(Request $request)
     private function bookValidationMessages(): array
     {
         return [
-            'book_no.required' =>
-                'Book No. wajib diisi.',
-
-            'book_no.unique' =>
-                'Book No. sudah digunakan. Silakan gunakan Book No. lain.',
-
-            'tag_no.max' =>
-                'Tag No. terlalu panjang.',
-
-            'cat_no.required' =>
-                'Cat. No. wajib diisi.',
-
-            'equipment_id.required' =>
-                'Equipment wajib dipilih.',
-
-            'equipment_id.exists' =>
-                'Equipment yang dipilih tidak valid.',
-
-            'location.required' =>
-                'Location wajib diisi.',
-
-            'location.max' =>
-                'Location terlalu panjang.',
-
-            'title.required' =>
-                'Judul buku wajib diisi.',
-
-            'author.required' =>
-                'Author wajib diisi.',
-
-            'publisher.required' =>
-                'Publisher wajib diisi.',
-
-            'qty.required' =>
-                'Jumlah buku wajib diisi.',
-
-            'qty.integer' =>
-                'Jumlah buku harus berupa angka.',
-
-            'qty.min' =>
-                'Jumlah buku minimal 1.',
+            'book_no.required' => 'Book No. wajib diisi.',
+            'book_no.unique' => 'Book No. sudah digunakan. Silakan gunakan Book No. lain.',
+            'tag_no.max' => 'Tag No. terlalu panjang.',
+            'cat_no.required' => 'Cat. No. wajib diisi.',
+            'equipment.required' => 'Equipment wajib diisi.',
+            'equipment_id.required' => 'Equipment wajib dipilih.',
+            'equipment_id.exists' => 'Equipment yang dipilih tidak valid.',
+            'location.required' => 'Location wajib diisi.',
+            'location.max' => 'Location terlalu panjang.',
+            'title.required' => 'Judul buku wajib diisi.',
+            'author.required' => 'Author wajib diisi.',
+            'publisher.required' => 'Publisher wajib diisi.',
+            'qty.required' => 'Jumlah buku wajib diisi.',
+            'qty.integer' => 'Jumlah buku harus berupa angka.',
+            'qty.min' => 'Jumlah buku minimal 1.',
         ];
     }
 }

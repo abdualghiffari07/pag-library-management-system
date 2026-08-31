@@ -6,25 +6,22 @@
         $lost = $copies->where('status', 'Hilang')->count();
         $damaged = $copies->where('status', 'Rusak')->count();
 
-        if ($lost > 0) {
-            $status = 'Hilang';
-        } elseif ($damaged > 0) {
-            $status = 'Rusak';
-        } elseif ($borrowed > 0) {
-            $status = 'Dipinjam';
-        } else {
-            $status = 'Tersedia';
-        }
+        $status = match (true) {
+            $lost > 0 => 'Hilang',
+            $damaged > 0 => 'Rusak',
+            $borrowed > 0 => 'Dipinjam',
+            default => 'Tersedia',
+        };
 
         return [
             'id' => $book->book_id,
             'tagNo' => $book->tag_no ?? '-',
             'bookNo' => $book->book_code ?? '-',
             'catNo' => $book->cat_no ?? '-',
-            'equipment' => $book->equipment ?? '-',
+            'equipment' => $book->equipment?->equipment_name ?? '-',
             'description' => $book->description ?? '-',
             'title' => $book->title ?? '-',
-            'location' => $book->location->location_name ?? $book->rack ?? '-',
+            'location' => $book->location?->location_name ?? $book->rack ?? '-',
             'remark' => $book->remark ?? '-',
             'author' => $book->authors->pluck('author_name')->join(', ') ?: '-',
             'publisher' => $book->publisher ?? '-',
@@ -50,26 +47,22 @@
                 return this.tableRowData;
             }
 
-            return this.tableRowData.filter(row => {
-                return [
-                    row.tagNo,
-                    row.bookNo,
-                    row.catNo,
-                    row.equipment,
-                    row.description,
-                    row.title,
-                    row.location,
-                    row.remark,
-                    row.author,
-                    row.publisher,
-                    row.loanStatus,
-                    row.loanDate,
-                ].some(value =>
-                    String(value ?? '')
-                        .toLowerCase()
-                        .includes(keyword)
-                );
-            });
+            return this.tableRowData.filter(row => [
+                row.tagNo,
+                row.bookNo,
+                row.catNo,
+                row.equipment,
+                row.description,
+                row.title,
+                row.location,
+                row.remark,
+                row.author,
+                row.publisher,
+                row.loanStatus,
+                row.loanDate
+            ].some(value =>
+                String(value ?? '').toLowerCase().includes(keyword)
+            ));
         },
 
         get totalPages() {
@@ -91,14 +84,16 @@
         get displayedPages() {
             const pages = [];
 
-            for (let i = 1; i <= this.totalPages; i++) {
+            for (let page = 1; page <= this.totalPages; page++) {
                 if (
-                    i === 1 ||
-                    i === this.totalPages ||
-                    (i >= this.currentPage - 1 &&
-                        i <= this.currentPage + 1)
+                    page === 1 ||
+                    page === this.totalPages ||
+                    (
+                        page >= this.currentPage - 1 &&
+                        page <= this.currentPage + 1
+                    )
                 ) {
-                    pages.push(i);
+                    pages.push(page);
                 } else if (pages[pages.length - 1] !== '...') {
                     pages.push('...');
                 }
@@ -131,34 +126,26 @@
 
         getStatusClass(status) {
             const classes = {
-                'Tersedia':
+                Tersedia:
                     'bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-400',
-
-                'Dipinjam':
+                Dipinjam:
                     'bg-yellow-50 text-yellow-700 dark:bg-yellow-500/15 dark:text-yellow-400',
-
-                'Hilang':
+                Hilang:
                     'bg-red-50 text-red-700 dark:bg-red-500/15 dark:text-red-400',
-
-                'Rusak':
-                    'bg-red-50 text-red-700 dark:bg-red-500/15 dark:text-red-400',
+                Rusak:
+                    'bg-red-50 text-red-700 dark:bg-red-500/15 dark:text-red-400'
             };
 
             return classes[status] || '';
         }
     }"
 >
-    <div
-        class="relative w-full min-w-0 max-w-full rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]"
-    >
+    <div class="relative w-full min-w-0 max-w-full rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
 
-        {{-- HEADER --}}
-        <div
-            class="relative z-10 border-b border-gray-100 bg-white px-4 py-4 dark:border-white/[0.05] dark:bg-transparent sm:px-5"
-        >
+        {{-- Header --}}
+        <div class="relative z-10 border-b border-gray-100 bg-white px-4 py-4 dark:border-white/[0.05] dark:bg-transparent sm:px-5">
             <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
 
-                {{-- TITLE --}}
                 <div class="min-w-0">
                     <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">
                         Data Buku
@@ -168,12 +155,9 @@
                         Daftar koleksi buku perpustakaan
                     </p>
 
-                    {{-- SEARCH --}}
+                    {{-- Search --}}
                     <div class="relative mt-4 w-full sm:w-80">
-
-                        <span
-                            class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-                        >
+                        <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                             <svg
                                 class="h-4 w-4"
                                 fill="none"
@@ -216,15 +200,13 @@
                                     stroke-linecap="round"
                                     stroke-linejoin="round"
                                     stroke-width="2"
-                                    d="M6 6l12 12M18 6L6 18"
+                                    d="M6 6l12 12M18 6 6 18"
                                 />
                             </svg>
                         </button>
-
                     </div>
                 </div>
 
-                {{-- TAMBAH BUKU --}}
                 <a
                     href="{{ route('books.create') }}"
                     class="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-lg bg-brand-500 px-3 py-2.5 text-xs font-medium text-white shadow-theme-xs transition hover:bg-brand-600"
@@ -245,18 +227,13 @@
 
                     Tambah Buku
                 </a>
-
             </div>
         </div>
 
-        {{-- TABLE --}}
+        {{-- Table --}}
         <div class="relative z-0 block w-full max-w-full overflow-x-auto">
             <table class="min-w-[2100px] table-fixed">
-
-                {{-- TABLE HEADER --}}
-                <thead
-                    class="border-y border-gray-100 bg-gray-50 dark:border-white/[0.05] dark:bg-gray-900"
-                >
+                <thead class="border-y border-gray-100 bg-gray-50 dark:border-white/[0.05] dark:bg-gray-900">
                     <tr>
                         <th class="w-[55px] px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
                             NO
@@ -320,15 +297,13 @@
                     </tr>
                 </thead>
 
-                {{-- TABLE BODY --}}
                 <tbody>
                     <template
                         x-for="(row, index) in paginatedRows"
                         :key="row.id"
                     >
-                        <tr
-                            class="border-b border-gray-100 transition-colors hover:bg-gray-50 dark:border-white/[0.05] dark:hover:bg-white/[0.02]"
-                        >
+                        <tr class="border-b border-gray-100 transition-colors hover:bg-gray-50 dark:border-white/[0.05] dark:hover:bg-white/[0.02]">
+
                             <td class="px-3 py-3">
                                 <span
                                     class="text-xs text-gray-600 dark:text-gray-400"
@@ -431,8 +406,6 @@
 
                             <td class="px-3 py-3">
                                 <div class="flex items-center gap-3">
-
-                                    {{-- EDIT --}}
                                     <a
                                         :href="'{{ url('/books') }}/' + row.id + '/edit'"
                                         class="text-gray-500 transition-colors hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400"
@@ -448,21 +421,21 @@
                                                 stroke-linecap="round"
                                                 stroke-linejoin="round"
                                                 stroke-width="2"
-                                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5"
+                                                d="M11 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-5"
                                             />
+
                                             <path
                                                 stroke-linecap="round"
                                                 stroke-linejoin="round"
                                                 stroke-width="2"
-                                                d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"
+                                                d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
                                             />
                                         </svg>
                                     </a>
 
-                                    {{-- HAPUS --}}
                                     <form
                                         method="POST"
-                                        :action="'{{ url('/books') }}/' + encodeURIComponent(row.bookNo)"
+                                        :action="'{{ url('/books') }}/' + row.id"
                                         onsubmit="return confirm('Apakah Anda yakin ingin menghapus buku ini?')"
                                     >
                                         @csrf
@@ -483,18 +456,16 @@
                                                     stroke-linecap="round"
                                                     stroke-linejoin="round"
                                                     stroke-width="2"
-                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                                    d="M19 7l-.867 12.142A2 2 0 0 1 16.138 21H7.862a2 2 0 0 1-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v3M4 7h16"
                                                 />
                                             </svg>
                                         </button>
                                     </form>
-
                                 </div>
                             </td>
                         </tr>
                     </template>
 
-                    {{-- DATA KOSONG --}}
                     <template x-if="filteredRows.length === 0">
                         <tr>
                             <td
@@ -516,27 +487,19 @@
             </table>
         </div>
 
-        {{-- PAGINATION --}}
-        <div
-            class="relative z-10 border-t border-gray-200 bg-white px-4 py-4 dark:border-white/[0.05] dark:bg-transparent"
-        >
+        {{-- Pagination --}}
+        <div class="relative z-10 border-t border-gray-200 bg-white px-4 py-4 dark:border-white/[0.05] dark:bg-transparent">
             <div class="flex items-center justify-between">
-
                 <button
                     type="button"
                     @click="prevPage"
                     :disabled="currentPage === 1"
                     :class="currentPage === 1 ? 'cursor-not-allowed opacity-50' : ''"
-                    class="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-3 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200 sm:px-3.5"
+                    class="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-3 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 sm:px-3.5"
                 >
-                    <svg
-                        width="20"
-                        height="20"
-                        viewBox="0 0 20 20"
-                        fill="none"
-                    >
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                         <path
-                            d="M2.58301 9.99868L8.86018 4.46984M2.58301 9.99868L8.86018 15.5301M2.58301 9.99868H17.4175"
+                            d="M2.583 9.999 8.86 4.47M2.583 9.999 8.86 15.53M2.583 9.999h14.835"
                             stroke="currentColor"
                             stroke-width="1.5"
                             stroke-linecap="round"
@@ -557,18 +520,17 @@
                 </span>
 
                 <ul class="hidden items-center gap-0.5 sm:flex">
-                    <template
-                        x-for="page in displayedPages"
-                        :key="page"
-                    >
+                    <template x-for="page in displayedPages" :key="page">
                         <li>
                             <button
                                 type="button"
                                 x-show="page !== '...'"
                                 @click="goToPage(page)"
-                                :class="currentPage === page
-                                    ? 'bg-blue-500 text-white'
-                                    : 'text-gray-700 hover:bg-blue-500/[0.08] hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-500'"
+                                :class="
+                                    currentPage === page
+                                        ? 'bg-blue-500 text-white'
+                                        : 'text-gray-700 hover:bg-blue-500/[0.08] hover:text-blue-500 dark:text-gray-400'
+                                "
                                 class="flex h-10 w-10 items-center justify-center rounded-lg text-theme-sm font-medium"
                                 x-text="page"
                             ></button>
@@ -588,20 +550,15 @@
                     @click="nextPage"
                     :disabled="currentPage === totalPages"
                     :class="currentPage === totalPages ? 'cursor-not-allowed opacity-50' : ''"
-                    class="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-3 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200 sm:px-3.5"
+                    class="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-3 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 sm:px-3.5"
                 >
                     <span class="hidden sm:inline">
                         Next
                     </span>
 
-                    <svg
-                        width="20"
-                        height="20"
-                        viewBox="0 0 20 20"
-                        fill="none"
-                    >
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                         <path
-                            d="M17.4175 9.9986L11.1403 4.46984M17.4175 9.9986L11.1403 15.5301M17.4175 9.9986H2.58301"
+                            d="M17.418 9.999 11.14 4.47M17.418 9.999 11.14 15.53M17.418 9.999H2.583"
                             stroke="currentColor"
                             stroke-width="1.5"
                             stroke-linecap="round"
@@ -609,8 +566,8 @@
                         />
                     </svg>
                 </button>
-
             </div>
         </div>
+
     </div>
 </div>

@@ -204,7 +204,7 @@
 
                     <h1 class="text-4xl font-bold leading-tight tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
                         Perpustakaan 
-                        <span>Perta Arun Gas</span>
+                        <span>PertaArunGas</span>
                     </h1>
 
                     <p class="mx-auto mt-5 max-w-2xl text-base leading-7 text-white/90 sm:mt-6 sm:text-lg sm:leading-relaxed md:text-xl lg:mx-0">
