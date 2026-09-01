@@ -120,6 +120,11 @@ Route::middleware('admin')->group(function () {
     Route::put('/books/{book_id}', [BookController::class, 'update'])
         ->name('books.update');
 
+    // Hapus banyak buku
+    Route::delete('/books/bulk-delete', [BookController::class, 'bulkDestroy'])
+        ->name('books.bulk-destroy');
+
+    // Hapus satu buku
     Route::delete('/books/{book_id}', [BookController::class, 'destroy'])
         ->name('books.destroy');
 
@@ -183,7 +188,6 @@ Route::middleware('admin')->group(function () {
         ]);
     })->name('visitors');
 
-    // Hapus pengunjung
     Route::delete('/visitors/{visitor_id}', function ($visitor_id) {
         $visitor = Visitor::where('visitor_id', $visitor_id)->first();
 
