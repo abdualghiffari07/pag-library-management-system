@@ -9,6 +9,7 @@ import 'flatpickr/dist/flatpickr.min.css';
 
 import './books-data';
 import './report';
+import './borrowers-data';
 
 window.Alpine = Alpine;
 window.ApexCharts = ApexCharts;

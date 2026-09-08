@@ -16,6 +16,7 @@ class Book extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'book_identifier',
         'tag_no',
         'book_code',
         'cat_no',

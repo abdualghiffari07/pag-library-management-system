@@ -6,58 +6,24 @@
     'activeLoans' => null,
     'equipments' => null,
     'authors' => null,
+    'visitors' => null,
 ])
 
 @php
     $activeLoans = $activeLoans ?? collect();
     $equipments = $equipments ?? collect();
     $authors = $authors ?? collect();
+    $visitors = $visitors ?? collect();
 @endphp
 
-<div
-    class="space-y-6"
-    x-data="{
-        bookNo: @js(old('book_no', $book->book_code)),
-        bookNoExists: false,
-        checkingBookNo: false,
-
-        async checkBookNo() {
-            const value = this.bookNo.trim();
-
-            this.bookNoExists = false;
-
-            if (!value || value === @js($book->book_code)) {
-                return;
-            }
-
-            this.checkingBookNo = true;
-
-            try {
-                const response = await fetch(
-                    '{{ route('books.check-book-no') }}?book_no=' +
-                    encodeURIComponent(value)
-                );
-
-                const data = await response.json();
-
-                this.bookNoExists = data.exists;
-            } catch (error) {
-                console.error(error);
-            } finally {
-                this.checkingBookNo = false;
-            }
-        }
-    }"
->
+<div class="space-y-6">
 
     {{-- Edit Buku --}}
     <x-common.component-card title="Edit Buku">
-
         <form
             action="{{ route('books.update', $book->book_id) }}"
             method="POST"
             class="space-y-6"
-            @submit="if (bookNoExists || checkingBookNo) $event.preventDefault()"
         >
             @csrf
             @method('PUT')
@@ -73,24 +39,12 @@
                     <input
                         type="text"
                         name="book_no"
-                        x-model="bookNo"
-                        @input.debounce.400ms="checkBookNo()"
+                        value="{{ old('book_no', $book->book_code) }}"
                         required
-                        class="h-11 w-full rounded-lg border bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs outline-none focus:ring-3 dark:bg-gray-900 dark:text-white/90"
-                        :class="
-                            bookNoExists
-                                ? 'border-error-300 focus:border-error-300 focus:ring-error-500/10 dark:border-error-700'
-                                : 'border-gray-300 focus:border-brand-300 focus:ring-brand-500/10 dark:border-gray-700 dark:focus:border-brand-800'
-                        "
+                        autocomplete="off"
+                        placeholder="Masukkan nomor buku"
+                        class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs outline-none focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
                     >
-
-                    <p
-                        x-show="bookNoExists"
-                        x-cloak
-                        class="mt-1.5 text-xs text-error-500"
-                    >
-                        Book No. sudah digunakan. Silakan gunakan Book No. lain.
-                    </p>
 
                     @error('book_no')
                         <p class="mt-1.5 text-xs text-error-500">
@@ -338,6 +292,7 @@
 
             {{-- Action --}}
             <div class="flex items-center justify-end gap-3 border-t border-gray-200 pt-5 dark:border-gray-800">
+
                 <a
                     href="{{ route('data-buku') }}"
                     class="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-theme-xs transition hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
@@ -347,25 +302,18 @@
 
                 <button
                     type="submit"
-                    :disabled="bookNoExists || checkingBookNo"
-                    :class="
-                        bookNoExists || checkingBookNo
-                            ? 'cursor-not-allowed opacity-50'
-                            : 'hover:bg-brand-600'
-                    "
-                    class="inline-flex items-center justify-center rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white shadow-theme-xs transition"
+                    class="inline-flex items-center justify-center rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white shadow-theme-xs transition hover:bg-brand-600"
                 >
                     Simpan Perubahan
                 </button>
+
             </div>
 
         </form>
-
     </x-common.component-card>
 
     {{-- Peminjaman --}}
     <x-common.component-card title="Peminjaman">
-
         <div class="space-y-6">
 
             {{-- Ringkasan --}}
@@ -450,7 +398,9 @@
                                     </p>
 
                                     <p class="mt-1 text-sm font-semibold text-gray-800 dark:text-white">
-                                        {{ \Carbon\Carbon::parse($loanDetail->loan->loan_date)->format('d-m-Y') }}
+                                        {{ \Carbon\Carbon::parse(
+                                            $loanDetail->loan->loan_date
+                                        )->format('d-m-Y') }}
                                     </p>
                                 </div>
 
@@ -469,6 +419,7 @@
                             @endif
 
                             <div class="mt-4 flex justify-end border-t border-gray-100 pt-4 dark:border-gray-800">
+
                                 <form
                                     action="{{ route('books.return', [
                                         'book_id' => $book->book_id,
@@ -486,6 +437,7 @@
                                         Buku Sudah Dikembalikan
                                     </button>
                                 </form>
+
                             </div>
 
                         </div>
@@ -527,32 +479,329 @@
                         action="{{ route('books.borrow', $book->book_id) }}"
                         method="POST"
                         class="space-y-5"
+                        x-data="{
+                            openVisitor: false,
+
+                            visitorId: @js((string) old('visitor_id', '')),
+
+                            borrowerName: @js(
+                                old('borrower_name', '')
+                            ),
+
+                            identityNumber: @js(
+                                old('nopek', '')
+                            ),
+
+                            visitors: @js(
+                                $visitors->map(function ($visitor) {
+                                    return [
+                                        'id' => (string) $visitor->visitor_id,
+                                        'name' => $visitor->visitor_name,
+                                        'identity' => $visitor->employee_number ?? '',
+                                        'category' => $visitor->visitor_category ?? '',
+                                    ];
+                                })->values()
+                            ),
+
+                            initVisitor() {
+                                if (!this.visitorId) {
+                                    return;
+                                }
+
+                                const visitor = this.visitors.find(
+                                    item =>
+                                        String(item.id) ===
+                                        String(this.visitorId)
+                                );
+
+                                if (!visitor) {
+                                    this.visitorId = '';
+                                    this.borrowerName = '';
+                                    this.identityNumber = '';
+                                    return;
+                                }
+
+                                this.borrowerName = visitor.name ?? '';
+                                this.identityNumber = visitor.identity ?? '';
+                            },
+
+                            get filteredVisitors() {
+                                const keyword = this.borrowerName
+                                    .toLowerCase()
+                                    .trim();
+
+                                if (!keyword) {
+                                    return this.visitors.slice(0, 8);
+                                }
+
+                                return this.visitors
+                                    .filter(visitor => {
+                                        const name = String(
+                                            visitor.name ?? ''
+                                        ).toLowerCase();
+
+                                        const identity = String(
+                                            visitor.identity ?? ''
+                                        ).toLowerCase();
+
+                                        return (
+                                            name.includes(keyword) ||
+                                            identity.includes(keyword)
+                                        );
+                                    })
+                                    .slice(0, 8);
+                            },
+
+                            handleVisitorInput() {
+                                this.openVisitor = true;
+
+                                if (!this.visitorId) {
+                                    this.identityNumber = '';
+                                    return;
+                                }
+
+                                const selected = this.visitors.find(
+                                    visitor =>
+                                        String(visitor.id) ===
+                                        String(this.visitorId)
+                                );
+
+                                if (
+                                    !selected ||
+                                    selected.name !== this.borrowerName
+                                ) {
+                                    this.visitorId = '';
+                                    this.identityNumber = '';
+                                }
+                            },
+
+                            selectVisitor(visitor) {
+                                this.visitorId = String(visitor.id);
+                                this.borrowerName = visitor.name ?? '';
+                                this.identityNumber = visitor.identity ?? '';
+                                this.openVisitor = false;
+                            },
+
+                            clearVisitor() {
+                                this.visitorId = '';
+                                this.borrowerName = '';
+                                this.identityNumber = '';
+                                this.openVisitor = false;
+                            }
+                        }"
+                        x-init="initVisitor()"
+                        @submit="
+                            if (!visitorId) {
+                                $event.preventDefault();
+                                openVisitor = true;
+                            }
+                        "
                     >
                         @csrf
 
+                        <input
+                            type="hidden"
+                            name="visitor_id"
+                            :value="visitorId"
+                        >
+
                         <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
 
-                            <div>
+                            {{-- Nama Peminjam --}}
+                            <div
+                                class="relative"
+                                @click.outside="openVisitor = false"
+                            >
                                 <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
                                     NAMA PEMINJAM
                                 </label>
 
-                                <input
-                                    type="text"
-                                    name="borrower_name"
-                                    value="{{ old('borrower_name') }}"
-                                    required
-                                    placeholder="Masukkan nama lengkap peminjam"
-                                    class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 outline-none focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+                                <div class="relative">
+
+                                    <input
+                                        type="text"
+                                        name="borrower_name"
+                                        x-model="borrowerName"
+                                        @input="handleVisitorInput()"
+                                        @focus="openVisitor = true"
+                                        autocomplete="off"
+                                        required
+                                        placeholder="Cari nama atau nomor identitas"
+                                        class="h-11 w-full rounded-lg border bg-transparent px-4 py-2.5 pr-10 text-sm text-gray-800 outline-none focus:ring-3 dark:bg-gray-900 dark:text-white/90"
+                                        :class="
+                                            borrowerName && !visitorId
+                                                ? 'border-yellow-400 focus:border-yellow-400 focus:ring-yellow-500/10'
+                                                : 'border-gray-300 focus:border-brand-300 focus:ring-brand-500/10 dark:border-gray-700'
+                                        "
+                                    >
+
+                                    <button
+                                        x-show="borrowerName.length > 0"
+                                        x-cloak
+                                        type="button"
+                                        @click="clearVisitor()"
+                                        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 transition hover:text-gray-600 dark:hover:text-gray-200"
+                                        title="Hapus pilihan"
+                                    >
+                                        <svg
+                                            width="16"
+                                            height="16"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                d="M18 6L6 18M6 6L18 18"
+                                                stroke="currentColor"
+                                                stroke-width="1.8"
+                                                stroke-linecap="round"
+                                            />
+                                        </svg>
+                                    </button>
+
+                                </div>
+
+                                {{-- Dropdown --}}
+                                <div
+                                    x-show="openVisitor"
+                                    x-cloak
+                                    class="absolute left-0 right-0 z-50 mt-2 max-h-72 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-xl dark:border-gray-700 dark:bg-gray-900"
                                 >
+
+                                    <template x-if="filteredVisitors.length > 0">
+                                        <div class="py-1">
+
+                                            <template
+                                                x-for="visitor in filteredVisitors"
+                                                :key="visitor.id"
+                                            >
+                                                <button
+                                                    type="button"
+                                                    @click="selectVisitor(visitor)"
+                                                    class="flex w-full items-center justify-between gap-4 border-b border-gray-100 px-4 py-3 text-left transition last:border-b-0 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-white/[0.05]"
+                                                >
+                                                    <div class="min-w-0">
+
+                                                        <p
+                                                            class="truncate text-sm font-medium text-gray-800 dark:text-white/90"
+                                                            x-text="visitor.name"
+                                                        ></p>
+
+                                                        <div class="mt-1 flex min-w-0 items-center gap-2 text-[11px] text-gray-500 dark:text-gray-400">
+
+                                                            <span
+                                                                class="truncate"
+                                                                x-text="
+                                                                    visitor.identity
+                                                                        ? 'No Identitas: ' + visitor.identity
+                                                                        : 'No Identitas: -'
+                                                                "
+                                                            ></span>
+
+                                                            <span
+                                                                x-show="visitor.category"
+                                                                class="shrink-0 text-gray-300 dark:text-gray-700"
+                                                            >
+                                                                •
+                                                            </span>
+
+                                                            <span
+                                                                x-show="visitor.category"
+                                                                class="truncate capitalize"
+                                                                x-text="visitor.category"
+                                                            ></span>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                    <svg
+                                                        width="16"
+                                                        height="16"
+                                                        viewBox="0 0 24 24"
+                                                        fill="none"
+                                                        class="shrink-0 text-gray-400"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                    >
+                                                        <path
+                                                            d="M9 18L15 12L9 6"
+                                                            stroke="currentColor"
+                                                            stroke-width="1.8"
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                        />
+                                                    </svg>
+
+                                                </button>
+                                            </template>
+
+                                        </div>
+                                    </template>
+
+                                    {{-- Tidak ditemukan --}}
+                                    <template
+                                        x-if="
+                                            borrowerName.length > 0 &&
+                                            filteredVisitors.length === 0
+                                        "
+                                    >
+                                        <div class="px-4 py-4">
+
+                                            <p class="text-xs font-medium text-gray-700 dark:text-gray-300">
+                                                Pengunjung tidak ditemukan.
+                                            </p>
+
+                                            <p class="mt-1 text-[11px] text-gray-500 dark:text-gray-400">
+                                                Peminjam harus terdaftar terlebih dahulu di Daftar Pengunjung.
+                                            </p>
+
+                                        </div>
+                                    </template>
+
+                                    {{-- Tidak ada pengunjung --}}
+                                    <template
+                                        x-if="
+                                            borrowerName.length === 0 &&
+                                            visitors.length === 0
+                                        "
+                                    >
+                                        <div class="px-4 py-4">
+
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                Belum ada data pada Daftar Pengunjung.
+                                            </p>
+
+                                        </div>
+                                    </template>
+
+                                </div>
+
+                                @error('visitor_id')
+                                    <p class="mt-1.5 text-xs text-error-500">
+                                        {{ $message }}
+                                    </p>
+                                @enderror
 
                                 @error('borrower_name')
                                     <p class="mt-1.5 text-xs text-error-500">
                                         {{ $message }}
                                     </p>
                                 @enderror
+
+                                <p
+                                    x-show="
+                                        borrowerName.length > 0 &&
+                                        !visitorId
+                                    "
+                                    x-cloak
+                                    class="mt-1.5 text-[11px] text-yellow-500"
+                                >
+                                    Pilih peminjam dari dropdown.
+                                </p>
+
                             </div>
 
+                            {{-- Nomor Identitas --}}
                             <div>
                                 <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
                                     NOMOR IDENTITAS
@@ -561,10 +810,10 @@
                                 <input
                                     type="text"
                                     name="nopek"
-                                    value="{{ old('nopek') }}"
-                                    required
-                                    placeholder="Masukkan nomor identitas"
-                                    class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 outline-none focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
+                                    x-model="identityNumber"
+                                    readonly
+                                    placeholder="Otomatis dari Daftar Pengunjung"
+                                    class="h-11 w-full cursor-not-allowed rounded-lg border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 outline-none dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
                                 >
 
                                 @error('nopek')
@@ -574,6 +823,7 @@
                                 @enderror
                             </div>
 
+                            {{-- Tanggal Peminjaman --}}
                             <div>
                                 <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
                                     TANGGAL PINJAMAN
@@ -582,7 +832,10 @@
                                 <input
                                     type="date"
                                     name="loan_date"
-                                    value="{{ old('loan_date', now()->format('Y-m-d')) }}"
+                                    value="{{ old(
+                                        'loan_date',
+                                        now()->format('Y-m-d')
+                                    ) }}"
                                     required
                                     class="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 outline-none focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90"
                                 >
@@ -596,13 +849,64 @@
 
                         </div>
 
-                        <div class="border-t border-gray-200 pt-5">
+                        {{-- Pengunjung Terpilih --}}
+                        <div
+                            x-show="visitorId"
+                            x-cloak
+                            class="flex items-center gap-2 rounded-lg border border-green-500/20 bg-green-500/10 px-4 py-3"
+                        >
+                            <svg
+                                width="17"
+                                height="17"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                class="shrink-0 text-green-500"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path
+                                    d="M5 12L10 17L19 8"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                />
+                            </svg>
+
+                            <div class="min-w-0">
+
+                                <p class="text-xs font-medium text-green-600 dark:text-green-400">
+                                    Peminjam terdaftar di Daftar Pengunjung
+                                </p>
+
+                                <p class="mt-0.5 truncate text-[11px] text-gray-500 dark:text-gray-400">
+                                    <span x-text="borrowerName"></span>
+
+                                    <template x-if="identityNumber">
+                                        <span>
+                                            —
+                                            <span x-text="identityNumber"></span>
+                                        </span>
+                                    </template>
+                                </p>
+
+                            </div>
+                        </div>
+
+                        <div class="border-t border-gray-200 pt-5 dark:border-gray-800">
+
                             <button
                                 type="submit"
-                                class="inline-flex items-center justify-center rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white shadow-theme-xs transition hover:bg-brand-600"
+                                :disabled="!visitorId"
+                                :class="
+                                    visitorId
+                                        ? 'bg-brand-500 hover:bg-brand-600'
+                                        : 'cursor-not-allowed bg-gray-400 opacity-60'
+                                "
+                                class="inline-flex items-center justify-center rounded-lg px-4 py-2.5 text-sm font-medium text-white shadow-theme-xs transition"
                             >
                                 Simpan Peminjaman
                             </button>
+
                         </div>
 
                     </form>
@@ -620,7 +924,6 @@
             @endif
 
         </div>
-
     </x-common.component-card>
 
 </div>

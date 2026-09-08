@@ -15,6 +15,7 @@
 
         return [
             'id' => $book->book_id,
+            'bookId' => $book->book_identifier ?? '-',
             'loanStatus' => $status,
             'tagNo' => $book->tag_no ?? '-',
             'bookNo' => $book->book_code ?? '-',
@@ -36,6 +37,7 @@
     x-data="booksTable(@js($tableRows))"
     :class="resizingColumn ? 'select-none' : ''"
 >
+    {{-- Bulk Delete --}}
     <form
         x-ref="bulkDeleteForm"
         action="{{ route('books.bulk-destroy') }}"
@@ -58,8 +60,11 @@
 
         {{-- Header --}}
         <div class="relative z-10 border-b border-gray-100 bg-white px-4 py-4 dark:border-white/[0.05] dark:bg-transparent sm:px-5">
+
             <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+
                 <div class="min-w-0">
+
                     <h3 class="text-base font-semibold text-gray-800 dark:text-white/90">
                         Data Buku
                     </h3>
@@ -68,7 +73,9 @@
                         Daftar koleksi buku perpustakaan
                     </p>
 
+                    {{-- Search --}}
                     <div class="relative mt-4 w-full sm:w-80">
+
                         <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                             <svg
                                 class="h-4 w-4"
@@ -116,17 +123,55 @@
                                 />
                             </svg>
                         </button>
+
                     </div>
+
                 </div>
 
+                {{-- Header Actions --}}
                 <div class="flex flex-wrap items-center justify-end gap-2">
 
-                    {{-- Normal --}}
                     <div
                         x-show="!selectionMode"
                         x-cloak
-                        class="flex items-center gap-2"
+                        class="flex flex-wrap items-center justify-end gap-2"
                     >
+                        {{-- Filter --}}
+                        <button
+                            type="button"
+                            @click="filterOpen = !filterOpen"
+                            class="relative inline-flex h-10 items-center justify-center gap-1.5 rounded-lg border px-3 text-xs font-medium shadow-theme-xs transition"
+                            :class="
+                                filterOpen || activeFilterCount > 0
+                                    ? 'border-brand-300 bg-brand-50 text-brand-600 dark:border-brand-500/40 dark:bg-brand-500/10 dark:text-brand-400'
+                                    : 'border-gray-300 bg-white text-gray-700 hover:border-brand-300 hover:bg-brand-50 hover:text-brand-600 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:border-brand-500/50 dark:hover:bg-brand-500/10 dark:hover:text-brand-400'
+                            "
+                        >
+                            <svg
+                                class="h-4 w-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M3 4a1 1 0 011-1h16a1 1 0 01.8 1.6L14 13.667V19a1 1 0 01-.553.894l-4 2A1 1 0 018 21v-7.333L3.2 4.6A1 1 0 013 4Z"
+                                />
+                            </svg>
+
+                            Filter
+
+                            <span
+                                x-show="activeFilterCount > 0"
+                                x-cloak
+                                class="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-500 px-1.5 text-[10px] font-semibold text-white"
+                                x-text="activeFilterCount"
+                            ></span>
+                        </button>
+
+                        {{-- Pilih --}}
                         <button
                             type="button"
                             @click="enterSelectionMode()"
@@ -149,6 +194,7 @@
                             Pilih
                         </button>
 
+                        {{-- Tambah Buku --}}
                         <a
                             href="{{ route('books.create') }}"
                             class="inline-flex h-10 items-center justify-center gap-1.5 rounded-lg bg-brand-500 px-3 text-xs font-medium text-white shadow-theme-xs transition hover:bg-brand-600"
@@ -169,9 +215,10 @@
 
                             Tambah Buku
                         </a>
+
                     </div>
 
-                    {{-- Pilih --}}
+                    {{-- Selection Actions --}}
                     <div
                         x-show="selectionMode"
                         x-cloak
@@ -222,21 +269,345 @@
                         >
                             Selesai
                         </button>
+
                     </div>
+
                 </div>
+
             </div>
+
+            {{-- Filter Panel --}}
+            <div
+                x-show="filterOpen && !selectionMode"
+                x-cloak
+                x-transition
+                class="mt-4 rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-900/70"
+            >
+                <div class="mb-4 flex items-center justify-between gap-3">
+
+                    <div>
+                        <p class="text-sm font-semibold text-gray-800 dark:text-white/90">
+                            Filter Data Buku
+                        </p>
+
+                        <p class="mt-0.5 text-[11px] text-gray-500 dark:text-gray-400">
+                            Tampilkan buku berdasarkan data yang dipilih.
+                        </p>
+                    </div>
+
+                    <button
+                        type="button"
+                        @click="filterOpen = false"
+                        class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-200 hover:text-gray-700 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+                        title="Tutup filter"
+                    >
+                        <svg
+                            class="h-4 w-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M6 6l12 12M18 6 6 18"
+                            />
+                        </svg>
+                    </button>
+
+                </div>
+
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+
+                    {{-- Status --}}
+                    <div>
+                        <label class="mb-1.5 block text-[11px] font-medium uppercase text-gray-500 dark:text-gray-400">
+                            Status Peminjaman
+                        </label>
+
+                        <select
+                            x-model="filters.status"
+                            @change="currentPage = 1"
+                            class="h-10 w-full rounded-lg border border-gray-300 bg-white px-3 text-xs text-gray-700 outline-none transition focus:border-brand-500 focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                        >
+                            <option value="">
+                                Semua Status
+                            </option>
+
+                            <template
+                                x-for="option in statusOptions"
+                                :key="option"
+                            >
+                                <option
+                                    :value="option"
+                                    x-text="option"
+                                ></option>
+                            </template>
+                        </select>
+                    </div>
+
+                    {{-- Location --}}
+                    <div>
+                        <label class="mb-1.5 block text-[11px] font-medium uppercase text-gray-500 dark:text-gray-400">
+                            Location
+                        </label>
+
+                        <select
+                            x-model="filters.location"
+                            @change="currentPage = 1"
+                            class="h-10 w-full rounded-lg border border-gray-300 bg-white px-3 text-xs text-gray-700 outline-none transition focus:border-brand-500 focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                        >
+                            <option value="">
+                                Semua Location
+                            </option>
+
+                            <template
+                                x-for="option in locationOptions"
+                                :key="option"
+                            >
+                                <option
+                                    :value="option"
+                                    x-text="option"
+                                ></option>
+                            </template>
+                        </select>
+                    </div>
+
+                    {{-- Author --}}
+                    <div>
+                        <label class="mb-1.5 block text-[11px] font-medium uppercase text-gray-500 dark:text-gray-400">
+                            Penulis
+                        </label>
+
+                        <select
+                            x-model="filters.author"
+                            @change="currentPage = 1"
+                            class="h-10 w-full rounded-lg border border-gray-300 bg-white px-3 text-xs text-gray-700 outline-none transition focus:border-brand-500 focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                        >
+                            <option value="">
+                                Semua Penulis
+                            </option>
+
+                            <template
+                                x-for="option in authorOptions"
+                                :key="option"
+                            >
+                                <option
+                                    :value="option"
+                                    x-text="option"
+                                ></option>
+                            </template>
+                        </select>
+                    </div>
+
+                    {{-- Equipment --}}
+                    <div>
+                        <label class="mb-1.5 block text-[11px] font-medium uppercase text-gray-500 dark:text-gray-400">
+                            Equipment
+                        </label>
+
+                        <select
+                            x-model="filters.equipment"
+                            @change="currentPage = 1"
+                            class="h-10 w-full rounded-lg border border-gray-300 bg-white px-3 text-xs text-gray-700 outline-none transition focus:border-brand-500 focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                        >
+                            <option value="">
+                                Semua Equipment
+                            </option>
+
+                            <template
+                                x-for="option in equipmentOptions"
+                                :key="option"
+                            >
+                                <option
+                                    :value="option"
+                                    x-text="option"
+                                ></option>
+                            </template>
+                        </select>
+                    </div>
+
+                    {{-- Publisher --}}
+                    <div>
+                        <label class="mb-1.5 block text-[11px] font-medium uppercase text-gray-500 dark:text-gray-400">
+                            Publisher
+                        </label>
+
+                        <select
+                            x-model="filters.publisher"
+                            @change="currentPage = 1"
+                            class="h-10 w-full rounded-lg border border-gray-300 bg-white px-3 text-xs text-gray-700 outline-none transition focus:border-brand-500 focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                        >
+                            <option value="">
+                                Semua Publisher
+                            </option>
+
+                            <template
+                                x-for="option in publisherOptions"
+                                :key="option"
+                            >
+                                <option
+                                    :value="option"
+                                    x-text="option"
+                                ></option>
+                            </template>
+                        </select>
+                    </div>
+
+                </div>
+
+                {{-- Filter Footer --}}
+                <div class="mt-4 flex flex-col gap-3 border-t border-gray-200 pt-4 sm:flex-row sm:items-center sm:justify-between dark:border-gray-700">
+
+                    <div class="text-[11px] text-gray-500 dark:text-gray-400">
+
+                        Menampilkan
+
+                        <span
+                            class="font-semibold text-gray-700 dark:text-gray-300"
+                            x-text="filteredRows.length"
+                        ></span>
+
+                        dari
+
+                        <span
+                            class="font-semibold text-gray-700 dark:text-gray-300"
+                            x-text="tableRowData.length"
+                        ></span>
+
+                        buku
+
+                    </div>
+
+                    <div class="flex items-center gap-2">
+
+                        <button
+                            type="button"
+                            @click="resetFilters()"
+                            :disabled="!hasActiveFilters"
+                            :class="
+                                !hasActiveFilters
+                                    ? 'cursor-not-allowed opacity-50'
+                                    : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+                            "
+                            class="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 text-[11px] font-medium text-gray-700 transition dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                        >
+                            <svg
+                                class="h-3.5 w-3.5"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M4 4v6h6M20 20v-6h-6M5.5 18.5A8 8 0 0118 5.5M18.5 18.5A8 8 0 006 5.5"
+                                />
+                            </svg>
+
+                            Reset Filter
+                        </button>
+
+                        <button
+                            type="button"
+                            @click="filterOpen = false"
+                            class="inline-flex h-9 items-center justify-center rounded-lg bg-brand-500 px-3 text-[11px] font-medium text-white transition hover:bg-brand-600"
+                        >
+                            Selesai
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {{-- Active Filters --}}
+            <div
+                x-show="hasActiveFilters && !filterOpen && !selectionMode"
+                x-cloak
+                class="mt-3 flex flex-wrap items-center gap-2"
+            >
+                <span class="text-[11px] text-gray-500 dark:text-gray-400">
+                    Filter aktif:
+                </span>
+
+                <template x-if="filters.status">
+                    <span class="inline-flex items-center rounded-full bg-brand-50 px-2.5 py-1 text-[10px] font-medium text-brand-600 dark:bg-brand-500/10 dark:text-brand-400">
+                        Status:
+                        <span
+                            class="ml-1"
+                            x-text="filters.status"
+                        ></span>
+                    </span>
+                </template>
+
+                <template x-if="filters.location">
+                    <span class="inline-flex items-center rounded-full bg-brand-50 px-2.5 py-1 text-[10px] font-medium text-brand-600 dark:bg-brand-500/10 dark:text-brand-400">
+                        Location:
+                        <span
+                            class="ml-1"
+                            x-text="filters.location"
+                        ></span>
+                    </span>
+                </template>
+
+                <template x-if="filters.author">
+                    <span class="inline-flex items-center rounded-full bg-brand-50 px-2.5 py-1 text-[10px] font-medium text-brand-600 dark:bg-brand-500/10 dark:text-brand-400">
+                        Penulis:
+                        <span
+                            class="ml-1"
+                            x-text="filters.author"
+                        ></span>
+                    </span>
+                </template>
+
+                <template x-if="filters.equipment">
+                    <span class="inline-flex items-center rounded-full bg-brand-50 px-2.5 py-1 text-[10px] font-medium text-brand-600 dark:bg-brand-500/10 dark:text-brand-400">
+                        Equipment:
+                        <span
+                            class="ml-1"
+                            x-text="filters.equipment"
+                        ></span>
+                    </span>
+                </template>
+
+                <template x-if="filters.publisher">
+                    <span class="inline-flex items-center rounded-full bg-brand-50 px-2.5 py-1 text-[10px] font-medium text-brand-600 dark:bg-brand-500/10 dark:text-brand-400">
+                        Publisher:
+                        <span
+                            class="ml-1"
+                            x-text="filters.publisher"
+                        ></span>
+                    </span>
+                </template>
+
+                <button
+                    type="button"
+                    @click="resetFilters()"
+                    class="text-[10px] font-medium text-red-500 transition hover:text-red-600"
+                >
+                    Hapus semua filter
+                </button>
+            </div>
+
         </div>
 
         {{-- Table --}}
         <div class="relative z-0 block w-full max-w-full overflow-x-auto">
+
             <table
                 class="table-fixed border-collapse"
                 :style="`width: ${tableWidth}px`"
             >
+
                 <colgroup>
                     <col :style="selectionMode ? `width: ${columnWidths.select}px` : 'width: 0px'">
                     <col :style="`width: ${columnWidths.no}px`">
                     <col :style="`width: ${columnWidths.status}px`">
+                    <col :style="`width: ${columnWidths.bookId}px`">
                     <col :style="`width: ${columnWidths.tagNo}px`">
                     <col :style="`width: ${columnWidths.bookNo}px`">
                     <col :style="`width: ${columnWidths.catNo}px`">
@@ -252,6 +623,7 @@
                 </colgroup>
 
                 <thead class="border-y border-gray-100 bg-gray-50 dark:border-white/[0.05] dark:bg-gray-900">
+
                     <tr>
 
                         {{-- Pilih --}}
@@ -265,6 +637,7 @@
                                 class="flex items-center justify-center"
                             >
                                 <label class="relative inline-flex h-4 w-4 cursor-pointer items-center justify-center">
+
                                     <input
                                         type="checkbox"
                                         :checked="isCurrentPageSelected"
@@ -286,6 +659,7 @@
                                             d="M5 13l4 4L19 7"
                                         />
                                     </svg>
+
                                 </label>
                             </div>
                         </th>
@@ -306,6 +680,16 @@
 
                             <div
                                 @mousedown.stop="startResize($event, 'status')"
+                                class="absolute right-0 top-0 h-full w-1.5 cursor-col-resize transition hover:bg-brand-500"
+                            ></div>
+                        </th>
+
+                        {{-- ID Buku --}}
+                        <th class="relative px-3 py-2.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                            ID BUKU
+
+                            <div
+                                @mousedown.stop="startResize($event, 'bookId')"
                                 class="absolute right-0 top-0 h-full w-1.5 cursor-col-resize transition hover:bg-brand-500"
                             ></div>
                         </th>
@@ -429,10 +813,13 @@
                                 class="absolute right-0 top-0 h-full w-1.5 cursor-col-resize transition hover:bg-brand-500"
                             ></div>
                         </th>
+
                     </tr>
+
                 </thead>
 
                 <tbody>
+
                     <template
                         x-for="(row, index) in paginatedRows"
                         :key="row.id"
@@ -445,7 +832,6 @@
                                     : ''
                             "
                         >
-
                             {{-- Pilih --}}
                             <td
                                 class="overflow-hidden py-3 text-center"
@@ -457,6 +843,7 @@
                                     class="flex items-center justify-center"
                                 >
                                     <label class="relative inline-flex h-4 w-4 cursor-pointer items-center justify-center">
+
                                         <input
                                             type="checkbox"
                                             :checked="selectedIds.includes(Number(row.id))"
@@ -477,128 +864,168 @@
                                                 d="M5 13l4 4L19 7"
                                             />
                                         </svg>
+
                                     </label>
                                 </div>
                             </td>
 
                             {{-- No --}}
                             <td class="overflow-hidden px-3 py-3">
+
                                 <span
                                     class="block truncate text-xs text-gray-600 dark:text-gray-400"
                                     x-text="((currentPage - 1) * itemsPerPage) + index + 1"
                                 ></span>
+
                             </td>
 
                             {{-- Status --}}
                             <td class="overflow-hidden px-3 py-3">
+
                                 <span
                                     class="inline-block whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-medium"
                                     :class="getStatusClass(row.loanStatus)"
                                     x-text="row.loanStatus"
                                 ></span>
+
+                            </td>
+
+                            {{-- ID Buku --}}
+                            <td class="overflow-hidden px-3 py-3">
+
+                                <span
+                                    class="block truncate text-xs font-semibold text-gray-700 dark:text-gray-300"
+                                    x-text="row.bookId"
+                                    :title="row.bookId"
+                                ></span>
+
                             </td>
 
                             {{-- Tag --}}
                             <td class="overflow-hidden px-3 py-3">
+
                                 <span
                                     class="block truncate text-xs font-medium text-gray-700 dark:text-gray-300"
                                     x-text="row.tagNo"
                                     :title="row.tagNo"
                                 ></span>
+
                             </td>
 
                             {{-- Book No --}}
                             <td class="overflow-hidden px-3 py-3">
+
                                 <span
                                     class="block truncate text-xs font-semibold text-gray-700 dark:text-gray-300"
                                     x-text="row.bookNo"
                                     :title="row.bookNo"
                                 ></span>
+
                             </td>
 
                             {{-- Cat No --}}
                             <td class="overflow-hidden px-3 py-3">
+
                                 <span
                                     class="block truncate text-xs text-gray-600 dark:text-gray-400"
                                     x-text="row.catNo"
                                     :title="row.catNo"
                                 ></span>
+
                             </td>
 
                             {{-- Equipment --}}
                             <td class="overflow-hidden px-3 py-3">
+
                                 <span
                                     class="block truncate text-xs text-gray-600 dark:text-gray-400"
                                     x-text="row.equipment"
                                     :title="row.equipment"
                                 ></span>
+
                             </td>
 
                             {{-- Description --}}
                             <td class="overflow-hidden px-3 py-3">
+
                                 <span
                                     class="block truncate text-xs text-gray-600 dark:text-gray-400"
                                     x-text="row.description"
                                     :title="row.description"
                                 ></span>
+
                             </td>
 
                             {{-- Title --}}
                             <td class="overflow-hidden px-3 py-3">
+
                                 <span
                                     class="block truncate text-xs font-medium text-gray-700 dark:text-gray-300"
                                     x-text="row.title"
                                     :title="row.title"
                                 ></span>
+
                             </td>
 
                             {{-- Location --}}
                             <td class="overflow-hidden px-3 py-3">
+
                                 <span
                                     class="block truncate text-xs text-gray-600 dark:text-gray-400"
                                     x-text="row.location"
                                     :title="row.location"
                                 ></span>
+
                             </td>
 
                             {{-- Remark --}}
                             <td class="overflow-hidden px-3 py-3">
+
                                 <span
                                     class="block truncate text-xs text-gray-600 dark:text-gray-400"
                                     x-text="row.remark"
                                     :title="row.remark"
                                 ></span>
+
                             </td>
 
                             {{-- Author --}}
                             <td class="overflow-hidden px-3 py-3">
+
                                 <span
                                     class="block truncate text-xs text-gray-600 dark:text-gray-400"
                                     x-text="row.author"
                                     :title="row.author"
                                 ></span>
+
                             </td>
 
                             {{-- Publisher --}}
                             <td class="overflow-hidden px-3 py-3">
+
                                 <span
                                     class="block truncate text-xs text-gray-600 dark:text-gray-400"
                                     x-text="row.publisher"
                                     :title="row.publisher"
                                 ></span>
+
                             </td>
 
                             {{-- Qty --}}
                             <td class="overflow-hidden px-3 py-3">
+
                                 <span
                                     class="block truncate text-xs font-medium text-gray-700 dark:text-gray-300"
                                     x-text="row.qty"
                                 ></span>
+
                             </td>
 
                             {{-- Action --}}
                             <td class="overflow-hidden px-3 py-3">
+
                                 <div class="flex items-center gap-3">
+
                                     <a
                                         :href="'{{ url('/books') }}/' + row.id + '/edit'"
                                         class="shrink-0 text-gray-500 transition-colors hover:text-brand-500 dark:text-gray-400 dark:hover:text-brand-400"
@@ -653,37 +1080,64 @@
                                                 />
                                             </svg>
                                         </button>
+
                                     </form>
+
                                 </div>
+
                             </td>
+
                         </tr>
+
                     </template>
 
                     {{-- Kosong --}}
                     <template x-if="filteredRows.length === 0">
+
                         <tr>
+
                             <td
-                                colspan="15"
+                                colspan="16"
                                 class="px-3 py-10 text-center text-sm text-gray-500 dark:text-gray-400"
                             >
-                                <span x-show="search">
-                                    Tidak ada buku yang cocok dengan pencarian
-                                    "<span x-text="search"></span>".
-                                </span>
+                                <div class="space-y-2">
 
-                                <span x-show="!search">
-                                    Belum ada data buku.
-                                </span>
+                                    <p x-show="search || hasActiveFilters">
+                                        Tidak ada buku yang sesuai dengan pencarian atau filter.
+                                    </p>
+
+                                    <p x-show="!search && !hasActiveFilters">
+                                        Belum ada data buku.
+                                    </p>
+
+                                    <button
+                                        type="button"
+                                        x-show="hasActiveFilters"
+                                        x-cloak
+                                        @click="resetFilters()"
+                                        class="text-xs font-medium text-brand-500 hover:text-brand-600"
+                                    >
+                                        Reset filter
+                                    </button>
+
+                                </div>
                             </td>
+
                         </tr>
+
                     </template>
+
                 </tbody>
+
             </table>
+
         </div>
 
         {{-- Pagination --}}
         <div class="relative z-10 border-t border-gray-200 bg-white px-4 py-4 dark:border-white/[0.05] dark:bg-transparent">
+
             <div class="flex items-center justify-between">
+
                 <button
                     type="button"
                     @click="prevPage()"
@@ -719,11 +1173,13 @@
                 </span>
 
                 <ul class="hidden items-center gap-0.5 sm:flex">
+
                     <template
                         x-for="page in displayedPages"
                         :key="page"
                     >
                         <li>
+
                             <button
                                 type="button"
                                 x-show="page !== '...'"
@@ -743,8 +1199,10 @@
                             >
                                 ...
                             </span>
+
                         </li>
                     </template>
+
                 </ul>
 
                 <button
@@ -773,7 +1231,11 @@
                         />
                     </svg>
                 </button>
+
             </div>
+
         </div>
+
     </div>
+
 </div>

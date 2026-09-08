@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\BorrowerController;
 use App\Http\Controllers\EquipmentController;
+use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\VisitorController;
 use App\Models\Book;
@@ -54,7 +56,7 @@ Route::post('/login', function (Request $request) {
     return redirect()->route('dashboard');
 })->name('login.process');
 
-// Pengunjung
+// Pengunjung landing
 Route::get('/visitor-register', function () {
     return view('pages.landing-page.visitor-register');
 })->name('visitors.register');
@@ -102,6 +104,9 @@ Route::middleware('admin')->group(function () {
     Route::post('/books', [BookController::class, 'store'])
         ->name('books.store');
 
+    Route::get('/books/check-book-id', [BookController::class, 'checkBookId'])
+        ->name('books.check-book-id');
+
     Route::get('/books/check-book-no', [BookController::class, 'checkBookNo'])
         ->name('books.check-book-no');
 
@@ -111,8 +116,10 @@ Route::middleware('admin')->group(function () {
     Route::post('/books/{book_id}/borrow', [BookController::class, 'borrow'])
         ->name('books.borrow');
 
-    Route::post('/books/{book_id}/return/{loan_detail_id}', [BookController::class, 'returnBook'])
-        ->name('books.return');
+    Route::post(
+        '/books/{book_id}/return/{loan_detail_id}',
+        [BookController::class, 'returnBook']
+    )->name('books.return');
 
     Route::get('/books/{book_id}/edit', [BookController::class, 'edit'])
         ->name('books.edit');
@@ -120,11 +127,9 @@ Route::middleware('admin')->group(function () {
     Route::put('/books/{book_id}', [BookController::class, 'update'])
         ->name('books.update');
 
-    // Hapus banyak buku
     Route::delete('/books/bulk-delete', [BookController::class, 'bulkDestroy'])
         ->name('books.bulk-destroy');
 
-    // Hapus satu buku
     Route::delete('/books/{book_id}', [BookController::class, 'destroy'])
         ->name('books.destroy');
 
@@ -146,6 +151,9 @@ Route::middleware('admin')->group(function () {
 
     Route::delete('/authors/{id}', [AuthorController::class, 'destroy'])
         ->name('authors.destroy');
+    // Hapus penulis terpilih
+    Route::delete('/authors/bulk/delete', [AuthorController::class, 'bulkDestroy'])
+    ->name('authors.bulk-destroy');
 
     // Equipment
     Route::get('/equipment', [EquipmentController::class, 'index'])
@@ -157,25 +165,95 @@ Route::middleware('admin')->group(function () {
     Route::post('/equipment', [EquipmentController::class, 'store'])
         ->name('equipment.store');
 
-    Route::get('/equipment/{equipment_id}/edit', [EquipmentController::class, 'edit'])
-        ->name('equipment.edit');
+    Route::get(
+        '/equipment/{equipment_id}/edit',
+        [EquipmentController::class, 'edit']
+    )->name('equipment.edit');
 
-    Route::put('/equipment/{equipment_id}', [EquipmentController::class, 'update'])
-        ->name('equipment.update');
+    Route::put(
+        '/equipment/{equipment_id}',
+        [EquipmentController::class, 'update']
+    )->name('equipment.update');
 
-    Route::delete('/equipment/{equipment_id}', [EquipmentController::class, 'destroy'])
-        ->name('equipment.destroy');
+    Route::delete(
+        '/equipment/{equipment_id}',
+        [EquipmentController::class, 'destroy']
+    )->name('equipment.destroy');
 
-    // Daftar Pengunjung
+    // Location
+    Route::get('/locations', [LocationController::class, 'index'])
+        ->name('locations.index');
+
+    Route::get('/locations/create', [LocationController::class, 'create'])
+        ->name('locations.create');
+
+    Route::post('/locations', [LocationController::class, 'store'])
+        ->name('locations.store');
+
+    Route::get(
+        '/locations/{location}/edit',
+        [LocationController::class, 'edit']
+    )->name('locations.edit');
+
+    Route::put(
+        '/locations/{location}',
+        [LocationController::class, 'update']
+    )->name('locations.update');
+
+    Route::delete(
+        '/locations/{location}',
+        [LocationController::class, 'destroy']
+    )->name('locations.destroy');
+
+    // Daftar peminjam
+    Route::get('/borrowers', [BorrowerController::class, 'index'])
+        ->name('borrowers.index');
+
+    Route::post(
+        '/borrowers/bulk/return',
+        [BorrowerController::class, 'bulkReturn']
+    )->name('borrowers.bulk-return');
+
+    Route::post(
+        '/borrowers/{loan_detail_id}/return',
+        [BorrowerController::class, 'returnBook']
+    )->name('borrowers.return');
+
+    Route::delete(
+        '/borrowers/bulk/delete',
+        [BorrowerController::class, 'bulkDestroy']
+    )->name('borrowers.bulk-destroy');
+
+    Route::delete(
+        '/borrowers/{loan_detail_id}',
+        [BorrowerController::class, 'destroy']
+    )->name('borrowers.destroy');
+
+    // Daftar pengunjung
     Route::get('/visitors', function (Request $request) {
-        $search = trim($request->input('search', ''));
+        $search = trim(
+            $request->input('search', '')
+        );
 
         $visitors = Visitor::query()
             ->when($search !== '', function ($query) use ($search) {
                 $query->where(function ($query) use ($search) {
-                    $query->where('visitor_name', 'like', "%{$search}%")
-                        ->orWhere('employee_number', 'like', "%{$search}%")
-                        ->orWhere('visitor_category', 'like', "%{$search}%");
+                    $query
+                        ->where(
+                            'visitor_name',
+                            'like',
+                            "%{$search}%"
+                        )
+                        ->orWhere(
+                            'employee_number',
+                            'like',
+                            "%{$search}%"
+                        )
+                        ->orWhere(
+                            'visitor_category',
+                            'like',
+                            "%{$search}%"
+                        );
                 });
             })
             ->orderByDesc('created_at')
@@ -189,19 +267,28 @@ Route::middleware('admin')->group(function () {
     })->name('visitors');
 
     Route::delete('/visitors/{visitor_id}', function ($visitor_id) {
-        $visitor = Visitor::where('visitor_id', $visitor_id)->first();
+        $visitor = Visitor::where(
+            'visitor_id',
+            $visitor_id
+        )->first();
 
         if (!$visitor) {
             return redirect()
                 ->route('visitors')
-                ->with('error', 'Data pengunjung tidak ditemukan.');
+                ->with(
+                    'error',
+                    'Data pengunjung tidak ditemukan.'
+                );
         }
 
         $visitor->delete();
 
         return redirect()
             ->route('visitors')
-            ->with('success', 'Data pengunjung berhasil dihapus.');
+            ->with(
+                'success',
+                'Data pengunjung berhasil dihapus.'
+            );
     })->name('visitors.destroy');
 
     // Logout

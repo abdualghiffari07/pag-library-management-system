@@ -2,16 +2,13 @@
 
 @section('content')
 
-    <div class="space-y-6">
+    <x-common.page-breadcrumb
+        pageTitle="Penulis"
+    />
 
-        <x-common.component-card title="Data Penulis">
-
-            <x-tables.basic-tables.authors-data.authors
-                :authors="$authors"
-            />
-
-        </x-common.component-card>
-
-    </div>
+    <x-tables.basic-tables.authors-data.authors
+        :authors="$authors"
+        :search="$search"
+    />
 
 @endsection
