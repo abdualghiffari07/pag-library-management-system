@@ -1,0 +1,94 @@
+/* Background */
+
+.pv-background {
+    position: fixed;
+    inset: 0;
+
+    z-index: 0;
+
+    overflow: hidden;
+
+    background: #003b70;
+
+    pointer-events: none;
+}
+
+
+/* Slides */
+
+.pv-background-slide {
+    position: absolute;
+    inset: 0;
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    opacity: 0;
+
+    transform: scale(1.02);
+
+    transition:
+        opacity 1.2s ease,
+        transform 6s ease;
+
+    will-change:
+        opacity,
+        transform;
+}
+
+.pv-background-slide.is-active {
+    opacity: 1;
+
+    transform: scale(1.06);
+}
+
+
+/* Overlay */
+
+.pv-background-overlay {
+    position: absolute;
+    inset: 0;
+
+    z-index: 2;
+
+    background: linear-gradient(
+        135deg,
+        rgba(0, 59, 112, .90) 0%,
+        rgba(0, 93, 170, .76) 48%,
+        rgba(16, 42, 67, .90) 100%
+    );
+}
+
+
+/* Mobile */
+
+@media (max-width: 700px) {
+    .pv-background-slide {
+        background-position: center;
+    }
+
+    .pv-background-overlay {
+        background: linear-gradient(
+            180deg,
+            rgba(0, 59, 112, .90) 0%,
+            rgba(0, 93, 170, .80) 48%,
+            rgba(16, 42, 67, .94) 100%
+        );
+    }
+}
+
+
+/* Reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+    .pv-background-slide {
+        transform: none;
+
+        transition: opacity .2s ease;
+    }
+
+    .pv-background-slide.is-active {
+        transform: none;
+    }
+}

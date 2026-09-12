@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Visitor extends Model
 {
@@ -18,5 +19,17 @@ class Visitor extends Model
         'visitor_category',
         'visitor_name',
         'employee_number',
+        'phone_number',
+        'profile_photo',
     ];
+
+    // Riwayat kunjungan
+    public function checkins(): HasMany
+    {
+        return $this->hasMany(
+            VisitorCheckin::class,
+            'visitor_id',
+            'visitor_id'
+        );
+    }
 }

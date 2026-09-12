@@ -6,7 +6,8 @@ use App\Http\Controllers\BorrowerController;
 use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ReportController;
-use App\Http\Controllers\VisitorController;
+use App\Http\Controllers\VisitorAdminController;
+use App\Http\Controllers\VisitorGuestController;
 use App\Models\Book;
 use App\Models\Visitor;
 use Illuminate\Http\Request;
@@ -61,10 +62,10 @@ Route::get('/visitor-register', function () {
     return view('pages.landing-page.visitor-register');
 })->name('visitors.register');
 
-Route::post('/visitors', [VisitorController::class, 'store'])
+Route::post('/visitors', [VisitorGuestController::class, 'store'])
     ->name('visitors.store');
 
-Route::post('/visitors/check-in', [VisitorController::class, 'checkIn'])
+Route::post('/visitors/check-in', [VisitorGuestController::class, 'checkIn'])
     ->name('visitors.checkin');
 
 // Admin
@@ -149,11 +150,11 @@ Route::middleware('admin')->group(function () {
     Route::put('/authors/{id}', [AuthorController::class, 'update'])
         ->name('authors.update');
 
+    Route::delete('/authors/bulk/delete', [AuthorController::class, 'bulkDestroy'])
+        ->name('authors.bulk-destroy');
+
     Route::delete('/authors/{id}', [AuthorController::class, 'destroy'])
         ->name('authors.destroy');
-    // Hapus penulis terpilih
-    Route::delete('/authors/bulk/delete', [AuthorController::class, 'bulkDestroy'])
-    ->name('authors.bulk-destroy');
 
     // Equipment
     Route::get('/equipment', [EquipmentController::class, 'index'])
@@ -230,66 +231,32 @@ Route::middleware('admin')->group(function () {
     )->name('borrowers.destroy');
 
     // Daftar pengunjung
-    Route::get('/visitors', function (Request $request) {
-        $search = trim(
-            $request->input('search', '')
-        );
+    Route::get('/visitors', [VisitorAdminController::class, 'index'])
+        ->name('visitors');
 
-        $visitors = Visitor::query()
-            ->when($search !== '', function ($query) use ($search) {
-                $query->where(function ($query) use ($search) {
-                    $query
-                        ->where(
-                            'visitor_name',
-                            'like',
-                            "%{$search}%"
-                        )
-                        ->orWhere(
-                            'employee_number',
-                            'like',
-                            "%{$search}%"
-                        )
-                        ->orWhere(
-                            'visitor_category',
-                            'like',
-                            "%{$search}%"
-                        );
-                });
-            })
-            ->orderByDesc('created_at')
-            ->get();
+    Route::get(
+        '/visitors/{visitor}/details',
+        [VisitorAdminController::class, 'detail']
+    )->name('visitors.details')
+        ->whereNumber('visitor');
 
-        return view('pages.tables.Visitors.visitors', [
-            'title' => 'Daftar Pengunjung',
-            'visitors' => $visitors,
-            'search' => $search,
-        ]);
-    })->name('visitors');
+    Route::get(
+        '/visitors/{visitor}/profile-photo',
+        [VisitorAdminController::class, 'profilePhoto']
+    )->name('visitors.profile-photo')
+        ->whereNumber('visitor');
 
-    Route::delete('/visitors/{visitor_id}', function ($visitor_id) {
-        $visitor = Visitor::where(
-            'visitor_id',
-            $visitor_id
-        )->first();
+    Route::get(
+        '/visitors/checkins/{checkin}/selfie',
+        [VisitorAdminController::class, 'selfie']
+    )->name('visitors.selfie')
+        ->whereNumber('checkin');
 
-        if (!$visitor) {
-            return redirect()
-                ->route('visitors')
-                ->with(
-                    'error',
-                    'Data pengunjung tidak ditemukan.'
-                );
-        }
-
-        $visitor->delete();
-
-        return redirect()
-            ->route('visitors')
-            ->with(
-                'success',
-                'Data pengunjung berhasil dihapus.'
-            );
-    })->name('visitors.destroy');
+    Route::delete(
+        '/visitors/{visitor}',
+        [VisitorAdminController::class, 'destroy']
+    )->name('visitors.destroy')
+        ->whereNumber('visitor');
 
     // Logout
     Route::post('/logout', function (Request $request) {

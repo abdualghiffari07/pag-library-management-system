@@ -7,10 +7,20 @@ import { Calendar } from '@fullcalendar/core';
 
 import 'flatpickr/dist/flatpickr.min.css';
 
+// Visitor styles
+import '../css/background-slider.css';
+import '../css/visitor-welcome.css';
+
+// Pages
 import './books-data';
 import './report';
 import './borrowers-data';
 
+// Visitor
+import './background-slider';
+import './visitor-register';
+
+// Globals
 window.Alpine = Alpine;
 window.ApexCharts = ApexCharts;
 window.flatpickr = flatpickr;
