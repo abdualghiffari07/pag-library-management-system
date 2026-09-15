@@ -3,166 +3,78 @@ document.addEventListener('alpine:init', () => {
         selectionMode: false,
         selected: [],
 
-        columnWidths: {
-            select: 45,
-            no: 55,
-            borrower: 160,
-            employeeNumber: 120,
-            status: 110,
-            category: 100,
-            bookId: 100,
-            title: 190,
-            copyId: 115,
-            loanDate: 110,
-            returnedDate: 120,
-            action: 220,
-        },
+        detailOpen: false,
+        detail: {},
 
+        resizingColumn: null,
         resizeStartX: 0,
         resizeStartWidth: 0,
-        resizingColumn: null,
+
+        columnWidths: {
+            select: 44,
+            no: 55,
+            borrower: 165,
+            employeeNumber: 145,
+            status: 110,
+            category: 115,
+            bookId: 115,
+            title: 220,
+            copyId: 130,
+            loanDate: 120,
+            returnedDate: 130,
+            action: 250
+        },
+
+        defaultWidths: {
+            select: 44,
+            no: 55,
+            borrower: 165,
+            employeeNumber: 145,
+            status: 110,
+            category: 115,
+            bookId: 115,
+            title: 220,
+            copyId: 130,
+            loanDate: 120,
+            returnedDate: 130,
+            action: 250
+        },
+
+        minimumWidths: {
+            select: 40,
+            no: 45,
+            borrower: 100,
+            employeeNumber: 90,
+            status: 90,
+            category: 85,
+            bookId: 80,
+            title: 110,
+            copyId: 90,
+            loanDate: 95,
+            returnedDate: 105,
+            action: 210
+        },
 
         init() {
-            this.restoreWidths();
+            this.loadColumnWidths();
         },
 
-        minimumWidth(column) {
-            const minimums = {
-                select: 40,
-                no: 45,
-                borrower: 90,
-                employeeNumber: 80,
-                status: 80,
-                category: 75,
-                bookId: 75,
-                title: 90,
-                copyId: 85,
-                loanDate: 85,
-                returnedDate: 90,
-                action: 95,
-            };
-
-            return minimums[column] ?? 60;
-        },
-
+        // Table width
         getTableWidth() {
             return Object.entries(this.columnWidths)
-                .filter(([column]) => {
+                .reduce((total, [column, width]) => {
                     if (
                         column === 'select' &&
                         !this.selectionMode
                     ) {
-                        return false;
+                        return total;
                     }
 
-                    return true;
-                })
-                .reduce(
-                    (total, [, width]) =>
-                        total + width,
-                    0
-                );
+                    return total + Number(width);
+                }, 0);
         },
 
-        restoreWidths() {
-            const saved = localStorage.getItem(
-                'pagBorrowersTableWidths'
-            );
-
-            if (!saved) {
-                return;
-            }
-
-            try {
-                const widths = JSON.parse(saved);
-
-                this.columnWidths = {
-                    ...this.columnWidths,
-                    ...widths,
-                };
-            } catch (error) {
-                localStorage.removeItem(
-                    'pagBorrowersTableWidths'
-                );
-            }
-        },
-
-        saveWidths() {
-            localStorage.setItem(
-                'pagBorrowersTableWidths',
-                JSON.stringify(
-                    this.columnWidths
-                )
-            );
-        },
-
-        startResize(event, column) {
-            event.preventDefault();
-
-            this.resizingColumn = column;
-
-            this.resizeStartX =
-                event.clientX;
-
-            this.resizeStartWidth =
-                this.columnWidths[column];
-
-            document.documentElement.classList.add(
-                'select-none'
-            );
-
-            document.body.style.cursor =
-                'col-resize';
-
-            const handleMouseMove = (moveEvent) => {
-                const difference =
-                    moveEvent.clientX -
-                    this.resizeStartX;
-
-                const minimum =
-                    this.minimumWidth(column);
-
-                this.columnWidths[column] =
-                    Math.max(
-                        minimum,
-                        this.resizeStartWidth +
-                            difference
-                    );
-            };
-
-            const handleMouseUp = () => {
-                this.saveWidths();
-
-                document.documentElement.classList.remove(
-                    'select-none'
-                );
-
-                document.body.style.cursor = '';
-
-                document.removeEventListener(
-                    'mousemove',
-                    handleMouseMove
-                );
-
-                document.removeEventListener(
-                    'mouseup',
-                    handleMouseUp
-                );
-
-                this.resizingColumn = null;
-            };
-
-            document.addEventListener(
-                'mousemove',
-                handleMouseMove
-            );
-
-            document.addEventListener(
-                'mouseup',
-                handleMouseUp
-            );
-        },
-
+        // Selection
         toggleSelectionMode() {
             this.selectionMode =
                 !this.selectionMode;
@@ -172,102 +84,62 @@ document.addEventListener('alpine:init', () => {
             }
         },
 
-        normalizeId(id) {
-            return String(id);
-        },
-
-        toggleSelect(id) {
-            const normalizedId =
-                this.normalizeId(id);
-
-            if (
-                this.selected.includes(
-                    normalizedId
-                )
-            ) {
-                this.selected =
-                    this.selected.filter(
-                        item =>
-                            item !== normalizedId
-                    );
-
-                return;
-            }
-
-            this.selected.push(
-                normalizedId
-            );
+        clearSelection() {
+            this.selected = [];
         },
 
         isSelected(id) {
             return this.selected.includes(
-                this.normalizeId(id)
+                String(id)
             );
         },
 
-        getPageIds() {
-            return Array.from(
-                this.$root.querySelectorAll(
-                    '.borrower-select'
-                )
-            ).map(
-                checkbox =>
-                    this.normalizeId(
-                        checkbox.value
-                    )
-            );
-        },
+        toggleSelect(id) {
+            id = String(id);
 
-        allVisibleSelected() {
-            const ids = this.getPageIds();
-
-            if (ids.length === 0) {
-                return false;
-            }
-
-            return ids.every(
-                id =>
-                    this.selected.includes(id)
-            );
-        },
-
-        someVisibleSelected() {
-            const ids = this.getPageIds();
-
-            if (ids.length === 0) {
-                return false;
-            }
-
-            const selectedCount =
-                ids.filter(
-                    id =>
-                        this.selected.includes(id)
-                ).length;
-
-            return (
-                selectedCount > 0 &&
-                selectedCount < ids.length
-            );
-        },
-
-        toggleSelectAll() {
-            const ids = this.getPageIds();
-
-            if (ids.length === 0) {
-                return;
-            }
-
-            if (this.allVisibleSelected()) {
+            if (this.isSelected(id)) {
                 this.selected =
                     this.selected.filter(
-                        id =>
-                            !ids.includes(id)
+                        selectedId =>
+                            selectedId !== id
                     );
 
                 return;
             }
 
-            ids.forEach((id) => {
+            this.selected.push(id);
+        },
+
+        visibleIds() {
+            return Array.from(
+                document.querySelectorAll(
+                    '.borrower-select'
+                )
+            ).map(input =>
+                String(input.value)
+            );
+        },
+
+        toggleSelectAll() {
+            const ids =
+                this.visibleIds();
+
+            const allSelected =
+                ids.length > 0 &&
+                ids.every(id =>
+                    this.selected.includes(id)
+                );
+
+            if (allSelected) {
+                this.selected =
+                    this.selected.filter(
+                        id => !ids.includes(id)
+                    );
+
+                return;
+            }
+
+            ids.forEach(id => {
                 if (
                     !this.selected.includes(id)
                 ) {
@@ -276,19 +148,213 @@ document.addEventListener('alpine:init', () => {
             });
         },
 
-        clearSelection() {
-            this.selected = [];
+        allVisibleSelected() {
+            const ids =
+                this.visibleIds();
+
+            return (
+                ids.length > 0 &&
+                ids.every(id =>
+                    this.selected.includes(id)
+                )
+            );
+        },
+
+        someVisibleSelected() {
+            const ids =
+                this.visibleIds();
+
+            if (!ids.length) {
+                return false;
+            }
+
+            const selectedCount =
+                ids.filter(id =>
+                    this.selected.includes(id)
+                ).length;
+
+            return (
+                selectedCount > 0 &&
+                selectedCount < ids.length
+            );
+        },
+
+        // Resize
+        startResize(event, column) {
+            if (
+                !Object.prototype.hasOwnProperty.call(
+                    this.columnWidths,
+                    column
+                )
+            ) {
+                return;
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            this.resizingColumn =
+                column;
+
+            this.resizeStartX =
+                event.clientX;
+
+            this.resizeStartWidth =
+                Number(
+                    this.columnWidths[column]
+                );
+
+            document.body.style.cursor =
+                'col-resize';
+
+            document.body.style.userSelect =
+                'none';
+
+            const handleMove = moveEvent => {
+                if (
+                    this.resizingColumn
+                    !== column
+                ) {
+                    return;
+                }
+
+                const difference =
+                    moveEvent.clientX
+                    - this.resizeStartX;
+
+                const minimum =
+                    this.minimumWidths[
+                        column
+                    ] ?? 60;
+
+                const newWidth =
+                    Math.max(
+                        minimum,
+                        this.resizeStartWidth
+                        + difference
+                    );
+
+                this.columnWidths[column] =
+                    Math.round(newWidth);
+            };
+
+            const handleUp = () => {
+                this.saveColumnWidths();
+
+                this.resizingColumn =
+                    null;
+
+                document.body.style.cursor =
+                    '';
+
+                document.body.style.userSelect =
+                    '';
+
+                document.removeEventListener(
+                    'mousemove',
+                    handleMove
+                );
+
+                document.removeEventListener(
+                    'mouseup',
+                    handleUp
+                );
+            };
+
+            document.addEventListener(
+                'mousemove',
+                handleMove
+            );
+
+            document.addEventListener(
+                'mouseup',
+                handleUp
+            );
+        },
+
+        resetColumnWidth(column) {
+            if (
+                !Object.prototype.hasOwnProperty.call(
+                    this.defaultWidths,
+                    column
+                )
+            ) {
+                return;
+            }
+
+            this.columnWidths[column] =
+                this.defaultWidths[column];
+
+            this.saveColumnWidths();
+        },
+
+        resetAllColumnWidths() {
+            this.columnWidths = {
+                ...this.defaultWidths
+            };
+
+            this.saveColumnWidths();
+        },
+
+        saveColumnWidths() {
+            localStorage.setItem(
+                'pagBorrowersTableWidths',
+                JSON.stringify(
+                    this.columnWidths
+                )
+            );
+        },
+
+        loadColumnWidths() {
+            const saved =
+                localStorage.getItem(
+                    'pagBorrowersTableWidths'
+                );
+
+            if (!saved) {
+                return;
+            }
+
+            try {
+                const widths =
+                    JSON.parse(saved);
+
+                this.columnWidths = {
+                    ...this.columnWidths,
+                    ...widths
+                };
+            } catch (error) {
+                console.error(
+                    'Gagal membaca ukuran kolom:',
+                    error
+                );
+
+                localStorage.removeItem(
+                    'pagBorrowersTableWidths'
+                );
+            }
+        },
+
+        // Action layout
+        getActionLayout() {
+            return 'flex-row';
+        },
+
+        getActionTextSize() {
+            return this.columnWidths.action >= 180
+                ? 'text-[10px]'
+                : 'text-[9px]';
+        },
+
+        getActionPadding() {
+            return this.columnWidths.action >= 180
+                ? 'px-2 py-1.5'
+                : 'px-1 py-1.5';
         },
 
         getActionLabel() {
             if (
-                this.columnWidths.action >= 190
-            ) {
-                return 'Buku Sudah Dikembalikan';
-            }
-
-            if (
-                this.columnWidths.action >= 130
+                this.columnWidths.action >= 180
             ) {
                 return 'Kembalikan';
             }
@@ -296,75 +362,38 @@ document.addEventListener('alpine:init', () => {
             return 'Kembali';
         },
 
-        getActionTextSize() {
-            if (
-                this.columnWidths.action >= 150
-            ) {
-                return 'text-[10px]';
-            }
-
-            if (
-                this.columnWidths.action >= 110
-            ) {
-                return 'text-[9px]';
-            }
-
-            return 'text-[8px]';
-        },
-
-        getActionPadding() {
-            if (
-                this.columnWidths.action >= 160
-            ) {
-                return 'px-2.5 py-1.5';
-            }
-
-            if (
-                this.columnWidths.action >= 110
-            ) {
-                return 'px-2 py-1.5';
-            }
-
-            return 'px-1.5 py-1';
-        },
-
-        getActionLayout() {
-            if (
-                this.columnWidths.action >= 170
-            ) {
-                return 'flex-row';
-            }
-
-            return 'flex-col';
-        },
-
         getFinishedLabel() {
-            if (
-                this.columnWidths.action >= 120
-            ) {
-                return 'Selesai';
-            }
-
-            return '✓';
+            return 'Selesai';
         },
 
-        resetColumnWidths() {
-            this.columnWidths = {
-                select: 45,
-                no: 55,
-                borrower: 160,
-                employeeNumber: 120,
-                status: 110,
-                category: 100,
-                bookId: 100,
-                title: 190,
-                copyId: 115,
-                loanDate: 110,
-                returnedDate: 120,
-                action: 220,
+        // Detail
+        openDetail(data) {
+            this.detail = {
+                name: data.name || '-',
+                identity: data.identity || '-',
+                category: data.category || '-',
+                status: data.status || '-',
+                bookId: data.bookId || '-',
+                title: data.title || '-',
+                copyId: data.copyId || '-',
+                loanDate: data.loanDate || '-',
+                returnedDate:
+                    data.returnedDate || '-'
             };
 
-            this.saveWidths();
+            this.detailOpen = true;
+
+            document.body.classList.add(
+                'overflow-hidden'
+            );
         },
+
+        closeDetail() {
+            this.detailOpen = false;
+
+            document.body.classList.remove(
+                'overflow-hidden'
+            );
+        }
     }));
 });

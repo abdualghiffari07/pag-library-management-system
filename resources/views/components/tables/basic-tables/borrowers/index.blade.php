@@ -3,12 +3,85 @@
     'search' => '',
 ])
 
+@php
+    $tableColumns = [
+        [
+            'key' => 'no',
+            'label' => 'No',
+            'align' => 'text-left',
+            'padding' => 'px-3',
+        ],
+        [
+            'key' => 'borrower',
+            'label' => 'Nama Peminjam',
+            'align' => 'text-left',
+            'padding' => 'px-3',
+        ],
+        [
+            'key' => 'employeeNumber',
+            'label' => 'No Identitas',
+            'align' => 'text-left',
+            'padding' => 'px-3',
+        ],
+        [
+            'key' => 'status',
+            'label' => 'Status',
+            'align' => 'text-center',
+            'padding' => 'px-2',
+        ],
+        [
+            'key' => 'category',
+            'label' => 'Kategori',
+            'align' => 'text-left',
+            'padding' => 'px-3',
+        ],
+        [
+            'key' => 'bookId',
+            'label' => 'ID Buku',
+            'align' => 'text-left',
+            'padding' => 'px-3',
+        ],
+        [
+            'key' => 'title',
+            'label' => 'Judul Buku',
+            'align' => 'text-left',
+            'padding' => 'px-3',
+        ],
+        [
+            'key' => 'copyId',
+            'label' => 'ID Eksemplar',
+            'align' => 'text-left',
+            'padding' => 'px-3',
+        ],
+        [
+            'key' => 'loanDate',
+            'label' => 'Tanggal Pinjam',
+            'align' => 'text-left',
+            'padding' => 'px-3',
+        ],
+        [
+            'key' => 'returnedDate',
+            'label' => 'Tanggal Kembali',
+            'align' => 'text-left',
+            'padding' => 'px-3',
+        ],
+        [
+            'key' => 'action',
+            'label' => 'Action',
+            'align' => 'text-center',
+            'padding' => 'px-2',
+        ],
+    ];
+@endphp
+
 <div
     class="space-y-6"
     x-data="borrowersTable()"
+    @keydown.escape.window="closeDetail()"
 >
     <x-common.component-card title="Daftar Peminjam">
 
+        {{-- Alert --}}
         @if (session('success'))
             <div class="mb-5 rounded-lg border border-success-200 bg-success-50 px-4 py-3 text-sm text-success-600 dark:border-success-800 dark:bg-success-500/10 dark:text-success-400">
                 {{ session('success') }}
@@ -21,6 +94,7 @@
             </div>
         @endif
 
+        {{-- Header --}}
         <div class="mb-5">
 
             <div class="mb-4">
@@ -47,7 +121,6 @@
                             height="18"
                             viewBox="0 0 20 20"
                             fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
                         >
                             <path
                                 fill-rule="evenodd"
@@ -68,10 +141,10 @@
                     >
                 </form>
 
-                {{-- Action --}}
+                {{-- Actions --}}
                 <div class="flex flex-wrap items-center justify-end gap-2">
 
-                    {{-- Kembalikan Terpilih --}}
+                    {{-- Kembalikan terpilih --}}
                     <form
                         x-show="selectionMode && selected.length > 0"
                         x-cloak
@@ -101,7 +174,6 @@
                                 height="16"
                                 viewBox="0 0 24 24"
                                 fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
                             >
                                 <path
                                     d="M5 12L10 17L19 8"
@@ -123,7 +195,7 @@
                         </button>
                     </form>
 
-                    {{-- Hapus Terpilih --}}
+                    {{-- Hapus terpilih --}}
                     <form
                         x-show="selectionMode && selected.length > 0"
                         x-cloak
@@ -154,7 +226,6 @@
                                 height="15"
                                 viewBox="0 0 24 24"
                                 fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
                             >
                                 <path
                                     d="M3 6H5H21"
@@ -206,7 +277,6 @@
                             height="16"
                             viewBox="0 0 24 24"
                             fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
                         >
                             <path
                                 d="M9 11L11 13L15 9"
@@ -232,21 +302,19 @@
 
             </div>
 
-            {{-- Info Pilihan --}}
+            {{-- Info pilihan --}}
             <div
                 x-show="selectionMode && selected.length > 0"
                 x-cloak
                 class="mt-3 flex items-center gap-3"
             >
                 <span class="text-[11px] text-gray-500 dark:text-gray-400">
-
                     <span
                         class="font-semibold text-gray-700 dark:text-gray-300"
                         x-text="selected.length"
                     ></span>
 
                     data dipilih
-
                 </span>
 
                 <button
@@ -260,6 +328,49 @@
 
         </div>
 
+        {{-- Informasi resize --}}
+        <div class="mb-3 rounded-lg border border-gray-100 bg-gray-50 px-3 py-2.5 dark:border-gray-800 dark:bg-white/[0.02]">
+
+            <div class="flex items-center gap-2 text-[11px] text-gray-500 dark:text-gray-400">
+
+                <svg
+                    class="shrink-0"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                >
+                    <path
+                        d="M8 7L3 12L8 17"
+                        stroke-width="1.7"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    />
+
+                    <path
+                        d="M16 7L21 12L16 17"
+                        stroke-width="1.7"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    />
+
+                    <path
+                        d="M3 12H21"
+                        stroke-width="1.7"
+                        stroke-linecap="round"
+                    />
+                </svg>
+
+                <span>
+                    Geser garis pada header tabel untuk memperkecil atau memperlebar kolom.
+                </span>
+
+            </div>
+
+        </div>
+
+        {{-- Table --}}
         <div class="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
 
             <div class="max-w-full overflow-x-auto">
@@ -271,6 +382,7 @@
 
                     <colgroup>
 
+                        {{-- Selection --}}
                         <col
                             :style="`
                                 width: ${
@@ -295,11 +407,12 @@
 
                     </colgroup>
 
+                    {{-- Header --}}
                     <thead class="border-b border-gray-100 bg-gray-50 dark:border-gray-800 dark:bg-white/[0.02]">
 
                         <tr>
 
-                            {{-- Pilih Semua --}}
+                            {{-- Pilih semua --}}
                             <th
                                 class="overflow-hidden py-2.5 text-center"
                                 :class="selectionMode ? 'px-3' : 'px-0'"
@@ -341,164 +454,43 @@
                                 </div>
                             </th>
 
-                            {{-- No --}}
-                            <th class="relative px-3 py-2.5 text-left text-[10px] font-medium uppercase text-gray-500 dark:text-gray-400">
+                            {{-- Kolom --}}
+                            @foreach ($tableColumns as $column)
 
-                                <span class="block truncate">
-                                    No
-                                </span>
+                                <th class="relative {{ $column['padding'] }} py-2.5 {{ $column['align'] }} text-[10px] font-medium uppercase text-gray-500 dark:text-gray-400">
 
-                                <span
-                                    @mousedown="startResize($event, 'no')"
-                                    class="absolute right-0 top-0 h-full w-1 cursor-col-resize select-none hover:bg-brand-500"
-                                ></span>
+                                    <span class="block truncate">
+                                        {{ $column['label'] }}
+                                    </span>
 
-                            </th>
+                                    {{-- Resize handle --}}
+                                    <span
+                                        @mousedown.stop="startResize(
+                                            $event,
+                                            '{{ $column['key'] }}'
+                                        )"
+                                        class="group absolute -right-[5px] top-0 z-20 flex h-full w-[10px] cursor-col-resize select-none items-center justify-center"
+                                        title="Geser untuk mengubah lebar kolom"
+                                    >
+                                        <span
+                                            class="h-5 w-[2px] rounded-full transition-all duration-150 group-hover:h-7 group-hover:bg-brand-500 dark:group-hover:bg-brand-400"
+                                            :class="
+                                                resizingColumn === '{{ $column['key'] }}'
+                                                    ? 'h-7 bg-brand-500 dark:bg-brand-400'
+                                                    : 'bg-gray-300 dark:bg-gray-700'
+                                            "
+                                        ></span>
+                                    </span>
 
-                            {{-- Nama Peminjam --}}
-                            <th class="relative px-3 py-2.5 text-left text-[10px] font-medium uppercase text-gray-500 dark:text-gray-400">
+                                </th>
 
-                                <span class="block truncate">
-                                    Nama Peminjam
-                                </span>
-
-                                <span
-                                    @mousedown="startResize($event, 'borrower')"
-                                    class="absolute right-0 top-0 h-full w-1 cursor-col-resize select-none hover:bg-brand-500"
-                                ></span>
-
-                            </th>
-
-                            {{-- No Identitas --}}
-                            <th class="relative px-3 py-2.5 text-left text-[10px] font-medium uppercase text-gray-500 dark:text-gray-400">
-
-                                <span class="block truncate">
-                                    No Identitas
-                                </span>
-
-                                <span
-                                    @mousedown="startResize($event, 'employeeNumber')"
-                                    class="absolute right-0 top-0 h-full w-1 cursor-col-resize select-none hover:bg-brand-500"
-                                ></span>
-
-                            </th>
-
-                            {{-- Status --}}
-                            <th class="relative px-2 py-2.5 text-center text-[10px] font-medium uppercase text-gray-500 dark:text-gray-400">
-
-                                <span class="block truncate">
-                                    Status
-                                </span>
-
-                                <span
-                                    @mousedown="startResize($event, 'status')"
-                                    class="absolute right-0 top-0 h-full w-1 cursor-col-resize select-none hover:bg-brand-500"
-                                ></span>
-
-                            </th>
-
-                            {{-- Kategori --}}
-                            <th class="relative px-3 py-2.5 text-left text-[10px] font-medium uppercase text-gray-500 dark:text-gray-400">
-
-                                <span class="block truncate">
-                                    Kategori
-                                </span>
-
-                                <span
-                                    @mousedown="startResize($event, 'category')"
-                                    class="absolute right-0 top-0 h-full w-1 cursor-col-resize select-none hover:bg-brand-500"
-                                ></span>
-
-                            </th>
-
-                            {{-- ID Buku --}}
-                            <th class="relative px-3 py-2.5 text-left text-[10px] font-medium uppercase text-gray-500 dark:text-gray-400">
-
-                                <span class="block truncate">
-                                    ID Buku
-                                </span>
-
-                                <span
-                                    @mousedown="startResize($event, 'bookId')"
-                                    class="absolute right-0 top-0 h-full w-1 cursor-col-resize select-none hover:bg-brand-500"
-                                ></span>
-
-                            </th>
-
-                            {{-- Judul Buku --}}
-                            <th class="relative px-3 py-2.5 text-left text-[10px] font-medium uppercase text-gray-500 dark:text-gray-400">
-
-                                <span class="block truncate">
-                                    Judul Buku
-                                </span>
-
-                                <span
-                                    @mousedown="startResize($event, 'title')"
-                                    class="absolute right-0 top-0 h-full w-1 cursor-col-resize select-none hover:bg-brand-500"
-                                ></span>
-
-                            </th>
-
-                            {{-- ID Eksemplar --}}
-                            <th class="relative px-3 py-2.5 text-left text-[10px] font-medium uppercase text-gray-500 dark:text-gray-400">
-
-                                <span class="block truncate">
-                                    ID Eksemplar
-                                </span>
-
-                                <span
-                                    @mousedown="startResize($event, 'copyId')"
-                                    class="absolute right-0 top-0 h-full w-1 cursor-col-resize select-none hover:bg-brand-500"
-                                ></span>
-
-                            </th>
-
-                            {{-- Tanggal Pinjam --}}
-                            <th class="relative px-3 py-2.5 text-left text-[10px] font-medium uppercase text-gray-500 dark:text-gray-400">
-
-                                <span class="block truncate">
-                                    Tanggal Pinjam
-                                </span>
-
-                                <span
-                                    @mousedown="startResize($event, 'loanDate')"
-                                    class="absolute right-0 top-0 h-full w-1 cursor-col-resize select-none hover:bg-brand-500"
-                                ></span>
-
-                            </th>
-
-                            {{-- Tanggal Kembali --}}
-                            <th class="relative px-3 py-2.5 text-left text-[10px] font-medium uppercase text-gray-500 dark:text-gray-400">
-
-                                <span class="block truncate">
-                                    Tanggal Kembali
-                                </span>
-
-                                <span
-                                    @mousedown="startResize($event, 'returnedDate')"
-                                    class="absolute right-0 top-0 h-full w-1 cursor-col-resize select-none hover:bg-brand-500"
-                                ></span>
-
-                            </th>
-
-                            {{-- Action --}}
-                            <th class="relative px-2 py-2.5 text-center text-[10px] font-medium uppercase text-gray-500 dark:text-gray-400">
-
-                                <span class="block truncate">
-                                    Action
-                                </span>
-
-                                <span
-                                    @mousedown="startResize($event, 'action')"
-                                    class="absolute right-0 top-0 h-full w-1 cursor-col-resize select-none hover:bg-brand-500"
-                                ></span>
-
-                            </th>
+                            @endforeach
 
                         </tr>
 
                     </thead>
 
+                    {{-- Body --}}
                     <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
 
                         @forelse ($borrowers as $index => $borrower)
@@ -531,6 +523,39 @@
                                             $borrower->returned_date
                                         )->format('d/m/Y')
                                         : '-';
+
+                                $statusLabel = $isReturned
+                                    ? 'Dikembalikan'
+                                    : 'Dipinjam';
+
+                                $borrowerDetail = [
+                                    'name' => $borrowerName,
+                                    'identity' => $identityNumber,
+
+                                    'category' =>
+                                        $borrower->visitor_category
+                                            ? ucfirst(
+                                                $borrower->visitor_category
+                                            )
+                                            : '-',
+
+                                    'status' => $statusLabel,
+
+                                    'bookId' =>
+                                        $borrower->book_identifier
+                                            ?: '-',
+
+                                    'title' =>
+                                        $borrower->title
+                                            ?: '-',
+
+                                    'copyId' =>
+                                        $borrower->copy_code
+                                            ?: '-',
+
+                                    'loanDate' => $loanDate,
+                                    'returnedDate' => $returnedDate,
+                                ];
                             @endphp
 
                             <tr
@@ -586,28 +611,24 @@
                                     {{ $borrowers->firstItem() + $index }}
                                 </td>
 
-                                {{-- Nama Peminjam --}}
+                                {{-- Nama --}}
                                 <td class="overflow-hidden px-3 py-3">
-
                                     <span
                                         class="block truncate text-[11px] font-medium text-gray-800 dark:text-white/90"
                                         title="{{ $borrowerName }}"
                                     >
                                         {{ $borrowerName }}
                                     </span>
-
                                 </td>
 
-                                {{-- No Identitas --}}
+                                {{-- Identitas --}}
                                 <td class="overflow-hidden px-3 py-3">
-
                                     <span
                                         class="block truncate text-[11px] text-gray-600 dark:text-gray-400"
                                         title="{{ $identityNumber }}"
                                     >
                                         {{ $identityNumber }}
                                     </span>
-
                                 </td>
 
                                 {{-- Status --}}
@@ -637,7 +658,6 @@
 
                                 {{-- Kategori --}}
                                 <td class="overflow-hidden px-3 py-3">
-
                                     <span
                                         class="block truncate text-[11px] text-gray-600 dark:text-gray-400"
                                         title="{{ $borrower->visitor_category ?? '-' }}"
@@ -646,67 +666,56 @@
                                             ? ucfirst($borrower->visitor_category)
                                             : '-' }}
                                     </span>
-
                                 </td>
 
                                 {{-- ID Buku --}}
                                 <td class="overflow-hidden px-3 py-3">
-
                                     <span
                                         class="block truncate text-[11px] font-semibold text-gray-700 dark:text-gray-300"
                                         title="{{ $borrower->book_identifier ?? '-' }}"
                                     >
                                         {{ $borrower->book_identifier ?: '-' }}
                                     </span>
-
                                 </td>
 
-                                {{-- Judul Buku --}}
+                                {{-- Judul --}}
                                 <td class="overflow-hidden px-3 py-3">
-
                                     <span
                                         class="block truncate text-[11px] font-medium text-gray-700 dark:text-gray-300"
                                         title="{{ $borrower->title ?? '-' }}"
                                     >
                                         {{ $borrower->title ?: '-' }}
                                     </span>
-
                                 </td>
 
                                 {{-- ID Eksemplar --}}
                                 <td class="overflow-hidden px-3 py-3">
-
                                     <span
                                         class="block truncate text-[11px] text-gray-600 dark:text-gray-400"
                                         title="{{ $borrower->copy_code ?? '-' }}"
                                     >
                                         {{ $borrower->copy_code ?: '-' }}
                                     </span>
-
                                 </td>
 
-                                {{-- Tanggal Pinjam --}}
+                                {{-- Tanggal pinjam --}}
                                 <td class="overflow-hidden px-3 py-3">
-
                                     <span
                                         class="block truncate whitespace-nowrap text-[11px] text-gray-600 dark:text-gray-400"
                                         title="{{ $loanDate }}"
                                     >
                                         {{ $loanDate }}
                                     </span>
-
                                 </td>
 
-                                {{-- Tanggal Kembali --}}
+                                {{-- Tanggal kembali --}}
                                 <td class="overflow-hidden px-3 py-3">
-
                                     <span
                                         class="block truncate whitespace-nowrap text-[11px] text-gray-600 dark:text-gray-400"
                                         title="{{ $returnedDate }}"
                                     >
                                         {{ $returnedDate }}
                                     </span>
-
                                 </td>
 
                                 {{-- Action --}}
@@ -717,6 +726,42 @@
                                         :class="getActionLayout()"
                                     >
 
+                                        {{-- Detail --}}
+                                        <button
+                                            type="button"
+                                            @click='openDetail(@js($borrowerDetail))'
+                                            class="flex min-w-0 flex-1 items-center justify-center gap-1 overflow-hidden rounded-md border border-brand-500 bg-brand-50 px-2 py-1.5 text-[10px] font-medium text-brand-600 transition hover:bg-brand-500 hover:text-white dark:bg-brand-500/10 dark:text-brand-400"
+                                            title="Lihat Detail"
+                                        >
+                                            <svg
+                                                class="shrink-0"
+                                                width="14"
+                                                height="14"
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                            >
+                                                <path
+                                                    d="M2.5 12C4.5 7.5 7.7 5.25 12 5.25C16.3 5.25 19.5 7.5 21.5 12C19.5 16.5 16.3 18.75 12 18.75C7.7 18.75 4.5 16.5 2.5 12Z"
+                                                    stroke-width="1.7"
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                />
+
+                                                <circle
+                                                    cx="12"
+                                                    cy="12"
+                                                    r="2.5"
+                                                    stroke-width="1.7"
+                                                />
+                                            </svg>
+
+                                            <span class="truncate">
+                                                Detail
+                                            </span>
+                                        </button>
+
+                                        {{-- Pengembalian --}}
                                         @if (!$isReturned)
 
                                             <form
@@ -750,50 +795,49 @@
                                         @else
 
                                             <div class="min-w-0 flex-1 text-center">
-
                                                 <span
                                                     class="block truncate font-medium text-gray-400"
                                                     :class="getActionTextSize()"
                                                     x-text="getFinishedLabel()"
                                                     title="Selesai"
                                                 ></span>
-
                                             </div>
 
                                         @endif
 
-                            <form
-                                action="{{ route(
-                                    'borrowers.destroy',
-                                    $borrower->loan_detail_id
-                                ) }}"
-                                method="POST"
-                                class="shrink-0"
-                                onsubmit="return confirm('Yakin ingin menghapus data peminjaman ini?')"
-                            >
-                                @csrf
-                                @method('DELETE')
+                                        {{-- Hapus --}}
+                                        <form
+                                            action="{{ route(
+                                                'borrowers.destroy',
+                                                $borrower->loan_detail_id
+                                            ) }}"
+                                            method="POST"
+                                            class="shrink-0"
+                                            onsubmit="return confirm('Yakin ingin menghapus data peminjaman ini?')"
+                                        >
+                                            @csrf
+                                            @method('DELETE')
 
-                                <button
-                                    type="submit"
-                                    class="inline-flex h-8 w-8 items-center justify-center text-gray-500 transition-colors hover:text-error-500 dark:text-gray-400 dark:hover:text-error-500"
-                                    title="Hapus"
-                                >
-                                    <svg
-                                        class="h-4 w-4"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                        />
-                                    </svg>
-                                </button>
-                            </form>
+                                            <button
+                                                type="submit"
+                                                class="inline-flex h-8 w-8 items-center justify-center text-gray-500 transition-colors hover:text-error-500 dark:text-gray-400 dark:hover:text-error-500"
+                                                title="Hapus"
+                                            >
+                                                <svg
+                                                    class="h-4 w-4"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor"
+                                                >
+                                                    <path
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                                    />
+                                                </svg>
+                                            </button>
+                                        </form>
 
                                     </div>
 
@@ -804,7 +848,6 @@
                         @empty
 
                             <tr>
-
                                 <td
                                     colspan="12"
                                     class="px-4 py-10 text-center"
@@ -840,7 +883,6 @@
 
                                     @endif
                                 </td>
-
                             </tr>
 
                         @endforelse
@@ -873,7 +915,6 @@
                                         height="18"
                                         viewBox="0 0 24 24"
                                         fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
                                     >
                                         <path
                                             d="M15 18L9 12L15 6"
@@ -898,7 +939,6 @@
                                         height="18"
                                         viewBox="0 0 24 24"
                                         fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
                                     >
                                         <path
                                             d="M15 18L9 12L15 6"
@@ -916,7 +956,7 @@
 
                         </div>
 
-                        {{-- Nomor Halaman --}}
+                        {{-- Nomor halaman --}}
                         <div class="flex items-center justify-center gap-2">
 
                             @php
@@ -944,11 +984,9 @@
                                 </a>
 
                                 @if ($startPage > 2)
-
                                     <span class="px-1 text-sm text-gray-400">
                                         ...
                                     </span>
-
                                 @endif
 
                             @endif
@@ -961,9 +999,7 @@
 
                                 @if ($page === $currentPage)
 
-                                    <span
-                                        class="inline-flex h-10 min-w-10 items-center justify-center rounded-lg bg-brand-500 px-3 text-sm font-medium text-white shadow-theme-xs"
-                                    >
+                                    <span class="inline-flex h-10 min-w-10 items-center justify-center rounded-lg bg-brand-500 px-3 text-sm font-medium text-white shadow-theme-xs">
                                         {{ $page }}
                                     </span>
 
@@ -983,11 +1019,9 @@
                             @if ($endPage < $lastPage)
 
                                 @if ($endPage < $lastPage - 1)
-
                                     <span class="px-1 text-sm text-gray-400">
                                         ...
                                     </span>
-
                                 @endif
 
                                 <a
@@ -1017,7 +1051,6 @@
                                         height="18"
                                         viewBox="0 0 24 24"
                                         fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
                                     >
                                         <path
                                             d="M9 18L15 12L9 6"
@@ -1043,7 +1076,6 @@
                                         height="18"
                                         viewBox="0 0 24 24"
                                         fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
                                     >
                                         <path
                                             d="M9 18L15 12L9 6"
@@ -1068,4 +1100,8 @@
         </div>
 
     </x-common.component-card>
+
+    {{-- Detail peminjam --}}
+    <x-tables.basic-tables.borrowers.borrower-detail />
+
 </div>

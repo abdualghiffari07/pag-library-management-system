@@ -16,11 +16,16 @@ class Visitor extends Model
     protected $keyType = 'int';
 
     protected $fillable = [
-        'visitor_category',
         'visitor_name',
         'employee_number',
+        'visitor_category',
         'phone_number',
         'profile_photo',
+        'is_active',
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
     ];
 
     // Riwayat kunjungan

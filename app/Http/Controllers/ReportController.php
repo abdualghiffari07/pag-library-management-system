@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Book;
 use App\Models\BookCopy;
 use App\Models\Loan;
 use App\Models\Visitor;
@@ -14,7 +15,9 @@ class ReportController extends Controller
     public function index(Request $request)
     {
         // Buku
-        $totalBooks = BookCopy::whereHas('book', function ($query) {
+        $totalBooks = Book::where('status', 'public')->count();
+
+        $totalBookCopies = BookCopy::whereHas('book', function ($query) {
             $query->where('status', 'public');
         })->count();
 
@@ -53,6 +56,29 @@ class ReportController extends Controller
             'lainnya'
         )->count();
 
+        // Pengunjung terbaru
+        $recentVisitors = DB::table('visitor_checkins as checkins')
+            ->join(
+                'visitors as visitors',
+                'visitors.visitor_id',
+                '=',
+                'checkins.visitor_id'
+            )
+            ->select([
+                'visitors.visitor_id',
+                'visitors.visitor_name',
+                'visitors.visitor_category',
+                'visitors.employee_number',
+                'visitors.phone_number',
+                'visitors.profile_photo',
+                'checkins.checkin_id',
+                'checkins.checked_in_at',
+            ])
+            ->whereNotNull('checkins.checked_in_at')
+            ->orderByDesc('checkins.checked_in_at')
+            ->limit(5)
+            ->get();
+
         // Periode
         $endDate = $request->filled('end_date')
             ? Carbon::parse($request->end_date)
@@ -63,16 +89,26 @@ class ReportController extends Controller
             : now()->startOfYear();
 
         if ($startDate->gt($endDate)) {
-            [$startDate, $endDate] = [$endDate, $startDate];
+            [$startDate, $endDate] = [
+                $endDate,
+                $startDate,
+            ];
         }
 
-        $rangeStart = $startDate->copy()->startOfDay();
-        $rangeEnd = $endDate->copy()->endOfDay();
+        $rangeStart = $startDate
+            ->copy()
+            ->startOfDay();
 
-        $daysDifference = $startDate->diffInDays($endDate);
+        $rangeEnd = $endDate
+            ->copy()
+            ->endOfDay();
+
+        $daysDifference = $startDate
+            ->diffInDays($endDate);
+
         $groupByDay = $daysDifference <= 31;
 
-        // Data peminjaman
+        // Peminjaman
         if ($groupByDay) {
             $loanResults = Loan::select(
                 DB::raw('CAST(loan_date AS DATE) as period'),
@@ -114,7 +150,7 @@ class ReportController extends Controller
                 ->get();
         }
 
-        // Data pengunjung
+        // Statistik pengunjung
         if ($groupByDay) {
             $visitorResults = Visitor::select(
                 DB::raw('CAST(created_at AS DATE) as period'),
@@ -162,7 +198,9 @@ class ReportController extends Controller
         $visitorData = [];
 
         if ($groupByDay) {
-            $cursor = $startDate->copy()->startOfDay();
+            $cursor = $startDate
+                ->copy()
+                ->startOfDay();
 
             while ($cursor->lte($endDate)) {
                 $chartMonths[] = $cursor->format('d M');
@@ -198,10 +236,14 @@ class ReportController extends Controller
                 }
             }
         } else {
-            $cursor = $startDate->copy()->startOfMonth();
+            $cursor = $startDate
+                ->copy()
+                ->startOfMonth();
 
             while ($cursor->lte($endDate)) {
-                $chartMonths[] = $cursor->translatedFormat('M Y');
+                $chartMonths[] = $cursor
+                    ->translatedFormat('M Y');
+
                 $loanData[] = 0;
                 $visitorData[] = 0;
 
@@ -243,21 +285,26 @@ class ReportController extends Controller
             }
         }
 
-        return view('pages.tables.report.report', compact(
-            'totalBooks',
-            'borrowedBooks',
-            'availableBooks',
-            'visitors',
-            'workerVisitors',
-            'studentVisitors',
-            'guestVisitors',
-            'otherVisitors',
-            'chartMonths',
-            'loanData',
-            'visitorData',
-            'startDate',
-            'endDate',
-            'groupByDay'
-        ));
+        return view(
+            'pages.tables.report.report',
+            compact(
+                'totalBooks',
+                'totalBookCopies',
+                'borrowedBooks',
+                'availableBooks',
+                'visitors',
+                'workerVisitors',
+                'studentVisitors',
+                'guestVisitors',
+                'otherVisitors',
+                'recentVisitors',
+                'chartMonths',
+                'loanData',
+                'visitorData',
+                'startDate',
+                'endDate',
+                'groupByDay'
+            )
+        );
     }
 }

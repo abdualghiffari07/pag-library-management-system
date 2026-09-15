@@ -3,11 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class VisitorCheckin extends Model
 {
     protected $table = 'visitor_checkins';
+
     protected $primaryKey = 'checkin_id';
 
     protected $fillable = [
@@ -20,7 +20,7 @@ class VisitorCheckin extends Model
         'checked_in_at' => 'datetime',
     ];
 
-    public function visitor(): BelongsTo
+    public function visitor()
     {
         return $this->belongsTo(
             Visitor::class,

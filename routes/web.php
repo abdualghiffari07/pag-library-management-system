@@ -62,18 +62,24 @@ Route::get('/visitor-register', function () {
     return view('pages.landing-page.visitor-register');
 })->name('visitors.register');
 
-Route::post('/visitors', [VisitorGuestController::class, 'store'])
-    ->name('visitors.store');
+Route::post(
+    '/visitors',
+    [VisitorGuestController::class, 'store']
+)->name('visitors.store');
 
-Route::post('/visitors/check-in', [VisitorGuestController::class, 'checkIn'])
-    ->name('visitors.checkin');
+Route::post(
+    '/visitors/check-in',
+    [VisitorGuestController::class, 'checkIn']
+)->name('visitors.checkin');
 
 // Admin
 Route::middleware('admin')->group(function () {
 
     // Dashboard
-    Route::get('/dashboard', [ReportController::class, 'index'])
-        ->name('dashboard');
+    Route::get(
+        '/dashboard',
+        [ReportController::class, 'index']
+    )->name('dashboard');
 
     // Profile
     Route::get('/profile', function () {
@@ -99,72 +105,112 @@ Route::middleware('admin')->group(function () {
         ]);
     })->name('data-buku');
 
-    Route::get('/books/create', [BookController::class, 'create'])
-        ->name('books.create');
+    Route::get(
+        '/books/create',
+        [BookController::class, 'create']
+    )->name('books.create');
 
-    Route::post('/books', [BookController::class, 'store'])
-        ->name('books.store');
+    Route::post(
+        '/books',
+        [BookController::class, 'store']
+    )->name('books.store');
 
-    Route::get('/books/check-book-id', [BookController::class, 'checkBookId'])
-        ->name('books.check-book-id');
+    Route::get(
+        '/books/check-book-id',
+        [BookController::class, 'checkBookId']
+    )->name('books.check-book-id');
 
-    Route::get('/books/check-book-no', [BookController::class, 'checkBookNo'])
-        ->name('books.check-book-no');
+    Route::get(
+        '/books/check-book-no',
+        [BookController::class, 'checkBookNo']
+    )->name('books.check-book-no');
 
-    Route::get('/books-search', [BookController::class, 'search'])
-        ->name('books.search');
+    Route::get(
+        '/books-search',
+        [BookController::class, 'search']
+    )->name('books.search');
 
-    Route::post('/books/{book_id}/borrow', [BookController::class, 'borrow'])
-        ->name('books.borrow');
+    Route::post(
+        '/books/{book_id}/borrow',
+        [BookController::class, 'borrow']
+    )->name('books.borrow');
 
     Route::post(
         '/books/{book_id}/return/{loan_detail_id}',
         [BookController::class, 'returnBook']
     )->name('books.return');
 
-    Route::get('/books/{book_id}/edit', [BookController::class, 'edit'])
-        ->name('books.edit');
+    Route::get(
+        '/books/{book_id}/edit',
+        [BookController::class, 'edit']
+    )->name('books.edit');
 
-    Route::put('/books/{book_id}', [BookController::class, 'update'])
-        ->name('books.update');
+    Route::put(
+        '/books/{book_id}',
+        [BookController::class, 'update']
+    )->name('books.update');
 
-    Route::delete('/books/bulk-delete', [BookController::class, 'bulkDestroy'])
-        ->name('books.bulk-destroy');
+    Route::delete(
+        '/books/bulk-delete',
+        [BookController::class, 'bulkDestroy']
+    )->name('books.bulk-destroy');
 
-    Route::delete('/books/{book_id}', [BookController::class, 'destroy'])
-        ->name('books.destroy');
+    Route::delete(
+        '/books/{book_id}',
+        [BookController::class, 'destroy']
+    )->name('books.destroy');
 
     // Penulis
-    Route::get('/authors', [AuthorController::class, 'index'])
-        ->name('authors');
+    Route::get(
+        '/authors',
+        [AuthorController::class, 'index']
+    )->name('authors');
 
-    Route::get('/authors/create', [AuthorController::class, 'create'])
-        ->name('authors.create');
+    Route::get(
+        '/authors/create',
+        [AuthorController::class, 'create']
+    )->name('authors.create');
 
-    Route::post('/authors', [AuthorController::class, 'store'])
-        ->name('authors.store');
+    Route::post(
+        '/authors',
+        [AuthorController::class, 'store']
+    )->name('authors.store');
 
-    Route::get('/authors/{id}/edit', [AuthorController::class, 'edit'])
-        ->name('authors.edit');
+    Route::get(
+        '/authors/{id}/edit',
+        [AuthorController::class, 'edit']
+    )->name('authors.edit');
 
-    Route::put('/authors/{id}', [AuthorController::class, 'update'])
-        ->name('authors.update');
+    Route::put(
+        '/authors/{id}',
+        [AuthorController::class, 'update']
+    )->name('authors.update');
 
-    Route::delete('/authors/bulk/delete', [AuthorController::class, 'bulkDestroy'])
-        ->name('authors.bulk-destroy');
+    Route::delete(
+        '/authors/bulk/delete',
+        [AuthorController::class, 'bulkDestroy']
+    )->name('authors.bulk-destroy');
 
-    Route::delete('/authors/{id}', [AuthorController::class, 'destroy'])
-        ->name('authors.destroy');
+    Route::delete(
+        '/authors/{id}',
+        [AuthorController::class, 'destroy']
+    )->name('authors.destroy');
 
     // Equipment
-    Route::get('/equipment', [EquipmentController::class, 'index'])
-        ->name('equipment.index');
+    Route::get(
+        '/equipment',
+        [EquipmentController::class, 'index']
+    )->name('equipment.index');
 
-    Route::get('/equipment/create', [EquipmentController::class, 'create'])
-        ->name('equipment.create');
+    Route::get(
+        '/equipment/create',
+        [EquipmentController::class, 'create']
+    )->name('equipment.create');
 
-    Route::post('/equipment', [EquipmentController::class, 'store'])
-        ->name('equipment.store');
+    Route::post(
+        '/equipment',
+        [EquipmentController::class, 'store']
+    )->name('equipment.store');
 
     Route::get(
         '/equipment/{equipment_id}/edit',
@@ -182,14 +228,20 @@ Route::middleware('admin')->group(function () {
     )->name('equipment.destroy');
 
     // Location
-    Route::get('/locations', [LocationController::class, 'index'])
-        ->name('locations.index');
+    Route::get(
+        '/locations',
+        [LocationController::class, 'index']
+    )->name('locations.index');
 
-    Route::get('/locations/create', [LocationController::class, 'create'])
-        ->name('locations.create');
+    Route::get(
+        '/locations/create',
+        [LocationController::class, 'create']
+    )->name('locations.create');
 
-    Route::post('/locations', [LocationController::class, 'store'])
-        ->name('locations.store');
+    Route::post(
+        '/locations',
+        [LocationController::class, 'store']
+    )->name('locations.store');
 
     Route::get(
         '/locations/{location}/edit',
@@ -207,8 +259,10 @@ Route::middleware('admin')->group(function () {
     )->name('locations.destroy');
 
     // Daftar peminjam
-    Route::get('/borrowers', [BorrowerController::class, 'index'])
-        ->name('borrowers.index');
+    Route::get(
+        '/borrowers',
+        [BorrowerController::class, 'index']
+    )->name('borrowers.index');
 
     Route::post(
         '/borrowers/bulk/return',
@@ -231,31 +285,44 @@ Route::middleware('admin')->group(function () {
     )->name('borrowers.destroy');
 
     // Daftar pengunjung
-    Route::get('/visitors', [VisitorAdminController::class, 'index'])
-        ->name('visitors');
+    Route::get(
+        '/visitors',
+        [VisitorAdminController::class, 'index']
+    )->name('visitors');
+
+    Route::get(
+        '/visitors/checkins/{checkin}/selfie',
+        [VisitorAdminController::class, 'selfie']
+    )
+        ->name('visitors.selfie')
+        ->whereNumber('checkin');
 
     Route::get(
         '/visitors/{visitor}/details',
         [VisitorAdminController::class, 'detail']
-    )->name('visitors.details')
+    )
+        ->name('visitors.details')
         ->whereNumber('visitor');
 
     Route::get(
         '/visitors/{visitor}/profile-photo',
         [VisitorAdminController::class, 'profilePhoto']
-    )->name('visitors.profile-photo')
+    )
+        ->name('visitors.profile-photo')
         ->whereNumber('visitor');
 
-    Route::get(
-        '/visitors/checkins/{checkin}/selfie',
-        [VisitorAdminController::class, 'selfie']
-    )->name('visitors.selfie')
-        ->whereNumber('checkin');
+    Route::patch(
+        '/visitors/{visitor}/status',
+        [VisitorAdminController::class, 'toggleStatus']
+    )
+        ->name('visitors.status')
+        ->whereNumber('visitor');
 
     Route::delete(
         '/visitors/{visitor}',
         [VisitorAdminController::class, 'destroy']
-    )->name('visitors.destroy')
+    )
+        ->name('visitors.destroy')
         ->whereNumber('visitor');
 
     // Logout
