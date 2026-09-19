@@ -12,7 +12,9 @@ use App\Models\Book;
 use App\Models\Visitor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 // Landing
 Route::get('/', function () {
@@ -25,8 +27,14 @@ Route::get('/', function () {
 // Login
 Route::post('/login', function (Request $request) {
     $credentials = $request->validate([
-        'email' => ['required', 'email'],
-        'password' => ['required'],
+        'email' => [
+            'required',
+            'email',
+        ],
+        'password' => [
+            'required',
+            'string',
+        ],
     ]);
 
     if (!Auth::attempt($credentials)) {
@@ -39,7 +47,13 @@ Route::post('/login', function (Request $request) {
 
     $user = Auth::user();
 
-    if (!$user->role || $user->role->role_name !== 'admin') {
+    $user->loadMissing([
+        'role',
+        'visitor',
+    ]);
+
+    // Status akun
+    if (!$user->is_active) {
         Auth::logout();
 
         $request->session()->invalidate();
@@ -47,17 +61,80 @@ Route::post('/login', function (Request $request) {
 
         return back()
             ->withErrors([
-                'email' => 'Akun Anda tidak memiliki akses ke sistem.',
+                'email' => 'Akun Anda sudah tidak aktif.',
+            ])
+            ->onlyInput('email');
+    }
+
+    // Role
+    if (!$user->role) {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return back()
+            ->withErrors([
+                'email' => 'Role akun tidak ditemukan.',
             ])
             ->onlyInput('email');
     }
 
     $request->session()->regenerate();
 
-    return redirect()->route('dashboard');
+    // Admin
+    if ($user->role->role_name === 'admin') {
+        return redirect()->route('dashboard');
+    }
+
+    // Pekerja
+    if ($user->role->role_name === 'pekerja') {
+        if (
+            !$user->visitor
+            || $user->visitor->visitor_category !== 'pekerja'
+        ) {
+            Auth::logout();
+
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return back()
+                ->withErrors([
+                    'email' => 'Data pekerja tidak ditemukan.',
+                ])
+                ->onlyInput('email');
+        }
+
+        if (!$user->visitor->is_active) {
+            Auth::logout();
+
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return back()
+                ->withErrors([
+                    'email' => 'Data pengunjung Anda sudah dinonaktifkan. Silakan hubungi administrator.',
+                ])
+                ->onlyInput('email');
+        }
+
+        return redirect()->route('worker.dashboard');
+    }
+
+    // Role lain
+    Auth::logout();
+
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    return back()
+        ->withErrors([
+            'email' => 'Akun Anda tidak memiliki akses ke sistem.',
+        ])
+        ->onlyInput('email');
 })->name('login.process');
 
-// Pengunjung landing
+// Pendaftaran pengunjung
 Route::get('/visitor-register', function () {
     return view('pages.landing-page.visitor-register');
 })->name('visitors.register');
@@ -71,6 +148,250 @@ Route::post(
     '/visitors/check-in',
     [VisitorGuestController::class, 'checkIn']
 )->name('visitors.checkin');
+
+// User login
+Route::middleware('auth')->group(function () {
+
+    // Foto profil pekerja
+    Route::get('/worker/profile-photo', function () {
+        $user = Auth::user();
+
+        $user->loadMissing([
+            'role',
+            'visitor',
+        ]);
+
+        abort_unless(
+            $user->role
+            && $user->role->role_name === 'pekerja',
+            403
+        );
+
+        abort_unless(
+            $user->is_active
+            && $user->visitor
+            && $user->visitor->is_active,
+            403
+        );
+
+        $profilePhoto = $user->visitor->profile_photo;
+
+        abort_if(
+            !$profilePhoto,
+            404
+        );
+
+        abort_unless(
+            Storage::disk('local')->exists($profilePhoto),
+            404
+        );
+
+        return response()->file(
+            Storage::disk('local')->path($profilePhoto),
+            [
+                'Cache-Control' => 'private, max-age=3600',
+            ]
+        );
+    })->name('worker.profile-photo');
+
+    // Dashboard pekerja
+    Route::get('/worker', function () {
+        $user = Auth::user();
+
+        $user->loadMissing([
+            'role',
+            'visitor',
+        ]);
+
+        abort_unless(
+            $user->role
+            && $user->role->role_name === 'pekerja',
+            403
+        );
+
+        if (
+            !$user->is_active
+            || !$user->visitor
+            || !$user->visitor->is_active
+        ) {
+            Auth::logout();
+
+            request()->session()->invalidate();
+            request()->session()->regenerateToken();
+
+            return redirect()
+                ->route('landing')
+                ->withErrors([
+                    'email' => 'Akun Anda sudah tidak aktif.',
+                ]);
+        }
+
+        $books = Book::where('status', 'public')
+            ->with([
+                'authors',
+                'location',
+                'copies',
+            ])
+            ->orderBy('title')
+            ->get();
+
+        return view(
+            'pages.landing-page.worker-dashboard',
+            [
+                'user' => $user,
+                'books' => $books,
+            ]
+        );
+    })->name('worker.dashboard');
+
+    // Form ganti password
+    Route::get('/worker/change-password', function () {
+        $user = Auth::user();
+
+        $user->loadMissing([
+            'role',
+            'visitor',
+        ]);
+
+        abort_unless(
+            $user->role
+            && $user->role->role_name === 'pekerja',
+            403
+        );
+
+        if (
+            !$user->is_active
+            || !$user->visitor
+            || !$user->visitor->is_active
+        ) {
+            Auth::logout();
+
+            request()->session()->invalidate();
+            request()->session()->regenerateToken();
+
+            return redirect()
+                ->route('landing')
+                ->withErrors([
+                    'email' => 'Akun Anda sudah tidak aktif.',
+                ]);
+        }
+
+        return view(
+            'pages.landing-page.change-password',
+            [
+                'user' => $user,
+            ]
+        );
+    })->name('worker.password.edit');
+
+    // Simpan password
+    Route::post('/worker/change-password', function (Request $request) {
+        $user = Auth::user();
+
+        $user->loadMissing([
+            'role',
+            'visitor',
+        ]);
+
+        abort_unless(
+            $user->role
+            && $user->role->role_name === 'pekerja',
+            403
+        );
+
+        if (
+            !$user->is_active
+            || !$user->visitor
+            || !$user->visitor->is_active
+        ) {
+            Auth::logout();
+
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()
+                ->route('landing')
+                ->withErrors([
+                    'email' => 'Akun Anda sudah tidak aktif.',
+                ]);
+        }
+
+        $validated = $request->validate([
+            'current_password' => [
+                'required',
+                'string',
+            ],
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+            ],
+        ], [
+            'current_password.required' =>
+                'Password saat ini wajib diisi.',
+
+            'password.required' =>
+                'Password baru wajib diisi.',
+
+            'password.min' =>
+                'Password baru minimal 8 karakter.',
+
+            'password.confirmed' =>
+                'Konfirmasi password baru tidak sesuai.',
+        ]);
+
+        // Cek password saat ini
+        if (!Hash::check(
+            $validated['current_password'],
+            $user->password_hash
+        )) {
+            return back()
+                ->withErrors([
+                    'current_password' =>
+                        'Password saat ini tidak sesuai.',
+                ]);
+        }
+
+        // Password baru tidak boleh sama
+        if (Hash::check(
+            $validated['password'],
+            $user->password_hash
+        )) {
+            return back()
+                ->withErrors([
+                    'password' =>
+                        'Password baru tidak boleh sama dengan password saat ini.',
+                ]);
+        }
+
+        $user->password_hash = Hash::make(
+            $validated['password']
+        );
+
+        $user->must_change_password = false;
+        $user->save();
+
+        $request->session()->regenerate();
+
+        return redirect()
+            ->route('worker.dashboard')
+            ->with(
+                'success',
+                'Password berhasil diubah.'
+            );
+    })->name('worker.password.update');
+
+    // Logout
+    Route::post('/logout', function (Request $request) {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('landing');
+    })->name('logout');
+});
 
 // Admin
 Route::middleware('admin')->group(function () {
@@ -99,10 +420,13 @@ Route::middleware('admin')->group(function () {
             ])
             ->get();
 
-        return view('pages.tables.books.books-data', [
-            'title' => 'Data Buku',
-            'books' => $books,
-        ]);
+        return view(
+            'pages.tables.books.books-data',
+            [
+                'title' => 'Data Buku',
+                'books' => $books,
+            ]
+        );
     })->name('data-buku');
 
     Route::get(
@@ -227,7 +551,7 @@ Route::middleware('admin')->group(function () {
         [EquipmentController::class, 'destroy']
     )->name('equipment.destroy');
 
-    // Location
+    // Lokasi
     Route::get(
         '/locations',
         [LocationController::class, 'index']
@@ -324,14 +648,4 @@ Route::middleware('admin')->group(function () {
     )
         ->name('visitors.destroy')
         ->whereNumber('visitor');
-
-    // Logout
-    Route::post('/logout', function (Request $request) {
-        Auth::logout();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return redirect()->route('landing');
-    })->name('logout');
 });

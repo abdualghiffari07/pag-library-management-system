@@ -416,91 +416,97 @@
     }
 
     async function openCamera(kind) {
-        clearFeedback();
+    clearFeedback();
+
+    const captureInput =
+        $('pv-' + kind + '-capture');
+
+    const isSecure =
+        window.isSecureContext;
+
+    // Jika dibuka dari HP melalui HTTP/LAN,
+    // gunakan kamera native perangkat.
+    if (!isSecure) {
+        captureInput.click();
+        return;
+    }
+
+    // Fallback jika browser tidak mendukung getUserMedia.
+    if (
+        !navigator.mediaDevices
+        || !navigator.mediaDevices.getUserMedia
+    ) {
+        captureInput.click();
+        return;
+    }
+
+    closeCamera();
+
+    lastFocus =
+        document.activeElement;
+
+    const request =
+        ++cameraRequest;
+
+    try {
+        const nextStream =
+            await navigator.mediaDevices
+                .getUserMedia({
+                    video: {
+                        facingMode: 'user'
+                    },
+                    audio: false
+                });
 
         if (
-            !navigator.mediaDevices
-            || !navigator.mediaDevices.getUserMedia
+            request
+            !== cameraRequest
         ) {
-            feedback(
-                'Kamera web tidak tersedia. Gunakan tombol unggah foto. Pada perangkat lain, kamera memerlukan HTTPS atau localhost.',
-                true
-            );
-
-            $('pv-' + kind + '-capture')
-                .click();
+            nextStream
+                .getTracks()
+                .forEach(track => {
+                    track.stop();
+                });
 
             return;
         }
 
+        stream =
+            nextStream;
+
+        cameraTarget =
+            kind;
+
+        $('pv-camera-video')
+            .srcObject = stream;
+
+        $('pv-camera-title')
+            .textContent =
+                kind === 'profile'
+                    ? 'Ambil foto profil'
+                    : 'Ambil selfie kunjungan';
+
+        $('pv-camera')
+            .classList
+            .add('is-open');
+
+        $('pv-camera')
+            .setAttribute(
+                'aria-hidden',
+                'false'
+            );
+
+        $('pv-camera-cancel')
+            .focus();
+
+    } catch (error) {
         closeCamera();
 
-        lastFocus =
-            document.activeElement;
-
-        const request =
-            ++cameraRequest;
-
-        try {
-            const nextStream =
-                await navigator.mediaDevices
-                    .getUserMedia({
-                        video: {
-                            facingMode: 'user'
-                        },
-                        audio: false
-                    });
-
-            if (
-                request
-                !== cameraRequest
-            ) {
-                nextStream
-                    .getTracks()
-                    .forEach(track => {
-                        track.stop();
-                    });
-
-                return;
-            }
-
-            stream =
-                nextStream;
-
-            cameraTarget =
-                kind;
-
-            $('pv-camera-video')
-                .srcObject = stream;
-
-            $('pv-camera-title')
-                .textContent =
-                    kind === 'profile'
-                        ? 'Ambil foto profil'
-                        : 'Ambil selfie kunjungan';
-
-            $('pv-camera')
-                .classList
-                .add('is-open');
-
-            $('pv-camera')
-                .setAttribute(
-                    'aria-hidden',
-                    'false'
-                );
-
-            $('pv-camera-cancel')
-                .focus();
-
-        } catch (error) {
-            closeCamera();
-
-            feedback(
-                'Kamera tidak dapat dibuka. Periksa izin kamera atau gunakan unggah foto.',
-                true
-            );
-        }
+        // Jika kamera web ditolak,
+        // langsung gunakan kamera native HP.
+        captureInput.click();
     }
+}
 
     function capturePhoto() {
         const video =

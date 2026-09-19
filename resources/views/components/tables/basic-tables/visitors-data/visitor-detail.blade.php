@@ -87,9 +87,11 @@
 
         <template x-if="detail">
             <div class="p-5 sm:p-6">
+
                 {{-- Profil --}}
                 <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.02]">
                     <div class="grid gap-5 p-5 sm:p-6 md:grid-cols-[160px_minmax(0,1fr)]">
+
                         {{-- Foto --}}
                         <div>
                             <button
@@ -149,6 +151,7 @@
                                 </div>
 
                                 <div class="flex flex-wrap items-center gap-2">
+
                                     {{-- Kategori --}}
                                     <span
                                         class="inline-flex w-fit rounded-full px-3 py-1 text-xs font-medium"
@@ -175,6 +178,8 @@
 
                             {{-- Biodata --}}
                             <div class="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
+
+                                {{-- Identitas --}}
                                 <div class="rounded-xl bg-gray-50 p-3 dark:bg-white/[0.03]">
                                     <p
                                         class="text-[11px] text-gray-400"
@@ -187,6 +192,7 @@
                                     ></p>
                                 </div>
 
+                                {{-- No HP --}}
                                 <div class="rounded-xl bg-gray-50 p-3 dark:bg-white/[0.03]">
                                     <p class="text-[11px] text-gray-400">
                                         No HP
@@ -198,6 +204,19 @@
                                     ></p>
                                 </div>
 
+                                {{-- Email --}}
+                                <div class="rounded-xl bg-gray-50 p-3 dark:bg-white/[0.03]">
+                                    <p class="text-[11px] text-gray-400">
+                                        Email
+                                    </p>
+
+                                    <p
+                                        class="mt-1 break-all text-sm font-medium text-gray-700 dark:text-gray-300"
+                                        x-text="detail.email || '-'"
+                                    ></p>
+                                </div>
+
+                                {{-- Waktu Pendaftaran --}}
                                 <div class="rounded-xl bg-gray-50 p-3 dark:bg-white/[0.03]">
                                     <p class="text-[11px] text-gray-400">
                                         Waktu Pendaftaran
@@ -209,7 +228,8 @@
                                     ></p>
                                 </div>
 
-                                <div class="rounded-xl bg-gray-50 p-3 dark:bg-white/[0.03]">
+                                {{-- Kunjungan Terakhir --}}
+                                <div class="rounded-xl bg-gray-50 p-3 dark:bg-white/[0.03] sm:col-span-2">
                                     <p class="text-[11px] text-gray-400">
                                         Kunjungan Terakhir
                                     </p>
@@ -250,40 +270,35 @@
                                         ></p>
                                     </div>
 
-                                    <form
-                                        :action="detail.status_url"
-                                        method="POST"
-                                        x-on:submit="
-                                            if (
-                                                !confirm(
-                                                    detail.is_active
-                                                        ? 'Apakah Anda yakin ingin menonaktifkan pengunjung ini?'
-                                                        : 'Apakah Anda yakin ingin mengaktifkan kembali pengunjung ini?'
-                                                )
-                                            ) {
-                                                $event.preventDefault();
-                                            }
-                                        "
-                                        class="shrink-0"
-                                    >
-                                        @csrf
-                                        @method('PATCH')
-
+                                    <div class="shrink-0">
                                         <button
-                                            type="submit"
-                                            class="inline-flex min-w-[170px] items-center justify-center rounded-lg px-4 py-2.5 text-xs font-medium transition"
+                                            type="button"
+                                            x-on:click="toggleVisitorStatus()"
+                                            :disabled="statusLoading"
+                                            class="inline-flex min-w-[170px] items-center justify-center rounded-lg px-4 py-2.5 text-xs font-medium transition disabled:cursor-not-allowed disabled:opacity-50"
                                             :class="
                                                 detail.is_active
                                                     ? 'border border-warning-200 bg-warning-50 text-warning-600 hover:bg-warning-100 dark:border-warning-900/50 dark:bg-warning-900/20 dark:text-warning-400'
                                                     : 'border border-success-200 bg-success-50 text-success-600 hover:bg-success-100 dark:border-success-900/50 dark:bg-success-900/20 dark:text-success-400'
                                             "
-                                            x-text="
-                                                detail.is_active
-                                                    ? 'Nonaktifkan Pengunjung'
-                                                    : 'Aktifkan Pengunjung'
-                                            "
-                                        ></button>
-                                    </form>
+                                        >
+                                            <span
+                                                x-show="!statusLoading"
+                                                x-text="
+                                                    detail.is_active
+                                                        ? 'Nonaktifkan Pengunjung'
+                                                        : 'Aktifkan Pengunjung'
+                                                "
+                                            ></span>
+
+                                            <span
+                                                x-show="statusLoading"
+                                                x-cloak
+                                            >
+                                                Memproses...
+                                            </span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -292,6 +307,7 @@
 
                 {{-- Statistik --}}
                 <div class="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
+
                     <div class="rounded-xl border border-gray-200 p-4 dark:border-gray-800">
                         <p class="text-xs text-gray-500 dark:text-gray-400">
                             Total Kunjungan
@@ -344,8 +360,10 @@
 
                 {{-- Riwayat --}}
                 <div class="mt-6 overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800">
+
                     {{-- Tabs --}}
                     <div class="flex overflow-x-auto border-b border-gray-200 bg-gray-50 px-4 pt-2 dark:border-gray-800 dark:bg-white/[0.02]">
+
                         <button
                             type="button"
                             x-on:click="activeHistoryTab = 'visits'"
@@ -421,6 +439,7 @@
                                 :key="entry.id"
                             >
                                 <div class="flex gap-4 rounded-xl border border-gray-100 p-3 transition hover:border-gray-200 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-white/[0.02]">
+
                                     {{-- Selfie --}}
                                     <button
                                         type="button"

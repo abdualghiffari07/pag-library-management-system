@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -19,12 +20,14 @@ class User extends Authenticatable
 
     protected $fillable = [
         'role_id',
+        'visitor_id',
         'nopek',
         'name',
         'email',
         'password_hash',
         'function_name',
         'is_active',
+        'must_change_password',
     ];
 
     protected $hidden = [
@@ -32,19 +35,40 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    /**
-     * Password authentication menggunakan password_hash
-     */
-    public function getAuthPassword()
+    protected $casts = [
+        'is_active' => 'boolean',
+        'must_change_password' => 'boolean',
+    ];
+
+    // Kolom password autentikasi
+    public function getAuthPasswordName(): string
+    {
+        return 'password_hash';
+    }
+
+    // Password autentikasi
+    public function getAuthPassword(): string
     {
         return $this->password_hash;
     }
 
-    /**
-     * Relasi User -> Role
-     */
-    public function role()
+    // Role
+    public function role(): BelongsTo
     {
-        return $this->belongsTo(Role::class, 'role_id', 'role_id');
+        return $this->belongsTo(
+            Role::class,
+            'role_id',
+            'role_id'
+        );
+    }
+
+    // Data pengunjung
+    public function visitor(): BelongsTo
+    {
+        return $this->belongsTo(
+            Visitor::class,
+            'visitor_id',
+            'visitor_id'
+        );
     }
 }

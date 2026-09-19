@@ -16,7 +16,7 @@
         'lainnya' => 'Lainnya',
     ];
 
-    // Data visitor yang baru terdaftar
+    // Data pengunjung baru
     $registered = session(
         'registered_visitor',
         session('visitor_registered', [])
@@ -57,6 +57,7 @@
         && !$errors->register->has('visitor_category')
         && !$errors->register->has('visitor_name')
         && !$errors->register->has('phone_number')
+        && !$errors->register->has('email')
         && !$errors->register->has('employee_number')
             ? 2
             : 1;
@@ -82,10 +83,10 @@
     @vite([
         'resources/css/app.css',
         'resources/css/background-slider.css',
-        'resources/css/visitor-register.css',
         'resources/css/visitor-welcome.css',
         'resources/js/app.js',
         'resources/js/background-slider.js',
+        'resources/js/visitor-qr.js',
         'resources/js/visitor-register.js'
     ])
 </head>
@@ -161,6 +162,65 @@
                             Daftarkan diri sekali, lalu catat kunjungan Anda dengan cepat.
                         </p>
                     </div>
+
+                    {{-- QR Pengunjung --}}
+                    <div
+                        class="mx-auto mb-6 w-full max-w-3xl overflow-hidden rounded-2xl border border-white/20 bg-white/95 shadow-xl backdrop-blur-md"
+                    >
+                        <div
+                            class="flex flex-col items-center gap-5 p-5 sm:flex-row sm:items-center sm:p-6"
+                        >
+                            <div
+                                class="flex shrink-0 items-center justify-center rounded-2xl border border-gray-200 bg-white p-3 shadow-sm"
+                            >
+                                <canvas
+                                    id="visitor-qr-code"
+                                    data-url="{{ request()->getSchemeAndHttpHost() . route('visitors.register', [], false) }}"
+                                    data-size="210"
+                                    class="h-auto max-w-full"
+                                    aria-label="QR Code halaman pengunjung PAG Library"
+                                ></canvas>
+                            </div>
+
+                            <div class="min-w-0 flex-1 text-center sm:text-left">
+                                <span
+                                    class="inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700"
+                                >
+                                    AKSES CEPAT
+                                </span>
+
+                                <h2
+                                    class="mt-3 text-lg font-bold text-gray-800 sm:text-xl"
+                                >
+                                    Scan QR Pengunjung
+                                </h2>
+
+                                <p
+                                    class="mt-2 text-sm leading-6 text-gray-500"
+                                >
+                                    Scan QR Code menggunakan kamera HP untuk membuka halaman
+                                    pendaftaran dan masuk pengunjung PAG Library.
+                                </p>
+
+                                <div
+                                    class="mt-4 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2"
+                                >
+                                    <p
+                                        class="break-all text-xs text-gray-500"
+                                    >
+                                        {{ route('visitors.register') }}
+                                    </p>
+                                </div>
+
+                                <p
+                                    id="visitor-qr-error"
+                                    class="mt-3 hidden text-xs font-medium text-red-500"
+                                >
+                                    QR Code gagal dibuat. Silakan muat ulang halaman.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 @endif
 
                 {{-- Success --}}
@@ -169,36 +229,36 @@
                     <div class="pv-card pv-success-card">
                         <div class="pv-success-page">
 
-        <div
-            class="pv-success-icon"
-            role="img"
-            aria-label="Kunjungan berhasil"
-        >
-            <svg
-                viewBox="0 0 52 52"
-                fill="none"
-                aria-hidden="true"
-            >
-                <circle
-                    class="pv-check-circle"
-                    cx="26"
-                    cy="26"
-                    r="24"
-                    stroke="currentColor"
-                    stroke-width="3"
-                    stroke-linecap="round"
-                />
+                            <div
+                                class="pv-success-icon"
+                                role="img"
+                                aria-label="Kunjungan berhasil"
+                            >
+                                <svg
+                                    viewBox="0 0 52 52"
+                                    fill="none"
+                                    aria-hidden="true"
+                                >
+                                    <circle
+                                        class="pv-check-circle"
+                                        cx="26"
+                                        cy="26"
+                                        r="24"
+                                        stroke="currentColor"
+                                        stroke-width="3"
+                                        stroke-linecap="round"
+                                    />
 
-                <path
-                    class="pv-check-mark"
-                    d="M15 27 L22 34 L37 19"
-                    stroke="currentColor"
-                    stroke-width="3"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                />
-            </svg>
-        </div>
+                                    <path
+                                        class="pv-check-mark"
+                                        d="M15 27 L22 34 L37 19"
+                                        stroke="currentColor"
+                                        stroke-width="3"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    />
+                                </svg>
+                            </div>
 
                             <span class="pv-success-badge">
                                 KUNJUNGAN BERHASIL
@@ -423,7 +483,7 @@
                                         value="register"
                                     >
 
-                                    {{-- Mobile step --}}
+                                    {{-- Mobile Step --}}
                                     <div
                                         class="pv-steps"
                                         aria-label="Langkah pendaftaran"
@@ -584,6 +644,41 @@
                                                     </p>
 
                                                     @error('employee_number', 'register')
+                                                        <p class="pv-error">
+                                                            {{ $message }}
+                                                        </p>
+                                                    @enderror
+                                                </div>
+
+                                                {{-- Email --}}
+                                                <div class="pv-field pv-span-2">
+                                                    <label
+                                                        class="pv-label"
+                                                        for="pv-r-email"
+                                                    >
+                                                        Email
+                                                        <span class="pv-required">*</span>
+                                                    </label>
+
+                                                    <input
+                                                        class="pv-control"
+                                                        id="pv-r-email"
+                                                        name="email"
+                                                        type="email"
+                                                        value="{{ old('email') }}"
+                                                        maxlength="255"
+                                                        autocomplete="email"
+                                                        inputmode="email"
+                                                        placeholder="nama@email.com"
+                                                        required
+                                                    >
+
+                                                    <p class="pv-help">
+                                                        Gunakan email aktif. Untuk pekerja,
+                                                        email ini nantinya digunakan sebagai akun login.
+                                                    </p>
+
+                                                    @error('email', 'register')
                                                         <p class="pv-error">
                                                             {{ $message }}
                                                         </p>
@@ -843,8 +938,8 @@
                                                     Buka pendaftaran baru
                                                 </a>.
 
-                                                Nama, No HP, dan foto profil tidak perlu
-                                                diisi kembali setiap kunjungan.
+                                                Nama, No HP, email, dan foto profil
+                                                tidak perlu diisi kembali setiap kunjungan.
                                             </div>
                                         </div>
 
@@ -1025,4 +1120,5 @@
     @endif
 
 </body>
+
 </html>

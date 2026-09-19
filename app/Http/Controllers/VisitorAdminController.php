@@ -70,6 +70,11 @@ class VisitorAdminController extends Controller
                                     'visitor_category',
                                     'like',
                                     $keyword
+                                )
+                                ->orWhere(
+                                    'email',
+                                    'like',
+                                    $keyword
                                 );
                         }
                     );
@@ -364,6 +369,8 @@ class VisitorAdminController extends Controller
                 'phone' => $visitor->phone_number,
 
                 'is_active' => (bool) $visitor->is_active,
+
+                'email' => $visitor->email,
 
                 'registered_at' => $this->formatDateTime(
                     $visitor->created_at
