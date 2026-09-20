@@ -1,408 +1,585 @@
 /* =========================================================
    SCROLL POSITION
-   ========================================================= */
+========================================================= */
 
 if ('scrollRestoration' in history) {
     history.scrollRestoration = 'manual';
 }
 
-
-/*
- * Simpan posisi scroll sebelum form pengunjung dikirim.
- */
-document.addEventListener('DOMContentLoaded', () => {
-
-    const visitorForm =
-        document.querySelector('#visitor form');
-
-
-    if (visitorForm) {
-
-        visitorForm.addEventListener('submit', () => {
-
-            sessionStorage.setItem(
-                'visitorScrollPosition',
-                window.scrollY
-            );
-
-        });
-
-    }
-
-});
-
-
-/*
- * Setelah halaman selesai dimuat kembali,
- * kembalikan posisi scroll sebelumnya.
- */
 window.addEventListener('load', () => {
-
     const savedScrollPosition =
-        sessionStorage.getItem('visitorScrollPosition');
-
-
-    if (savedScrollPosition !== null) {
-
-        window.scrollTo(
-            0,
-            parseInt(savedScrollPosition, 10)
+        sessionStorage.getItem(
+            'visitorScrollPosition'
         );
 
+    if (savedScrollPosition !== null) {
+        window.scrollTo(
+            0,
+            parseInt(
+                savedScrollPosition,
+                10
+            )
+        );
 
         sessionStorage.removeItem(
             'visitorScrollPosition'
         );
 
-    } else {
-
-        // Hanya kembali ke atas jika tidak ada
-        // posisi scroll yang perlu dipulihkan.
-        window.scrollTo(0, 0);
-
+        return;
     }
 
+    window.scrollTo(0, 0);
 });
 
+
 /* =========================================================
-   HERO IMAGE SLIDER
-   ========================================================= */
+   HERO SLIDER
+========================================================= */
 
 const heroSlides =
-    document.querySelectorAll('.hero-slide');
-
-const sliderIndicators =
-    document.querySelectorAll('.slider-indicator');
-
-let currentSlide = 0;
-
-
-/* =========================================================
-   SHOW SLIDE
-   ========================================================= */
-
-function showSlide(index) {
-
-    heroSlides.forEach((slide, i) => {
-
-        slide.classList.toggle(
-            'active',
-            i === index
-        );
-
-    });
-
-
-    sliderIndicators.forEach((indicator, i) => {
-
-        indicator.classList.toggle(
-            'active',
-            i === index
-        );
-
-    });
-
-}
-
-
-/* =========================================================
-   NEXT SLIDE
-   ========================================================= */
-
-function nextSlide() {
-
-    currentSlide =
-        (currentSlide + 1) % heroSlides.length;
-
-    showSlide(currentSlide);
-
-}
-
-
-/* =========================================================
-   AUTO SLIDER
-   ========================================================= */
-
-if (heroSlides.length > 0) {
-
-    // Pastikan slide pertama tampil
-    showSlide(0);
-
-
-    setInterval(
-        nextSlide,
-        4000
+    document.querySelectorAll(
+        '.hero-slide'
     );
 
-}
+const sliderIndicators =
+    document.querySelectorAll(
+        '.slider-indicator'
+    );
+
+let currentSlide = 0;
+let sliderInterval = null;
 
 
-/* =========================================================
-   SLIDER INDICATOR CLICK
-   ========================================================= */
+function showSlide(index) {
+    if (!heroSlides.length) {
+        return;
+    }
 
-sliderIndicators.forEach((indicator, index) => {
-
-    indicator.addEventListener(
-        'click',
-        () => {
-
-            currentSlide = index;
-
-            showSlide(currentSlide);
-
+    heroSlides.forEach(
+        (slide, i) => {
+            slide.classList.toggle(
+                'active',
+                i === index
+            );
         }
     );
 
-});
+    sliderIndicators.forEach(
+        (indicator, i) => {
+            indicator.classList.toggle(
+                'active',
+                i === index
+            );
+        }
+    );
+}
+
+
+function nextSlide() {
+    if (!heroSlides.length) {
+        return;
+    }
+
+    currentSlide =
+        (currentSlide + 1)
+        % heroSlides.length;
+
+    showSlide(currentSlide);
+}
+
+
+if (heroSlides.length > 0) {
+    showSlide(0);
+
+    sliderInterval =
+        window.setInterval(
+            nextSlide,
+            4000
+        );
+}
+
+
+sliderIndicators.forEach(
+    (indicator, index) => {
+        indicator.addEventListener(
+            'click',
+            () => {
+                currentSlide = index;
+
+                showSlide(
+                    currentSlide
+                );
+
+                if (sliderInterval) {
+                    window.clearInterval(
+                        sliderInterval
+                    );
+
+                    sliderInterval =
+                        window.setInterval(
+                            nextSlide,
+                            4000
+                        );
+                }
+            }
+        );
+    }
+);
+
 
 /* =========================================================
    MOBILE MENU
-   ========================================================= */
+========================================================= */
 
 const mobileMenuButton =
-    document.getElementById('mobile-menu-button');
+    document.getElementById(
+        'mobile-menu-button'
+    );
 
 const mobileMenu =
-    document.getElementById('mobile-menu');
+    document.getElementById(
+        'mobile-menu'
+    );
 
 const mobileMenuLinks =
-    document.querySelectorAll('.mobile-menu-link');
+    document.querySelectorAll(
+        '.mobile-menu-link'
+    );
 
-
-/* =========================================================
-   TOGGLE MOBILE MENU
-   ========================================================= */
 
 function toggleMobileMenu() {
+    if (
+        !mobileMenu
+        || !mobileMenuButton
+    ) {
+        return;
+    }
 
-    const isCurrentlyOpen =
-        !mobileMenu.classList.contains('hidden');
+    const isOpen =
+        !mobileMenu.classList
+            .contains('hidden');
 
-    mobileMenu.classList.toggle('hidden');
+    mobileMenu.classList.toggle(
+        'hidden'
+    );
 
     mobileMenuButton.setAttribute(
         'aria-expanded',
-        String(!isCurrentlyOpen)
+        String(!isOpen)
     );
-
 }
 
-
-/* =========================================================
-   CLOSE MOBILE MENU
-   ========================================================= */
 
 function closeMobileMenu() {
+    if (
+        !mobileMenu
+        || !mobileMenuButton
+    ) {
+        return;
+    }
 
-    mobileMenu.classList.add('hidden');
+    mobileMenu.classList.add(
+        'hidden'
+    );
 
-    mobileMenuButton.setAttribute('aria-expanded', 'false');
-
+    mobileMenuButton.setAttribute(
+        'aria-expanded',
+        'false'
+    );
 }
 
 
-if (mobileMenuButton && mobileMenu) {
-
+if (
+    mobileMenuButton
+    && mobileMenu
+) {
     mobileMenuButton.addEventListener(
         'click',
         toggleMobileMenu
     );
 
-    // Tutup menu otomatis saat salah satu link diklik
-    mobileMenuLinks.forEach((link) => {
-
-        link.addEventListener('click', closeMobileMenu);
-
-    });
-
+    mobileMenuLinks.forEach(
+        link => {
+            link.addEventListener(
+                'click',
+                closeMobileMenu
+            );
+        }
+    );
 }
+
 
 /* =========================================================
    LOGIN MODAL
-   ========================================================= */
+========================================================= */
 
 const loginTriggers =
-    document.querySelectorAll('.login-trigger');
+    document.querySelectorAll(
+        '.login-trigger'
+    );
 
 const loginModal =
-    document.getElementById('login-modal');
+    document.getElementById(
+        'login-modal'
+    );
 
 const loginPanel =
-    document.getElementById('login-panel');
+    document.getElementById(
+        'login-panel'
+    );
 
 const closeLogin =
-    document.getElementById('close-login');
+    document.getElementById(
+        'close-login'
+    );
 
-
-/* =========================================================
-   OPEN LOGIN
-   ========================================================= */
 
 function openLogin() {
-
-    // Tutup mobile menu jika sedang terbuka
-    if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
-
-        closeMobileMenu();
-
+    if (
+        !loginModal
+        || !loginPanel
+    ) {
+        return;
     }
 
-    // Tampilkan modal
-    loginModal.style.display = 'flex';
+    if (
+        mobileMenu
+        && !mobileMenu.classList
+            .contains('hidden')
+    ) {
+        closeMobileMenu();
+    }
 
-    // Pastikan panel berada di bawah
-    loginPanel.classList.remove('login-panel-show');
+    loginModal.style.display =
+        'flex';
 
-    /*
-     * Tunggu browser melakukan render,
-     * kemudian jalankan animasi.
-     */
-    requestAnimationFrame(() => {
-
-        requestAnimationFrame(() => {
-
-            loginPanel.classList.add(
-                'login-panel-show'
-            );
-
-        });
-
-    });
-
-}
-
-
-/* =========================================================
-   CLOSE LOGIN
-   ========================================================= */
-
-function closeLoginModal() {
-
-    // Hapus class animasi
     loginPanel.classList.remove(
         'login-panel-show'
     );
 
-    /*
-     * Tunggu animasi selesai
-     * sebelum menyembunyikan modal.
-     */
-    setTimeout(() => {
-
-        loginModal.style.display = 'none';
-
-    }, 700);
-
+    requestAnimationFrame(
+        () => {
+            requestAnimationFrame(
+                () => {
+                    loginPanel.classList.add(
+                        'login-panel-show'
+                    );
+                }
+            );
+        }
+    );
 }
 
 
-/* =========================================================
-   LOGIN BUTTONS
-   ========================================================= */
+function closeLoginModal() {
+    if (
+        !loginModal
+        || !loginPanel
+    ) {
+        return;
+    }
 
-loginTriggers.forEach((button) => {
-
-    button.addEventListener(
-        'click',
-        openLogin
+    loginPanel.classList.remove(
+        'login-panel-show'
     );
 
-});
+    setTimeout(
+        () => {
+            loginModal.style.display =
+                'none';
+        },
+        700
+    );
+}
 
 
-/* =========================================================
-   CLOSE BUTTON
-   ========================================================= */
+loginTriggers.forEach(
+    button => {
+        button.addEventListener(
+            'click',
+            openLogin
+        );
+    }
+);
+
 
 if (closeLogin) {
-
     closeLogin.addEventListener(
         'click',
         closeLoginModal
     );
-
 }
+
+
+if (loginModal) {
+    loginModal.addEventListener(
+        'click',
+        event => {
+            if (
+                event.target
+                === loginModal
+            ) {
+                closeLoginModal();
+            }
+        }
+    );
+}
+
+
+document.addEventListener(
+    'keydown',
+    event => {
+        if (
+            event.key === 'Escape'
+            && loginModal
+            && loginModal.style.display
+                === 'flex'
+        ) {
+            closeLoginModal();
+        }
+    }
+);
 
 
 /* =========================================================
-   CLICK OUTSIDE LOGIN PANEL
-   ========================================================= */
+   COUNTER
+========================================================= */
 
-if (loginModal) {
+document.addEventListener(
+    'DOMContentLoaded',
+    () => {
+        const counters =
+            document.querySelectorAll(
+                '[data-counter]'
+            );
 
-    loginModal.addEventListener(
-        'click',
-        (event) => {
-
-            if (event.target === loginModal) {
-
-                closeLoginModal();
-
-            }
-
-        }
-    );
-
-}
-// Counter Animation
-document.addEventListener('DOMContentLoaded', () => {
-    const counters = document.querySelectorAll('[data-counter]');
-
-    if (!counters.length) {
-        return;
-    }
-
-    const animateCounter = (counter) => {
-        const target = Number(counter.dataset.counter);
-
-        if (isNaN(target)) {
+        if (!counters.length) {
             return;
         }
 
-        const duration = 1800;
-        const startTime = performance.now();
+        const animateCounter =
+            counter => {
+                const target =
+                    Number(
+                        counter.dataset
+                            .counter
+                    );
 
-        const updateCounter = (currentTime) => {
-            const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-
-            // Ease out
-            const easedProgress = 1 - Math.pow(1 - progress, 3);
-
-            const currentValue = Math.floor(target * easedProgress);
-
-            counter.textContent = currentValue.toLocaleString('id-ID');
-
-            if (progress < 1) {
-                requestAnimationFrame(updateCounter);
-            } else {
-                counter.textContent = target.toLocaleString('id-ID');
-            }
-        };
-
-        requestAnimationFrame(updateCounter);
-    };
-
-    const counterObserver = new IntersectionObserver(
-        (entries, observer) => {
-            entries.forEach((entry) => {
-                if (!entry.isIntersecting) {
+                if (
+                    Number.isNaN(target)
+                ) {
                     return;
                 }
 
-                animateCounter(entry.target);
+                const duration = 1800;
 
-                observer.unobserve(entry.target);
-            });
-        },
-        {
-            threshold: 0.5
+                const startTime =
+                    performance.now();
+
+                const updateCounter =
+                    currentTime => {
+                        const elapsed =
+                            currentTime
+                            - startTime;
+
+                        const progress =
+                            Math.min(
+                                elapsed
+                                / duration,
+                                1
+                            );
+
+                        const easedProgress =
+                            1
+                            - Math.pow(
+                                1 - progress,
+                                3
+                            );
+
+                        const currentValue =
+                            Math.floor(
+                                target
+                                * easedProgress
+                            );
+
+                        counter.textContent =
+                            currentValue
+                                .toLocaleString(
+                                    'id-ID'
+                                );
+
+                        if (
+                            progress < 1
+                        ) {
+                            requestAnimationFrame(
+                                updateCounter
+                            );
+                        } else {
+                            counter.textContent =
+                                target
+                                    .toLocaleString(
+                                        'id-ID'
+                                    );
+                        }
+                    };
+
+                requestAnimationFrame(
+                    updateCounter
+                );
+            };
+
+        const counterObserver =
+            new IntersectionObserver(
+                (
+                    entries,
+                    observer
+                ) => {
+                    entries.forEach(
+                        entry => {
+                            if (
+                                !entry
+                                    .isIntersecting
+                            ) {
+                                return;
+                            }
+
+                            animateCounter(
+                                entry.target
+                            );
+
+                            observer.unobserve(
+                                entry.target
+                            );
+                        }
+                    );
+                },
+                {
+                    threshold: 0.5
+                }
+            );
+
+        counters.forEach(
+            counter => {
+                counterObserver.observe(
+                    counter
+                );
+            }
+        );
+    }
+);
+
+
+/* =========================================================
+   COPY VISITOR URL
+========================================================= */
+
+document.addEventListener(
+    'DOMContentLoaded',
+    () => {
+        const copyButton =
+            document.getElementById(
+                'copy-visitor-url'
+            );
+
+        const copyFeedback =
+            document.getElementById(
+                'copy-visitor-feedback'
+            );
+
+        if (!copyButton) {
+            return;
         }
-    );
 
-    counters.forEach((counter) => {
-        counterObserver.observe(counter);
-    });
-});
+        copyButton.addEventListener(
+            'click',
+            async () => {
+                const url =
+                    copyButton
+                        .dataset
+                        .url
+                        ?.trim();
 
+                if (!url) {
+                    return;
+                }
+
+                let copied = false;
+
+                try {
+                    if (
+                        navigator.clipboard
+                        && window
+                            .isSecureContext
+                    ) {
+                        await navigator
+                            .clipboard
+                            .writeText(url);
+
+                        copied = true;
+                    }
+                } catch (error) {
+                    copied = false;
+                }
+
+                if (!copied) {
+                    const textarea =
+                        document
+                            .createElement(
+                                'textarea'
+                            );
+
+                    textarea.value = url;
+
+                    textarea.setAttribute(
+                        'readonly',
+                        ''
+                    );
+
+                    textarea.style.position =
+                        'fixed';
+
+                    textarea.style.opacity =
+                        '0';
+
+                    document.body.appendChild(
+                        textarea
+                    );
+
+                    textarea.select();
+
+                    try {
+                        copied =
+                            document
+                                .execCommand(
+                                    'copy'
+                                );
+                    } catch (error) {
+                        copied = false;
+                    }
+
+                    textarea.remove();
+                }
+
+                if (
+                    copied
+                    && copyFeedback
+                ) {
+                    copyFeedback
+                        .classList
+                        .remove('hidden');
+
+                    setTimeout(
+                        () => {
+                            copyFeedback
+                                .classList
+                                .add(
+                                    'hidden'
+                                );
+                        },
+                        2000
+                    );
+                }
+            }
+        );
+    }
+);

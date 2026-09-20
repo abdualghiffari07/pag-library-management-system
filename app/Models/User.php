@@ -27,6 +27,7 @@ class User extends Authenticatable
         'password_hash',
         'function_name',
         'is_active',
+        'profile_photo',
         'must_change_password',
     ];
 

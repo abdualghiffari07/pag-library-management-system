@@ -27,16 +27,39 @@
         : [];
 
     // Tab awal
-    $initialTab = session(
-        'active_form',
-        $errors->register->any() ? 'register' : 'checkin'
-    );
+    $requestedTab = request()->query('tab');
+
+    $initialTab = session('active_form');
+
+    if (!$initialTab) {
+        if ($errors->register->any()) {
+            $initialTab = 'register';
+        } elseif ($errors->checkin->any()) {
+            $initialTab = 'checkin';
+        } elseif (
+            in_array(
+                $requestedTab,
+                ['register', 'checkin'],
+                true
+            )
+        ) {
+            $initialTab = $requestedTab;
+        } else {
+            $initialTab = 'checkin';
+        }
+    }
 
     if ($initialTab === 'visit') {
         $initialTab = 'checkin';
     }
 
-    if (!in_array($initialTab, ['register', 'checkin'], true)) {
+    if (
+        !in_array(
+            $initialTab,
+            ['register', 'checkin'],
+            true
+        )
+    ) {
         $initialTab = 'checkin';
     }
 
@@ -68,6 +91,10 @@
     $hasCheckinReceipt =
         is_array($checkinReceipt)
         && !empty($checkinReceipt['name']);
+
+    // URL QR pengunjung
+    $visitorUrl = request()->getSchemeAndHttpHost()
+        . route('visitors.register', [], false);
 @endphp
 
 <!DOCTYPE html>
@@ -175,7 +202,7 @@
                             >
                                 <canvas
                                     id="visitor-qr-code"
-                                    data-url="{{ request()->getSchemeAndHttpHost() . route('visitors.register', [], false) }}"
+                                    data-url="{{ $visitorUrl }}"
                                     data-size="210"
                                     class="h-auto max-w-full"
                                     aria-label="QR Code halaman pengunjung PAG Library"
@@ -208,7 +235,7 @@
                                     <p
                                         class="break-all text-xs text-gray-500"
                                     >
-                                        {{ route('visitors.register') }}
+                                        {{ $visitorUrl }}
                                     </p>
                                 </div>
 

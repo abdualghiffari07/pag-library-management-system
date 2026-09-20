@@ -1,14 +1,26 @@
 @php
     $user = auth()->user();
+
+    $user?->loadMissing('role');
+
+    $roleName = $user?->role?->role_name
+        ? ucfirst($user->role->role_name)
+        : 'Administrator';
+
+    $initial = strtoupper(
+        substr($user?->name ?? 'A', 0, 1)
+    );
 @endphp
 
 <div
     class="relative"
     x-data="{
         dropdownOpen: false,
+
         toggleDropdown() {
             this.dropdownOpen = !this.dropdownOpen;
         },
+
         closeDropdown() {
             this.dropdownOpen = false;
         }
@@ -16,25 +28,48 @@
     @click.away="closeDropdown()"
 >
 
-    <!-- User Button -->
+    {{-- User Button --}}
     <button
         class="flex items-center text-gray-700 dark:text-gray-400"
         @click.prevent="toggleDropdown()"
         type="button"
     >
-        <span class="mr-3 overflow-hidden rounded-full h-11 w-11">
-            <img
-                src="/images/user/profile.png"
-                alt="Administrator"
-            />
+
+        {{-- Avatar --}}
+        <span
+            class="mr-3 h-11 w-11 shrink-0 overflow-hidden rounded-full border border-gray-200 bg-brand-500 dark:border-gray-700"
+        >
+
+            @if ($user?->profile_photo)
+
+                <img
+                    src="{{ route('profile.photo') }}?v={{ $user->updated_at?->timestamp }}"
+                    alt="Foto {{ $user->name }}"
+                    class="h-full w-full object-cover"
+                >
+
+            @else
+
+                <span
+                    class="flex h-full w-full items-center justify-center text-sm font-semibold uppercase text-white"
+                >
+                    {{ $initial }}
+                </span>
+
+            @endif
+
         </span>
 
-        <span class="block mr-1 font-medium text-theme-sm">
-            {{ $user->name }}
+        {{-- Name --}}
+        <span
+            class="mr-1 hidden max-w-[150px] truncate font-medium text-theme-sm sm:block"
+        >
+            {{ $user?->name ?? 'Administrator' }}
         </span>
 
+        {{-- Dropdown Arrow --}}
         <svg
-            class="w-5 h-5 transition-transform duration-200"
+            class="h-5 w-5 transition-transform duration-200"
             :class="{ 'rotate-180': dropdownOpen }"
             fill="none"
             stroke="currentColor"
@@ -47,47 +82,101 @@
                 d="M19 9l-7 7-7-7"
             />
         </svg>
+
     </button>
 
-    <!-- Dropdown -->
+    {{-- Dropdown --}}
     <div
         x-show="dropdownOpen"
+        x-cloak
         x-transition:enter="transition ease-out duration-100"
         x-transition:enter-start="transform opacity-0 scale-95"
         x-transition:enter-end="transform opacity-100 scale-100"
         x-transition:leave="transition ease-in duration-75"
         x-transition:leave-start="transform opacity-100 scale-100"
         x-transition:leave-end="transform opacity-0 scale-95"
-        class="absolute right-0 mt-[17px] flex w-[260px] flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark z-50"
-        style="display: none;"
+        class="absolute right-0 z-50 mt-[17px] flex w-[280px] flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
     >
 
-        <!-- User Info -->
-        <div>
-            <span class="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
-                {{ $user->name }}
-            </span>
+        {{-- User Info --}}
+        <div
+            class="flex items-center gap-3 border-b border-gray-100 px-2 pb-3 dark:border-gray-800"
+        >
 
-            <span class="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
-                Administrator
-            </span>
+            {{-- Dropdown Avatar --}}
+            <div
+                class="h-11 w-11 shrink-0 overflow-hidden rounded-full border border-gray-200 bg-brand-500 dark:border-gray-700"
+            >
+
+                @if ($user?->profile_photo)
+
+                    <img
+                        src="{{ route('profile.photo') }}?v={{ $user->updated_at?->timestamp }}"
+                        alt="Foto {{ $user->name }}"
+                        class="h-full w-full object-cover"
+                    >
+
+                @else
+
+                    <div
+                        class="flex h-full w-full items-center justify-center text-sm font-semibold uppercase text-white"
+                    >
+                        {{ $initial }}
+                    </div>
+
+                @endif
+
+            </div>
+
+            <div class="min-w-0">
+
+                <span
+                    class="block truncate font-medium text-gray-700 text-theme-sm dark:text-gray-300"
+                >
+                    {{ $user?->name ?? 'Administrator' }}
+                </span>
+
+                <span
+                    class="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400"
+                >
+                    {{ $roleName }}
+                </span>
+
+                @if ($user?->email)
+
+                    <span
+                        class="mt-0.5 block max-w-[185px] truncate text-theme-xs text-gray-400 dark:text-gray-500"
+                    >
+                        {{ $user->email }}
+                    </span>
+
+                @endif
+
+            </div>
+
         </div>
 
-        <!-- Menu -->
-        <ul class="flex flex-col gap-1 pt-4 pb-3 border-b border-gray-200 dark:border-gray-800">
+        {{-- Menu --}}
+        <ul
+            class="flex flex-col gap-1 border-b border-gray-200 py-3 dark:border-gray-800"
+        >
 
-            <!-- Profile -->
+            {{-- Profile --}}
             <li>
+
                 <a
                     href="{{ route('profile') }}"
-                    class="flex items-center gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+                    class="group flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-gray-700 text-theme-sm transition hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
                     @click="closeDropdown()"
                 >
-                    <span class="text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-300">
+
+                    <span
+                        class="text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-300"
+                    >
 
                         <svg
-                            width="24"
-                            height="24"
+                            width="22"
+                            height="22"
                             viewBox="0 0 24 24"
                             fill="none"
                             xmlns="http://www.w3.org/2000/svg"
@@ -102,25 +191,32 @@
 
                     </span>
 
-                    Profil
+                    Profil Administrator
                 </a>
+
             </li>
 
         </ul>
 
-        <!-- Sign Out -->
-        <form method="POST" action="{{ route('logout') }}">
+        {{-- Sign Out --}}
+        <form
+            method="POST"
+            action="{{ route('logout') }}"
+        >
             @csrf
 
             <button
                 type="submit"
-                class="flex items-center w-full gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
+                class="group mt-3 flex w-full items-center gap-3 rounded-lg px-3 py-2 font-medium text-gray-700 text-theme-sm transition hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
                 @click="closeDropdown()"
             >
-                <span class="text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-300">
+
+                <span
+                    class="text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-300"
+                >
 
                     <svg
-                        class="w-5 h-5"
+                        class="h-5 w-5"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -129,7 +225,7 @@
                             stroke-linecap="round"
                             stroke-linejoin="round"
                             stroke-width="2"
-                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                            d="M17 16l4-4m0 0-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
                         />
                     </svg>
 
@@ -137,7 +233,9 @@
 
                 Keluar
             </button>
+
         </form>
 
     </div>
+
 </div>

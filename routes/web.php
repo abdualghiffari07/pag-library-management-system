@@ -5,6 +5,7 @@ use App\Http\Controllers\BookController;
 use App\Http\Controllers\BorrowerController;
 use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\VisitorAdminController;
 use App\Http\Controllers\VisitorGuestController;
@@ -403,11 +404,36 @@ Route::middleware('admin')->group(function () {
     )->name('dashboard');
 
     // Profile
-    Route::get('/profile', function () {
-        return view('pages.profile', [
-            'title' => 'Profile',
-        ]);
-    })->name('profile');
+    Route::get(
+        '/profile',
+        [ProfileController::class, 'index']
+    )->name('profile');
+
+    Route::patch(
+        '/profile',
+        [ProfileController::class, 'update']
+    )->name('profile.update');
+
+    Route::put(
+        '/profile/password',
+        [ProfileController::class, 'updatePassword']
+    )->name('profile.password.update');
+
+    // Foto profile
+    Route::get(
+        '/profile/photo',
+        [ProfileController::class, 'photo']
+    )->name('profile.photo');
+
+    Route::post(
+        '/profile/photo',
+        [ProfileController::class, 'updatePhoto']
+    )->name('profile.photo.update');
+
+    Route::delete(
+        '/profile/photo',
+        [ProfileController::class, 'deletePhoto']
+    )->name('profile.photo.delete');
 
     // Buku
     Route::get('/books-data', function () {
